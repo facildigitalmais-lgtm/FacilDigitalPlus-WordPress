@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
 define(
     'FD_THEME_VERSION',
-    '0.2.0'
+    '0.3.0'
 );
 
 define(
@@ -21,11 +21,12 @@ define(
     get_template_directory_uri()
 );
 
- $fdThemeFiles = [
+$fdThemeFiles = [
     '/inc/setup.php',
     '/inc/assets.php',
     '/inc/template-functions.php',
     '/inc/woocommerce.php',
+    '/inc/authentication.php',
 ];
 
 foreach ($fdThemeFiles as $fdThemeFile) {

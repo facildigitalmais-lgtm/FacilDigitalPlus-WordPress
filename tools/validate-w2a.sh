@@ -69,10 +69,19 @@ THEME_VERSION="$(
     --field=version
 )"
 
-[[ "$THEME_VERSION" == "0.2.0" ]] \
-  || fail "versao esperada 0.2.0"
+MIN_VERSION="$(
+  printf '%s\n' \
+    "0.2.0" \
+    "$THEME_VERSION" \
+  | sort -V \
+  | head -1
+)"
 
-pass "tema 0.2.0"
+[[ "$MIN_VERSION" == "0.2.0" ]] \
+  || fail "tema anterior a 0.2.0"
+
+echo "Tema: $THEME_VERSION"
+pass "tema >= 0.2.0"
 
 echo
 echo "=== THEME SUPPORT ==="

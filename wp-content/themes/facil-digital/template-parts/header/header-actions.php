@@ -6,8 +6,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$isLoggedIn =
+    is_user_logged_in();
+
 $accountUrl =
-    fd_theme_get_account_url();
+    $isLoggedIn
+        ? fd_theme_get_account_url()
+        : fd_theme_get_login_url();
 
 $cartUrl =
     fd_theme_get_cart_url();
@@ -55,7 +60,7 @@ $cartCount =
         <span class="fd-header-account__label">
             <?php
             echo esc_html(
-                is_user_logged_in()
+                $isLoggedIn
                     ? __(
                         'Minha conta',
                         'facil-digital'

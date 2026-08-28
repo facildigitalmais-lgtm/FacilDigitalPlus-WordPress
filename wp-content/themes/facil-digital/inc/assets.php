@@ -36,140 +36,155 @@ function fd_theme_asset_version(
     return FD_THEME_VERSION;
 }
 
+function fd_theme_enqueue_style_file(
+    string $handle,
+    string $file,
+    array $dependencies = []
+): void {
+    wp_enqueue_style(
+        $handle,
+        FD_THEME_URI . $file,
+        $dependencies,
+        fd_theme_asset_version(
+            $file
+        )
+    );
+}
+
+function fd_theme_enqueue_script_file(
+    string $handle,
+    string $file,
+    array $dependencies = []
+): void {
+    wp_enqueue_script(
+        $handle,
+        FD_THEME_URI . $file,
+        $dependencies,
+        fd_theme_asset_version(
+            $file
+        ),
+        [
+            'in_footer' => true,
+            'strategy'  => 'defer',
+        ]
+    );
+}
+
 function fd_theme_enqueue_assets(): void
 {
-    $styles = [
+    fd_theme_enqueue_style_file(
+        'fd-variables',
+        '/assets/css/variables.css'
+    );
+
+    fd_theme_enqueue_style_file(
+        'fd-reset',
+        '/assets/css/reset.css',
         [
-            'handle' =>
-                'fd-variables',
+            'fd-variables',
+        ]
+    );
 
-            'file' =>
-                '/assets/css/variables.css',
-
-            'dependencies' =>
-                [],
-        ],
-
+    fd_theme_enqueue_style_file(
+        'fd-typography',
+        '/assets/css/typography.css',
         [
-            'handle' =>
-                'fd-reset',
+            'fd-reset',
+        ]
+    );
 
-            'file' =>
-                '/assets/css/reset.css',
-
-            'dependencies' =>
-                [
-                    'fd-variables',
-                ],
-        ],
-
+    fd_theme_enqueue_style_file(
+        'fd-layout',
+        '/assets/css/layout.css',
         [
-            'handle' =>
-                'fd-typography',
+            'fd-typography',
+        ]
+    );
 
-            'file' =>
-                '/assets/css/typography.css',
-
-            'dependencies' =>
-                [
-                    'fd-reset',
-                ],
-        ],
-
+    fd_theme_enqueue_style_file(
+        'fd-components',
+        '/assets/css/components.css',
         [
-            'handle' =>
-                'fd-layout',
+            'fd-layout',
+        ]
+    );
 
-            'file' =>
-                '/assets/css/layout.css',
-
-            'dependencies' =>
-                [
-                    'fd-typography',
-                ],
-        ],
-
+    fd_theme_enqueue_style_file(
+        'fd-header',
+        '/assets/css/header.css',
         [
-            'handle' =>
+            'fd-components',
+        ]
+    );
+
+    fd_theme_enqueue_style_file(
+        'fd-footer',
+        '/assets/css/footer.css',
+        [
+            'fd-components',
+        ]
+    );
+
+    if (is_front_page()) {
+        fd_theme_enqueue_style_file(
+            'fd-home',
+            '/assets/css/home.css',
+            [
                 'fd-components',
-
-            'file' =>
-                '/assets/css/components.css',
-
-            'dependencies' =>
-                [
-                    'fd-layout',
-                ],
-        ],
-
-        [
-            'handle' =>
-                'fd-header',
-
-            'file' =>
-                '/assets/css/header.css',
-
-            'dependencies' =>
-                [
-                    'fd-components',
-                ],
-        ],
-
-        [
-            'handle' =>
-                'fd-footer',
-
-            'file' =>
-                '/assets/css/footer.css',
-
-            'dependencies' =>
-                [
-                    'fd-components',
-                ],
-        ],
-
-        [
-            'handle' =>
-                'fd-responsive',
-
-            'file' =>
-                '/assets/css/responsive.css',
-
-            'dependencies' =>
-                [
-                    'fd-header',
-                    'fd-footer',
-                ],
-        ],
-    ];
-
-    foreach ($styles as $style) {
-        wp_enqueue_style(
-            $style['handle'],
-            FD_THEME_URI
-                . $style['file'],
-            $style['dependencies'],
-            fd_theme_asset_version(
-                $style['file']
-            )
+            ]
         );
     }
 
-    wp_enqueue_script(
-        'fd-navigation',
-        FD_THEME_URI
-            . '/assets/js/navigation.js',
-        [],
-        fd_theme_asset_version(
-            '/assets/js/navigation.js'
-        ),
-        [
-            'in_footer' =>
-                true,
+    if (
+        is_page()
+        && !is_front_page()
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-pages',
+            '/assets/css/pages.css',
+            [
+                'fd-components',
+            ]
+        );
+    }
 
-            'strategy' =>
-                'defer',
+    if (
+        is_page_template(
+            'templates/page-login.php'
+        )
+        || is_page_template(
+            'templates/page-register.php'
+        )
+        || is_page_template(
+            'templates/page-lost-password.php'
+        )
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-auth',
+            '/assets/css/auth.css',
+            [
+                'fd-pages',
+            ]
+        );
+
+        fd_theme_enqueue_script_file(
+            'fd-auth',
+            '/assets/js/auth.js'
+        );
+    }
+
+    fd_theme_enqueue_style_file(
+        'fd-responsive',
+        '/assets/css/responsive.css',
+        [
+            'fd-header',
+            'fd-footer',
         ]
+    );
+
+    fd_theme_enqueue_script_file(
+        'fd-navigation',
+        '/assets/js/navigation.js'
     );
 }
 

@@ -1,18 +1,14 @@
-
 <?php
 
 if (!defined('ABSPATH')) {
-    exit(1);
+    exit;
 }
 
-/**
- * Configuracao idempotente da fundacao W1.
- */
-
-function fd_w1_ensure_page(
+function fd_configure_page(
     string $title,
     string $slug,
-    string $content = ''
+    string $content = '',
+    ?string $template = null
 ): int {
     $existing =
         get_page_by_path(
@@ -21,135 +17,172 @@ function fd_w1_ensure_page(
             'page'
         );
 
-    if (
-        $existing instanceof WP_Post
-    ) {
-        return (int) $existing->ID;
-    }
+    if ($existing instanceof WP_Post) {
+        $pageId =
+            (int) $existing->ID;
 
-    $result =
-        wp_insert_post(
+        wp_update_post(
             [
-                'post_type' =>
-                    'page',
-
-                'post_status' =>
-                    'publish',
+                'ID' =>
+                    $pageId,
 
                 'post_title' =>
                     $title,
 
-                'post_name' =>
-                    $slug,
-
-                'post_content' =>
-                    $content,
-            ],
-            true
+                'post_status' =>
+                    'publish',
+            ]
         );
+    } else {
+        $pageId =
+            wp_insert_post(
+                [
+                    'post_type' =>
+                        'page',
 
-    if (
-        is_wp_error(
-            $result
-        )
-    ) {
-        throw new RuntimeException(
-            sprintf(
-                'Falha ao criar pagina %s: %s',
-                $slug,
-                $result->get_error_message()
-            )
+                    'post_status' =>
+                        'publish',
+
+                    'post_title' =>
+                        $title,
+
+                    'post_name' =>
+                        $slug,
+
+                    'post_content' =>
+                        $content,
+                ],
+                true
+            );
+
+        if (is_wp_error($pageId)) {
+            throw new RuntimeException(
+                sprintf(
+                    'Falha ao criar pagina %s: %s',
+                    $slug,
+                    $pageId->get_error_message()
+                )
+            );
+        }
+
+        $pageId =
+            (int) $pageId;
+    }
+
+    if ($template !== null) {
+        update_post_meta(
+            $pageId,
+            '_wp_page_template',
+            $template
+        );
+    } else {
+        delete_post_meta(
+            $pageId,
+            '_wp_page_template'
         );
     }
 
-    return (int) $result;
+    return $pageId;
 }
 
-$pages = [
-    'home' =>
-        fd_w1_ensure_page(
-            'Inicio',
-            'inicio'
-        ),
+$pages = [];
 
-    'shop' =>
-        fd_w1_ensure_page(
-            'Apostilas',
-            'apostilas'
-        ),
+$pages['home'] =
+    fd_configure_page(
+        'Inicio',
+        'inicio'
+    );
 
-    'cart' =>
-        fd_w1_ensure_page(
-            'Carrinho',
-            'carrinho',
-            '[woocommerce_cart]'
-        ),
+$pages['shop'] =
+    fd_configure_page(
+        'Apostilas',
+        'apostilas'
+    );
 
-    'checkout' =>
-        fd_w1_ensure_page(
-            'Checkout',
-            'checkout',
-            '[woocommerce_checkout]'
-        ),
+$pages['cart'] =
+    fd_configure_page(
+        'Carrinho',
+        'carrinho',
+        '[woocommerce_cart]'
+    );
 
-    'account' =>
-        fd_w1_ensure_page(
-            'Minha Conta',
-            'minha-conta',
-            '[woocommerce_my_account]'
-        ),
+$pages['checkout'] =
+    fd_configure_page(
+        'Checkout',
+        'checkout',
+        '[woocommerce_checkout]'
+    );
 
-    'login' =>
-        fd_w1_ensure_page(
-            'Entrar',
-            'entrar',
-            'Pagina de login Facil Digital+ em desenvolvimento.'
-        ),
+$pages['account'] =
+    fd_configure_page(
+        'Minha Conta',
+        'minha-conta',
+        '[woocommerce_my_account]'
+    );
 
-    'register' =>
-        fd_w1_ensure_page(
-            'Cadastro',
-            'cadastro',
-            'Pagina de cadastro Facil Digital+ em desenvolvimento.'
-        ),
+$pages['login'] =
+    fd_configure_page(
+        'Entrar',
+        'entrar',
+        '',
+        'templates/page-login.php'
+    );
 
-    'lost_password' =>
-        fd_w1_ensure_page(
-            'Recuperar senha',
-            'recuperar-senha',
-            'Recuperacao de senha Facil Digital+ em desenvolvimento.'
-        ),
+$pages['register'] =
+    fd_configure_page(
+        'Cadastro',
+        'cadastro',
+        '',
+        'templates/page-register.php'
+    );
 
-    'about' =>
-        fd_w1_ensure_page(
-            'Sobre',
-            'sobre'
-        ),
+$pages['lost_password'] =
+    fd_configure_page(
+        'Recuperar Senha',
+        'recuperar-senha',
+        '',
+        'templates/page-lost-password.php'
+    );
 
-    'contact' =>
-        fd_w1_ensure_page(
-            'Contato',
-            'contato'
-        ),
+$pages['about'] =
+    fd_configure_page(
+        'Sobre',
+        'sobre',
+        '',
+        'templates/page-about.php'
+    );
 
-    'faq' =>
-        fd_w1_ensure_page(
-            'FAQ',
-            'faq'
-        ),
+$pages['contact'] =
+    fd_configure_page(
+        'Contato',
+        'contato',
+        '',
+        'templates/page-contact.php'
+    );
 
-    'privacy' =>
-        fd_w1_ensure_page(
-            'Politica de Privacidade',
-            'privacidade'
-        ),
+$pages['faq'] =
+    fd_configure_page(
+        'FAQ',
+        'faq',
+        '',
+        'templates/page-faq.php'
+    );
 
-    'terms' =>
-        fd_w1_ensure_page(
-            'Termos de Uso',
-            'termos'
-        ),
-];
+$pages['privacy'] =
+    fd_configure_page(
+        'Politica de Privacidade',
+        'privacidade',
+        '',
+        'templates/page-privacy.php'
+    );
+
+$pages['terms'] =
+    fd_configure_page(
+        'Termos de Uso',
+        'termos',
+        '',
+        'templates/page-terms.php'
+    );
 
 update_option(
     'blogname',
@@ -173,10 +206,7 @@ update_option(
 
 update_option(
     'timezone_string',
-    getenv(
-        'WORDPRESS_TIMEZONE'
-    )
-        ?: 'America/Sao_Paulo'
+    'America/Sao_Paulo'
 );
 
 update_option(
@@ -187,6 +217,11 @@ update_option(
 update_option(
     'default_role',
     'customer'
+);
+
+update_option(
+    'wp_page_for_privacy_policy',
+    $pages['privacy']
 );
 
 update_option(
@@ -215,13 +250,13 @@ update_option(
 );
 
 update_option(
-    'woocommerce_default_country',
-    'BR'
+    'woocommerce_currency',
+    'BRL'
 );
 
 update_option(
-    'woocommerce_currency',
-    'BRL'
+    'woocommerce_default_country',
+    'BR'
 );
 
 update_option(
@@ -239,14 +274,23 @@ update_option(
     'yes'
 );
 
-global $wp_rewrite;
+update_option(
+    'woocommerce_registration_generate_username',
+    'yes'
+);
 
-$wp_rewrite->set_permalink_structure(
+update_option(
+    'woocommerce_registration_generate_password',
+    'no'
+);
+
+update_option(
+    'permalink_structure',
     '/%postname%/'
 );
 
-$wp_rewrite->flush_rules(
-    true
+flush_rewrite_rules(
+    false
 );
 
 echo wp_json_encode(
@@ -256,6 +300,16 @@ echo wp_json_encode(
 
         'pages' =>
             $pages,
+
+        'theme' =>
+            'facil-digital',
+
+        'theme_version' =>
+            wp_get_theme(
+                'facil-digital'
+            )->get(
+                'Version'
+            ),
     ],
     JSON_PRETTY_PRINT
 );
