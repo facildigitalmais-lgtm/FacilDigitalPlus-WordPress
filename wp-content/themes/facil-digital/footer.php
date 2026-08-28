@@ -7,25 +7,24 @@ if (!defined('ABSPATH')) {
 }
 
 ?>
+
 </main>
 
-<footer class="fd-footer">
-    <div class="fd-container">
-        <strong>Facil Digital+</strong>
+<footer class="fd-site-footer">
+    <?php
+    get_template_part(
+        'template-parts/footer/footer-main'
+    );
+    ?>
 
-        <p>
-            Apostilas digitais e preparacao
-            para concursos publicos.
-        </p>
-
-        <p class="fd-footer__copyright">
-            &copy;
-            <?php echo esc_html(gmdate('Y')); ?>
-            Facil Digital+.
-        </p>
-    </div>
+    <?php
+    get_template_part(
+        'template-parts/footer/footer-bottom'
+    );
+    ?>
 </footer>
 
 <?php wp_footer(); ?>
+
 </body>
 </html>

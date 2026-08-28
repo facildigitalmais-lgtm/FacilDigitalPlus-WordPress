@@ -1,0 +1,96 @@
+:root {
+    --fd-color-primary: #0b5cff;
+    --fd-color-primary-hover: #0846c7;
+    --fd-color-primary-soft: #eef4ff;
+
+    --fd-color-secondary: #111827;
+    --fd-color-secondary-hover: #1f2937;
+
+    --fd-color-accent: #ffc928;
+
+    --fd-color-background: #f7f9fc;
+    --fd-color-surface: #ffffff;
+    --fd-color-surface-soft: #f1f5f9;
+
+    --fd-color-text: #111827;
+    --fd-color-text-muted: #667085;
+    --fd-color-text-soft: #98a2b3;
+
+    --fd-color-border: #e4e7ec;
+    --fd-color-border-strong: #d0d5dd;
+
+    --fd-color-success: #067647;
+    --fd-color-success-soft: #ecfdf3;
+
+    --fd-color-warning: #b54708;
+    --fd-color-warning-soft: #fffaeb;
+
+    --fd-color-danger: #b42318;
+    --fd-color-danger-soft: #fef3f2;
+
+    --fd-font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    --fd-font-size-xs: 0.75rem;
+    --fd-font-size-sm: 0.875rem;
+    --fd-font-size-base: 1rem;
+    --fd-font-size-lg: 1.125rem;
+    --fd-font-size-xl: 1.25rem;
+    --fd-font-size-2xl: 1.5rem;
+    --fd-font-size-3xl: 2rem;
+    --fd-font-size-4xl: 2.75rem;
+    --fd-font-size-5xl: 4rem;
+
+    --fd-line-height-tight: 1.1;
+    --fd-line-height-heading: 1.2;
+    --fd-line-height-body: 1.65;
+
+    --fd-space-1: 0.25rem;
+    --fd-space-2: 0.5rem;
+    --fd-space-3: 0.75rem;
+    --fd-space-4: 1rem;
+    --fd-space-5: 1.25rem;
+    --fd-space-6: 1.5rem;
+    --fd-space-8: 2rem;
+    --fd-space-10: 2.5rem;
+    --fd-space-12: 3rem;
+    --fd-space-16: 4rem;
+    --fd-space-20: 5rem;
+    --fd-space-24: 6rem;
+
+    --fd-radius-sm: 0.5rem;
+    --fd-radius-md: 0.75rem;
+    --fd-radius-lg: 1rem;
+    --fd-radius-xl: 1.5rem;
+    --fd-radius-full: 999px;
+
+    --fd-shadow-sm:
+        0 1px 3px
+        rgb(16 24 40 / 0.08);
+
+    --fd-shadow-md:
+        0 8px 24px
+        rgb(16 24 40 / 0.08);
+
+    --fd-shadow-lg:
+        0 20px 50px
+        rgb(16 24 40 / 0.12);
+
+    --fd-container: 1180px;
+    --fd-container-narrow: 820px;
+
+    --fd-header-height: 76px;
+
+    --fd-transition-fast: 160ms ease;
+    --fd-transition-base: 240ms ease;
+
+    --fd-z-overlay: 900;
+    --fd-z-header: 1000;
+    --fd-z-dropdown: 1010;
+}

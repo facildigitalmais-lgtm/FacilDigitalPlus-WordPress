@@ -7,78 +7,88 @@ if (!defined('ABSPATH')) {
 }
 
 ?><!doctype html>
+
 <html <?php language_attributes(); ?>>
+
 <head>
-    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta
+        charset="<?php
+            bloginfo(
+                'charset'
+            );
+        ?>"
+    >
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1"
     >
+
     <?php wp_head(); ?>
 </head>
 
-<body <?php body_class(); ?>>
+<body <?php body_class('fd-theme'); ?>>
+
 <?php wp_body_open(); ?>
 
-<header class="fd-header">
-    <div class="fd-container fd-header__inner">
-        <a
-            class="fd-brand"
-            href="<?php echo esc_url(home_url('/')); ?>"
-        >
-            Facil Digital<span>+</span>
-        </a>
+<a
+    class="fd-skip-link"
+    href="#fd-main-content"
+>
+    <?php
+    echo esc_html__(
+        'Ir para o conteudo',
+        'facil-digital'
+    );
+    ?>
+</a>
 
-        <nav
-            class="fd-nav"
-            aria-label="<?php
-                echo esc_attr__(
-                    'Navegacao principal',
-                    'facil-digital'
-                );
-            ?>"
-        >
-            <a href="<?php echo esc_url(home_url('/')); ?>">
-                Inicio
-            </a>
+<header
+    class="fd-site-header"
+    data-fd-site-header
+>
+    <div class="fd-container fd-site-header__inner">
+        <?php
+        get_template_part(
+            'template-parts/header/site-branding'
+        );
+        ?>
 
-            <a href="<?php echo esc_url(home_url('/apostilas/')); ?>">
-                Apostilas
-            </a>
+        <?php
+        get_template_part(
+            'template-parts/header/primary-navigation'
+        );
+        ?>
 
-            <a href="<?php echo esc_url(home_url('/faq/')); ?>">
-                FAQ
-            </a>
+        <?php
+        get_template_part(
+            'template-parts/header/header-actions'
+        );
+        ?>
+    </div>
 
-            <?php if (is_user_logged_in()) : ?>
-                <a
-                    class="fd-nav__account"
-                    href="<?php
-                        echo esc_url(
-                            home_url(
-                                '/minha-conta/'
-                            )
-                        );
-                    ?>"
-                >
-                    Minha conta
-                </a>
-            <?php else : ?>
-                <a
-                    class="fd-nav__account"
-                    href="<?php
-                        echo esc_url(
-                            home_url(
-                                '/entrar/'
-                            )
-                        );
-                    ?>"
-                >
-                    Entrar
-                </a>
-            <?php endif; ?>
-        </nav>
+    <div
+        id="fd-header-search"
+        class="fd-header-search"
+        data-fd-search-panel
+        hidden
+    >
+        <div class="fd-container">
+            <?php
+            get_search_form();
+            ?>
+        </div>
     </div>
 </header>
 
-<main class="fd-main">
+<div
+    class="fd-navigation-overlay"
+    data-fd-navigation-overlay
+    hidden
+    aria-hidden="true"
+></div>
+
+<main
+    id="fd-main-content"
+    class="fd-site-main"
+>

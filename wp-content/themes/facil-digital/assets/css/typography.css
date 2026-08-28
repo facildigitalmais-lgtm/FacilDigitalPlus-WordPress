@@ -1,0 +1,72 @@
+body {
+    font-size:
+        var(--fd-font-size-base);
+
+    line-height:
+        var(--fd-line-height-body);
+
+    -webkit-font-smoothing:
+        antialiased;
+
+    text-rendering:
+        optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0;
+
+    color:
+        var(--fd-color-text);
+
+    font-weight: 800;
+
+    line-height:
+        var(--fd-line-height-heading);
+
+    letter-spacing:
+        -0.025em;
+}
+
+h1 {
+    font-size:
+        clamp(
+            2.5rem,
+            6vw,
+            var(--fd-font-size-5xl)
+        );
+}
+
+h2 {
+    font-size:
+        clamp(
+            2rem,
+            4vw,
+            var(--fd-font-size-4xl)
+        );
+}
+
+h3 {
+    font-size:
+        var(--fd-font-size-2xl);
+}
+
+p {
+    margin-top: 0;
+}
+
+a {
+    text-decoration-thickness:
+        1px;
+
+    text-underline-offset:
+        0.18em;
+}
+
+strong {
+    font-weight: 750;
+}

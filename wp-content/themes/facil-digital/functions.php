@@ -8,64 +8,34 @@ if (!defined('ABSPATH')) {
 
 define(
     'FD_THEME_VERSION',
-    '0.1.0'
+    '0.2.0'
 );
 
-function fd_theme_setup(): void
-{
-    add_theme_support(
-        'title-tag'
-    );
+define(
+    'FD_THEME_DIR',
+    get_template_directory()
+);
 
-    add_theme_support(
-        'post-thumbnails'
-    );
+define(
+    'FD_THEME_URI',
+    get_template_directory_uri()
+);
 
-    add_theme_support(
-        'woocommerce'
-    );
+ $fdThemeFiles = [
+    '/inc/setup.php',
+    '/inc/assets.php',
+    '/inc/template-functions.php',
+    '/inc/woocommerce.php',
+];
 
-    add_theme_support(
-        'html5',
-        [
-            'search-form',
-            'comment-form',
-            'comment-list',
-            'gallery',
-            'caption',
-            'style',
-            'script',
-        ]
-    );
+foreach ($fdThemeFiles as $fdThemeFile) {
+    $fdThemePath =
+        FD_THEME_DIR
+        . $fdThemeFile;
 
-    register_nav_menus(
-        [
-            'primary' =>
-                __(
-                    'Menu principal',
-                    'facil-digital'
-                ),
-        ]
-    );
+    if (!is_readable($fdThemePath)) {
+        continue;
+    }
+
+    require_once $fdThemePath;
 }
-
-add_action(
-    'after_setup_theme',
-    'fd_theme_setup'
-);
-
-function fd_theme_enqueue_assets(): void
-{
-    wp_enqueue_style(
-        'fd-theme-main',
-        get_template_directory_uri()
-            . '/assets/css/main.css',
-        [],
-        FD_THEME_VERSION
-    );
-}
-
-add_action(
-    'wp_enqueue_scripts',
-    'fd_theme_enqueue_assets'
-);

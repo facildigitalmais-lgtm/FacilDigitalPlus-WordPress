@@ -1,0 +1,143 @@
+.fd-site-footer {
+    margin-top: auto;
+
+    background:
+        var(--fd-color-secondary);
+
+    color:
+        #fff;
+}
+
+.fd-footer-main {
+    padding:
+        var(--fd-space-16)
+        0;
+}
+
+.fd-footer-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(260px, 1.5fr)
+        repeat(
+            3,
+            minmax(140px, 1fr)
+        );
+
+    gap:
+        var(--fd-space-12);
+}
+
+.fd-footer-brand {
+    max-width: 360px;
+}
+
+.fd-footer-brand__logo {
+    display: inline-flex;
+
+    margin-bottom:
+        var(--fd-space-5);
+
+    color: #fff;
+
+    font-size:
+        var(--fd-font-size-2xl);
+
+    font-weight: 850;
+
+    letter-spacing:
+        -0.04em;
+
+    text-decoration: none;
+}
+
+.fd-footer-brand__logo strong {
+    color:
+        var(--fd-color-primary);
+}
+
+.fd-footer-brand p {
+    margin-bottom: 0;
+
+    color:
+        #98a2b3;
+}
+
+.fd-footer-column h2 {
+    margin-bottom:
+        var(--fd-space-5);
+
+    color: #fff;
+
+    font-size:
+        var(--fd-font-size-sm);
+
+    letter-spacing:
+        0.04em;
+
+    text-transform: uppercase;
+}
+
+.fd-footer-menu,
+.fd-footer-column .menu {
+    display: flex;
+
+    margin: 0;
+    padding: 0;
+
+    flex-direction: column;
+
+    gap:
+        var(--fd-space-3);
+
+    list-style: none;
+}
+
+.fd-footer-menu a,
+.fd-footer-column .menu a {
+    color:
+        #98a2b3;
+
+    font-size:
+        var(--fd-font-size-sm);
+
+    text-decoration: none;
+
+    transition:
+        color
+        var(--fd-transition-fast);
+}
+
+.fd-footer-menu a:hover,
+.fd-footer-column .menu a:hover {
+    color: #fff;
+}
+
+.fd-footer-bottom {
+    border-top:
+        1px solid
+        rgb(255 255 255 / 0.1);
+}
+
+.fd-footer-bottom__inner {
+    display: flex;
+
+    min-height: 74px;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap:
+        var(--fd-space-6);
+}
+
+.fd-footer-bottom p {
+    margin: 0;
+
+    color:
+        #98a2b3;
+
+    font-size:
+        var(--fd-font-size-sm);
+}
