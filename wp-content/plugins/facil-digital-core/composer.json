@@ -1,0 +1,17 @@
+{
+  "name": "facildigitalmais/facil-digital-core",
+  "description": "Core da plataforma Facil Digital+.",
+  "type": "wordpress-plugin",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "FacilDigital\\Core\\": "src/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

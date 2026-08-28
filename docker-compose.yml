@@ -1,0 +1,153 @@
+name: facil-digital-plus-wordpress
+
+services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    environment:
+      MARIADB_DATABASE: ${WORDPRESS_DB_NAME}
+      MARIADB_USER: ${WORDPRESS_DB_USER}
+      MARIADB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+
+    volumes:
+      - db_data:/var/lib/mysql
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--connect",
+          "--innodb_initialized"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  wordpress:
+    image: wordpress:7.1-php8.3-apache
+    restart: unless-stopped
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    env_file:
+      - .env
+
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+      WORDPRESS_URL: ${WORDPRESS_URL}
+      WORDPRESS_DEBUG: "1"
+
+      WORDPRESS_CONFIG_EXTRA: |
+        define(
+          'WP_ENVIRONMENT_TYPE',
+          'development'
+        );
+
+        define(
+          'WP_HOME',
+          getenv('WORDPRESS_URL')
+            ?: 'http://localhost:8080'
+        );
+
+        define(
+          'WP_SITEURL',
+          getenv('WORDPRESS_URL')
+            ?: 'http://localhost:8080'
+        );
+
+        define(
+          'WP_DEBUG_LOG',
+          true
+        );
+
+        define(
+          'WP_DEBUG_DISPLAY',
+          false
+        );
+
+        define(
+          'SCRIPT_DEBUG',
+          true
+        );
+
+        define(
+          'DISALLOW_FILE_EDIT',
+          true
+        );
+
+        define(
+          'AUTOMATIC_UPDATER_DISABLED',
+          true
+        );
+
+        define(
+          'WP_AUTO_UPDATE_CORE',
+          false
+        );
+
+    ports:
+      - "${WORDPRESS_PORT:-8080}:80"
+
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./:/workspace
+
+  wpcli:
+    image: wordpress:cli-php8.3
+
+    user: "33:33"
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    env_file:
+      - .env
+
+    environment:
+      HOME: /tmp
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+      WORDPRESS_URL: ${WORDPRESS_URL}
+
+    working_dir:
+      /var/www/html
+
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./:/workspace
+
+  composer:
+    image: composer:2
+
+    env_file:
+      - .env
+
+    user:
+      "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+
+    working_dir:
+      /app
+
+    volumes:
+      - ./wp-content/plugins/facil-digital-core:/app
+
+volumes:
+  db_data:
+  wordpress_data:

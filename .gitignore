@@ -1,0 +1,63 @@
+# ==================================================
+# FACIL DIGITAL+ WORDPRESS
+# ==================================================
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+
+# WordPress local / runtime
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backups/
+wp-content/backup-db/
+wp-content/ai1wm-backups/
+
+# Plugins externos
+wp-content/plugins/*
+!wp-content/plugins/facil-digital-core/
+!wp-content/plugins/facil-digital-core/**
+
+# Temas externos
+wp-content/themes/*
+!wp-content/themes/facil-digital/
+!wp-content/themes/facil-digital/**
+
+# Composer
+vendor/
+wp-content/plugins/facil-digital-core/vendor/
+
+# PHPUnit / coverage
+.phpunit.result.cache
+.coverage/
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Arquivos temporarios
+*.tmp
+*.temp
+tmp/
+
+# PDFs e dados privados
+private/
+storage/
+*.sqlite
+*.db
+*.sql
+*.sql.gz

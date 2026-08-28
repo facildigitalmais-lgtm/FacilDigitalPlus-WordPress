@@ -1,0 +1,15 @@
+{
+  "name": "Facil Digital+ WordPress",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "forwardPorts": [
+    8080
+  ],
+  "portsAttributes": {
+    "8080": {
+      "label": "Facil Digital+ WordPress",
+      "onAutoForward": "notify",
+      "protocol": "http"
+    }
+  },
+  "postCreateCommand": "chmod +x tools/*.sh 2>/dev/null || true"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "facildigitalmais/facil-digital-wordpress",
+  "description": "Codigo customizado da plataforma Facil Digital+ em WordPress.",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.2"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
