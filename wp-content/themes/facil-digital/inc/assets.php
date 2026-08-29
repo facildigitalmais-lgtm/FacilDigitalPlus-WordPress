@@ -231,6 +231,23 @@ function fd_theme_enqueue_assets(): void
     }
 
     if (
+        (string) get_query_var('fd_simulation') !== ''
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-simulation',
+            '/assets/css/simulation.css',
+            [
+                'fd-components',
+            ]
+        );
+
+        fd_theme_enqueue_script_file(
+            'fd-simulation',
+            '/assets/js/simulation.js'
+        );
+    }
+
+    if (
         is_search()
         || is_404()
     ) {

@@ -31,6 +31,10 @@ fail() {
   exit 1
 }
 
+version_ge() {
+  printf '%s\n%s\n' "$2" "$1" | sort -V -C
+}
+
 cleanup() {
   wpcli eval \
     'require "/workspace/tools/cleanup-m2.php";' \
@@ -72,8 +76,8 @@ pass "FPDI 2.6+ e TCPDF disponiveis"
 echo
 echo "=== CORE ==="
 CORE_VERSION="$(wpcli plugin get facil-digital-core --field=version)"
-[[ "$CORE_VERSION" == "0.6.0" ]] || fail "Core esperado 0.6.0; atual: $CORE_VERSION"
-pass "Core 0.6.0"
+version_ge "$CORE_VERSION" "0.6.0"   || fail "Core esperado >= 0.6.0; atual: $CORE_VERSION"
+pass "Core >= 0.6.0 ($CORE_VERSION)"
 
 echo
 echo "=== STORAGE PRIVADO ==="

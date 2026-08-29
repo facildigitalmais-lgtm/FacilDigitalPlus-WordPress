@@ -8,6 +8,7 @@ use FacilDigital\Core\Admin\Menu;
 use FacilDigital\Core\API\EntitlementController;
 use FacilDigital\Core\API\HealthController;
 use FacilDigital\Core\API\PdfController;
+use FacilDigital\Core\API\SimulationController;
 use FacilDigital\Core\API\StatusController;
 use FacilDigital\Core\CLI\StatusCommand;
 use FacilDigital\Core\Contests\ContestModule;
@@ -17,15 +18,17 @@ use FacilDigital\Core\PDFs\DownloadModule;
 use FacilDigital\Core\PDFs\PdfGenerationModule;
 use FacilDigital\Core\PDFs\PdfMasterModule;
 use FacilDigital\Core\Products\ProductMetadata;
+use FacilDigital\Core\Questions\QuestionAdminModule;
+use FacilDigital\Core\Simulations\SimulationAdminModule;
+use FacilDigital\Core\Simulations\SimulationFrontendModule;
 use FacilDigital\Core\Students\AccountModule;
+use FacilDigital\Core\Students\SimulationAccountModule;
 use FacilDigital\Core\WooCommerce\CheckoutModule;
 use FacilDigital\Core\WooCommerce\MercadoPagoModule;
 
 final class ModuleRegistry
 {
-    /**
-     * @return list<ModuleInterface>
-     */
+    /** @return list<ModuleInterface> */
     public static function defaults(): array
     {
         return [
@@ -44,6 +47,11 @@ final class ModuleRegistry
             new DownloadModule(),
             new AccountModule(),
             new PdfController(),
+            new QuestionAdminModule(),
+            new SimulationAdminModule(),
+            new SimulationFrontendModule(),
+            new SimulationAccountModule(),
+            new SimulationController(),
         ];
     }
 }
