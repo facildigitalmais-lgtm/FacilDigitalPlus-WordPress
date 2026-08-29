@@ -3,7 +3,7 @@
  * Plugin Name: Facil Digital+ Core
  * Plugin URI: https://facildigitalmais.com
  * Description: Regras de negocio da plataforma Facil Digital+.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: Facil Digital+
  * Author URI: https://facildigitalmais.com
  * Requires at least: 7.0
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('FACIL_DIGITAL_CORE_VERSION', '0.2.0');
+define('FACIL_DIGITAL_CORE_VERSION', '0.3.0');
 define('FACIL_DIGITAL_CORE_FILE', __FILE__);
 define('FACIL_DIGITAL_CORE_DIR', plugin_dir_path(__FILE__));
 
@@ -94,6 +94,7 @@ add_action(
 
         try {
             \FacilDigital\Core\Core\Migrations::maybeRun();
+            \FacilDigital\Core\Core\Capabilities::maybeRun();
         } catch (\Throwable $exception) {
             unset($exception);
 
@@ -106,7 +107,7 @@ add_action(
 
                     echo '<div class="notice notice-error"><p>';
                     echo esc_html__(
-                        'Facil Digital+ Core: falha ao preparar as tabelas W3. Execute ./tools/validate-w3a.sh.',
+                        'Facil Digital+ Core: falha ao preparar banco ou permissoes. Execute ./tools/validate-w3b.sh.',
                         'facil-digital-core'
                     );
                     echo '</p></div>';
