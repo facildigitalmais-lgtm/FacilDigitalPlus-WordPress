@@ -148,10 +148,47 @@ wpcli eval '
 use FacilDigital\Core\Admin\Menu;
 use FacilDigital\Core\Core\Capabilities;
 
+$administrators = get_users([
+    "role"   => "administrator",
+    "fields" => "ids",
+    "number" => 1,
+]);
+
+if (empty($administrators)) {
+    fwrite(
+        STDERR,
+        "Nenhum administrador disponivel para validar o menu." . PHP_EOL
+    );
+    exit(1);
+}
+
+wp_set_current_user((int) $administrators[0]);
+
+if (!current_user_can(Capabilities::ACCESS_ADMIN)) {
+    fwrite(
+        STDERR,
+        "Administrador sem ACCESS_ADMIN." . PHP_EOL
+    );
+    exit(1);
+}
+
+if (!current_user_can(Capabilities::MANAGE_SETTINGS)) {
+    fwrite(
+        STDERR,
+        "Administrador sem MANAGE_SETTINGS." . PHP_EOL
+    );
+    exit(1);
+}
+
+global $menu, $submenu, $_wp_submenu_nopriv;
+
+$menu = [];
+$submenu = [];
+$_wp_submenu_nopriv = [];
+
 $fdMenu = new Menu();
 $fdMenu->registerMenu();
 
-global $menu, $submenu;
 $rootFound = false;
 
 foreach ((array) $menu as $item) {
@@ -160,7 +197,10 @@ foreach ((array) $menu as $item) {
     }
 
     if (($item[1] ?? null) !== Capabilities::ACCESS_ADMIN) {
-        fwrite(STDERR, "Capability incorreta no menu raiz." . PHP_EOL);
+        fwrite(
+            STDERR,
+            "Capability incorreta no menu raiz." . PHP_EOL
+        );
         exit(1);
     }
 
@@ -169,26 +209,58 @@ foreach ((array) $menu as $item) {
 }
 
 if (!$rootFound) {
-    fwrite(STDERR, "Menu raiz Facil Digital+ ausente." . PHP_EOL);
+    fwrite(
+        STDERR,
+        "Menu raiz Facil Digital+ ausente." . PHP_EOL
+    );
     exit(1);
 }
 
+$dashboardFound = false;
 $settingsFound = false;
+
 foreach (($submenu[Menu::PARENT_SLUG] ?? []) as $item) {
-    if (($item[2] ?? null) !== "facil-digital-settings") {
-        continue;
+    $slug = $item[2] ?? null;
+    $capability = $item[1] ?? null;
+
+    if ($slug === Menu::PARENT_SLUG) {
+        if ($capability !== Capabilities::ACCESS_ADMIN) {
+            fwrite(
+                STDERR,
+                "Dashboard com capability incorreta." . PHP_EOL
+            );
+            exit(1);
+        }
+
+        $dashboardFound = true;
     }
 
-    if (($item[1] ?? null) !== Capabilities::MANAGE_SETTINGS) {
-        fwrite(STDERR, "Settings sem capability administrativa." . PHP_EOL);
-        exit(1);
-    }
+    if ($slug === "facil-digital-settings") {
+        if ($capability !== Capabilities::MANAGE_SETTINGS) {
+            fwrite(
+                STDERR,
+                "Settings sem capability administrativa." . PHP_EOL
+            );
+            exit(1);
+        }
 
-    $settingsFound = true;
+        $settingsFound = true;
+    }
+}
+
+if (!$dashboardFound) {
+    fwrite(
+        STDERR,
+        "Submenu Dashboard ausente." . PHP_EOL
+    );
+    exit(1);
 }
 
 if (!$settingsFound) {
-    fwrite(STDERR, "Submenu de configuracoes ausente." . PHP_EOL);
+    fwrite(
+        STDERR,
+        "Submenu de configuracoes ausente." . PHP_EOL
+    );
     exit(1);
 }
 '
@@ -196,10 +268,24 @@ pass "menu modular protegido por capabilities proprias"
 
 echo
 echo "=== CORE REST ==="
-REST_STATUS="$(curl -sS -o /tmp/fd-w3b-health.json -w '%{http_code}' "${WORDPRESS_URL%/}/wp-json/facil-digital/v1/health")"
-[[ "$REST_STATUS" == "200" ]] || fail "health endpoint HTTP $REST_STATUS"
-grep -q '"status":"ok"' /tmp/fd-w3b-health.json || fail "health endpoint sem status ok"
-grep -q '"service":"facil-digital-core"' /tmp/fd-w3b-health.json || fail "health endpoint sem service"
+
+HOST="$(
+  printf '%s' "$WORDPRESS_URL" |
+  sed -E 's#^https?://##; s#/$##'
+)"
+
+BASE="http://127.0.0.1:${WORDPRESS_PORT:-8080}"
+
+REST_STATUS="$(
+  curl     -sS     -o /tmp/fd-w3b-health.json     -w '%{http_code}'     -H "Host: $HOST"     -H "X-Forwarded-Proto: https"     "${BASE}/wp-json/facil-digital/v1/health"
+)"
+
+[[ "$REST_STATUS" == "200" ]]   || fail "health endpoint HTTP $REST_STATUS"
+
+grep -q '"status":"ok"'   /tmp/fd-w3b-health.json   || fail "health endpoint sem status ok"
+
+grep -q '"service":"facil-digital-core"'   /tmp/fd-w3b-health.json   || fail "health endpoint sem service"
+
 pass "REST health preservado no modulo API"
 
 echo
