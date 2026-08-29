@@ -43,12 +43,17 @@ final class EntitlementService
                 continue;
             }
 
-            $this->repository->grant(
+            $entitlementId = $this->repository->grant(
                 $userId,
                 $productId,
                 (int) $order->get_id(),
                 (int) $itemId,
                 'woocommerce'
+            );
+
+            do_action(
+                'facil_digital_entitlement_granted',
+                $entitlementId
             );
 
             $granted++;

@@ -7,12 +7,17 @@ namespace FacilDigital\Core\Core;
 use FacilDigital\Core\Admin\Menu;
 use FacilDigital\Core\API\EntitlementController;
 use FacilDigital\Core\API\HealthController;
+use FacilDigital\Core\API\PdfController;
 use FacilDigital\Core\API\StatusController;
 use FacilDigital\Core\CLI\StatusCommand;
 use FacilDigital\Core\Contests\ContestModule;
 use FacilDigital\Core\Contracts\ModuleInterface;
 use FacilDigital\Core\Entitlements\EntitlementModule;
+use FacilDigital\Core\PDFs\DownloadModule;
+use FacilDigital\Core\PDFs\PdfGenerationModule;
+use FacilDigital\Core\PDFs\PdfMasterModule;
 use FacilDigital\Core\Products\ProductMetadata;
+use FacilDigital\Core\Students\AccountModule;
 use FacilDigital\Core\WooCommerce\CheckoutModule;
 use FacilDigital\Core\WooCommerce\MercadoPagoModule;
 
@@ -34,6 +39,11 @@ final class ModuleRegistry
             new MercadoPagoModule(),
             new EntitlementModule(),
             new EntitlementController(),
+            new PdfMasterModule(),
+            new PdfGenerationModule(),
+            new DownloadModule(),
+            new AccountModule(),
+            new PdfController(),
         ];
     }
 }

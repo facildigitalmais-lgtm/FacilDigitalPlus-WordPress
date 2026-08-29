@@ -218,6 +218,19 @@ function fd_theme_enqueue_assets(): void
     }
 
     if (
+        function_exists('is_account_page')
+        && is_account_page()
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-student',
+            '/assets/css/student.css',
+            [
+                'fd-components',
+            ]
+        );
+    }
+
+    if (
         is_search()
         || is_404()
     ) {

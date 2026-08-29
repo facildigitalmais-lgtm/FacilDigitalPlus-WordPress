@@ -230,6 +230,50 @@ final class EntitlementRepository
         return (int) $result;
     }
 
+/**
+ * @return array<string, mixed>|null
+ */
+public function findById(int $id): ?array
+{
+    global $wpdb;
+
+    $table = Database::table('entitlements');
+    $row = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$table} WHERE id = %d LIMIT 1",
+            $id
+        ),
+        ARRAY_A
+    );
+
+    return is_array($row) ? $row : null;
+}
+
+/**
+ * @return list<array<string, mixed>>
+ */
+public function activeForProduct(int $productId): array
+{
+    global $wpdb;
+
+    $table = Database::table('entitlements');
+    $now = current_time('mysql', true);
+    $rows = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT * FROM {$table}
+             WHERE product_id = %d
+               AND status = 'active'
+               AND (expires_at IS NULL OR expires_at > %s)
+             ORDER BY id ASC",
+            $productId,
+            $now
+        ),
+        ARRAY_A
+    );
+
+    return is_array($rows) ? array_values($rows) : [];
+}
+
     public function countForOrder(int $orderId): int
     {
         global $wpdb;

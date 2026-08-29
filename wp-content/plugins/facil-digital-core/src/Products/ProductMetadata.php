@@ -199,15 +199,10 @@ final class ProductMetadata implements ModuleInterface
             ),
         ]);
 
-        echo '<p class="form-field">';
-        echo '<strong>';
-        echo esc_html__('PDF master', 'facil-digital-core');
-        echo '</strong><br>';
-        echo esc_html__(
-            'O arquivo master privado será configurado no macrolote M2. Ele não será enviado para a biblioteca pública de mídia.',
-            'facil-digital-core'
+        do_action(
+            'facil_digital_product_pdf_fields',
+            $productId
         );
-        echo '</p>';
 
         echo '</div>';
         echo '</div>';
@@ -299,6 +294,11 @@ final class ProductMetadata implements ModuleInterface
         $product->set_downloadable(false);
         $product->set_tax_status('none');
         $product->save();
+
+        do_action(
+            'facil_digital_save_product_pdf_fields',
+            $productId
+        );
     }
 
     public static function get(

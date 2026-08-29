@@ -38,6 +38,10 @@ fail() {
   exit 1
 }
 
+version_ge() {
+  printf '%s\n%s\n' "$2" "$1" | sort -V -C
+}
+
 extract_set_cookie() {
   local headers="$1"
   local cookie_name="$2"
@@ -117,11 +121,11 @@ CORE_VERSION="$(
     --field=version
 )"
 
-[[ "$CORE_VERSION" == "0.5.0" ]] \
+version_ge "$CORE_VERSION" "0.5.0" \
   || fail \
-    "Core esperado 0.5.0; atual: $CORE_VERSION"
+    "Core esperado >= 0.5.0; atual: $CORE_VERSION"
 
-pass "Core 0.5.0"
+pass "Core >= 0.5.0 ($CORE_VERSION)"
 
 echo
 echo "=== CAPABILITIES 1.1 ==="
