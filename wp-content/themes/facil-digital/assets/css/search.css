@@ -1,0 +1,222 @@
+.fd-search-page {
+    background:
+        var(--fd-color-background);
+}
+
+.fd-search-header {
+    max-width: 860px;
+
+    margin-bottom:
+        var(--fd-space-10);
+}
+
+.fd-search-header h1 {
+    margin-bottom:
+        var(--fd-space-3);
+}
+
+.fd-search-header > p {
+    margin-bottom:
+        var(--fd-space-6);
+
+    color:
+        var(--fd-color-text-muted);
+}
+
+.fd-search-header
+.fd-search-form {
+    max-width: 720px;
+}
+
+.fd-search-results {
+    align-items: stretch;
+}
+
+.fd-search-card {
+    padding:
+        var(--fd-space-6);
+
+    border:
+        1px solid
+        var(--fd-color-border);
+
+    border-radius:
+        var(--fd-radius-lg);
+
+    background:
+        var(--fd-color-surface);
+
+    box-shadow:
+        var(--fd-shadow-sm);
+}
+
+.fd-search-card__type {
+    display: block;
+
+    margin-bottom:
+        var(--fd-space-2);
+
+    color:
+        var(--fd-color-primary);
+
+    font-size:
+        var(--fd-font-size-xs);
+
+    font-weight: 800;
+
+    letter-spacing:
+        0.05em;
+
+    text-transform: uppercase;
+}
+
+.fd-search-card h2 {
+    margin-bottom:
+        var(--fd-space-3);
+
+    font-size:
+        var(--fd-font-size-xl);
+}
+
+.fd-search-card h2 a {
+    text-decoration: none;
+}
+
+.fd-search-card p {
+    color:
+        var(--fd-color-text-muted);
+}
+
+.fd-search-pagination {
+    margin-top:
+        var(--fd-space-10);
+}
+
+.fd-search-pagination
+.nav-links {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap:
+        var(--fd-space-2);
+}
+
+.fd-search-pagination
+.page-numbers {
+    display: inline-flex;
+
+    min-width: 42px;
+    height: 42px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding:
+        0
+        var(--fd-space-3);
+
+    border:
+        1px solid
+        var(--fd-color-border);
+
+    border-radius:
+        var(--fd-radius-sm);
+
+    background:
+        var(--fd-color-surface);
+
+    text-decoration: none;
+}
+
+.fd-search-pagination
+.page-numbers.current {
+    border-color:
+        var(--fd-color-primary);
+
+    background:
+        var(--fd-color-primary);
+
+    color: #fff;
+}
+
+.fd-search-empty__action {
+    display: flex;
+
+    justify-content: center;
+
+    margin-top:
+        var(--fd-space-6);
+}
+
+.fd-not-found {
+    min-height:
+        70vh;
+
+    display: flex;
+
+    align-items: center;
+}
+
+.fd-not-found__inner {
+    max-width: 780px;
+
+    text-align: center;
+}
+
+.fd-not-found__code {
+    display: block;
+
+    margin-bottom:
+        var(--fd-space-4);
+
+    color:
+        var(--fd-color-primary);
+
+    font-size:
+        clamp(
+            5rem,
+            15vw,
+            10rem
+        );
+
+    font-weight: 900;
+
+    letter-spacing:
+        -0.08em;
+
+    line-height: 0.9;
+}
+
+.fd-not-found h1 {
+    margin-bottom:
+        var(--fd-space-4);
+}
+
+.fd-not-found > p,
+.fd-not-found__inner > p {
+    color:
+        var(--fd-color-text-muted);
+}
+
+.fd-not-found__search {
+    max-width: 680px;
+
+    margin:
+        var(--fd-space-8)
+        auto
+        var(--fd-space-5);
+}
+
+.fd-not-found__actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap:
+        var(--fd-space-3);
+}

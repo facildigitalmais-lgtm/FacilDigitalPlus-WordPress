@@ -27,6 +27,8 @@ $fdThemeFiles = [
     '/inc/template-functions.php',
     '/inc/woocommerce.php',
     '/inc/authentication.php',
+    '/inc/catalog.php',
+    '/inc/product.php',
 ];
 
 foreach ($fdThemeFiles as $fdThemeFile) {

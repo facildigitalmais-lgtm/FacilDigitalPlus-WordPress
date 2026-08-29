@@ -1,3 +1,4 @@
+cat > tools/wp-configure.php <<'PHP'
 <?php
 
 if (!defined('ABSPATH')) {
@@ -21,18 +22,30 @@ function fd_configure_page(
         $pageId =
             (int) $existing->ID;
 
-        wp_update_post(
-            [
-                'ID' =>
-                    $pageId,
+        $updated =
+            wp_update_post(
+                [
+                    'ID' =>
+                        $pageId,
 
-                'post_title' =>
-                    $title,
+                    'post_title' =>
+                        $title,
 
-                'post_status' =>
-                    'publish',
-            ]
-        );
+                    'post_status' =>
+                        'publish',
+                ],
+                true
+            );
+
+        if (is_wp_error($updated)) {
+            throw new RuntimeException(
+                sprintf(
+                    'Falha ao atualizar pagina %s: %s',
+                    $slug,
+                    $updated->get_error_message()
+                )
+            );
+        }
     } else {
         $pageId =
             wp_insert_post(
@@ -184,6 +197,10 @@ $pages['terms'] =
         'templates/page-terms.php'
     );
 
+/*
+ * WordPress.
+ */
+
 update_option(
     'blogname',
     'Facil Digital+'
@@ -224,6 +241,10 @@ update_option(
     $pages['privacy']
 );
 
+/*
+ * Paginas WooCommerce.
+ */
+
 update_option(
     'woocommerce_shop_page_id',
     $pages['shop']
@@ -249,15 +270,57 @@ update_option(
     $pages['terms']
 );
 
-update_option(
-    'woocommerce_currency',
-    'BRL'
-);
+/*
+ * Localizacao comercial.
+ */
 
 update_option(
     'woocommerce_default_country',
     'BR'
 );
+
+update_option(
+    'woocommerce_currency',
+    'BRL'
+);
+
+/*
+ * Formatacao monetaria brasileira.
+ *
+ * O valor interno continua utilizando
+ * representacao decimal normalizada,
+ * por exemplo:
+ *
+ * 14.50
+ *
+ * A apresentacao publica passa a ser:
+ *
+ * R$ 14,50
+ */
+
+update_option(
+    'woocommerce_currency_pos',
+    'left_space'
+);
+
+update_option(
+    'woocommerce_price_thousand_sep',
+    '.'
+);
+
+update_option(
+    'woocommerce_price_decimal_sep',
+    ','
+);
+
+update_option(
+    'woocommerce_price_num_decimals',
+    '2'
+);
+
+/*
+ * Checkout e contas.
+ */
 
 update_option(
     'woocommerce_enable_guest_checkout',
@@ -283,6 +346,10 @@ update_option(
     'woocommerce_registration_generate_password',
     'no'
 );
+
+/*
+ * URLs.
+ */
 
 update_option(
     'permalink_structure',
@@ -310,6 +377,38 @@ echo wp_json_encode(
             )->get(
                 'Version'
             ),
+
+        'woocommerce' => [
+            'country' =>
+                get_option(
+                    'woocommerce_default_country'
+                ),
+
+            'currency' =>
+                get_option(
+                    'woocommerce_currency'
+                ),
+
+            'currency_position' =>
+                get_option(
+                    'woocommerce_currency_pos'
+                ),
+
+            'thousand_separator' =>
+                get_option(
+                    'woocommerce_price_thousand_sep'
+                ),
+
+            'decimal_separator' =>
+                get_option(
+                    'woocommerce_price_decimal_sep'
+                ),
+
+            'decimals' =>
+                get_option(
+                    'woocommerce_price_num_decimals'
+                ),
+        ],
     ],
     JSON_PRETTY_PRINT
 );

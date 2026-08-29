@@ -70,6 +70,20 @@ function fd_theme_enqueue_script_file(
     );
 }
 
+function fd_theme_is_storefront_context(): bool
+{
+    if (
+        function_exists(
+            'is_woocommerce'
+        )
+        && is_woocommerce()
+    ) {
+        return true;
+    }
+
+    return is_search();
+}
+
 function fd_theme_enqueue_assets(): void
 {
     fd_theme_enqueue_style_file(
@@ -170,6 +184,49 @@ function fd_theme_enqueue_assets(): void
         fd_theme_enqueue_script_file(
             'fd-auth',
             '/assets/js/auth.js'
+        );
+    }
+
+    if (
+        fd_theme_is_storefront_context()
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-storefront',
+            '/assets/css/storefront.css',
+            [
+                'fd-components',
+            ]
+        );
+
+        fd_theme_enqueue_script_file(
+            'fd-storefront',
+            '/assets/js/storefront.js'
+        );
+    }
+
+    if (
+        function_exists('is_product')
+        && is_product()
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-product',
+            '/assets/css/product.css',
+            [
+                'fd-storefront',
+            ]
+        );
+    }
+
+    if (
+        is_search()
+        || is_404()
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-search',
+            '/assets/css/search.css',
+            [
+                'fd-components',
+            ]
         );
     }
 
