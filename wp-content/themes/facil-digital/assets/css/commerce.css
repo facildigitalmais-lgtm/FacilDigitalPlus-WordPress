@@ -1,0 +1,90 @@
+.woocommerce-cart,
+.woocommerce-checkout,
+.woocommerce-account {
+    background: var(--fd-color-background);
+}
+
+.woocommerce-cart .woocommerce,
+.woocommerce-checkout .woocommerce,
+.woocommerce-account .woocommerce {
+    width: min(100% - 2rem, 1180px);
+    margin-inline: auto;
+    padding-block: var(--fd-space-10);
+}
+
+.woocommerce-cart table.shop_table,
+.woocommerce-checkout .woocommerce-checkout-review-order,
+.woocommerce-account .woocommerce-MyAccount-content,
+.woocommerce-account .woocommerce-MyAccount-navigation {
+    border: 1px solid var(--fd-color-border);
+    border-radius: var(--fd-radius-lg);
+    background: var(--fd-color-surface);
+    box-shadow: var(--fd-shadow-sm);
+}
+
+.woocommerce-cart table.shop_table {
+    overflow: hidden;
+}
+
+.woocommerce form .form-row input.input-text,
+.woocommerce form .form-row textarea,
+.woocommerce form .form-row select,
+.woocommerce-checkout .select2-container .select2-selection {
+    min-height: 46px;
+    border: 1px solid var(--fd-color-border-strong);
+    border-radius: var(--fd-radius-sm);
+    background: var(--fd-color-surface);
+    color: var(--fd-color-text);
+}
+
+.woocommerce form .form-row textarea {
+    min-height: 120px;
+}
+
+.woocommerce-cart .button,
+.woocommerce-checkout .button,
+.woocommerce-account .button {
+    min-height: 44px;
+    border-radius: var(--fd-radius-md);
+    background: var(--fd-color-primary);
+    color: #fff;
+    font-weight: 750;
+}
+
+.woocommerce-checkout #payment {
+    border: 1px solid var(--fd-color-border);
+    border-radius: var(--fd-radius-lg);
+    background: var(--fd-color-surface-soft);
+}
+
+.woocommerce-checkout #payment div.payment_box {
+    background: var(--fd-color-surface);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul {
+    margin: 0;
+    padding: var(--fd-space-4);
+    list-style: none;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation a {
+    display: block;
+    padding: var(--fd-space-3) var(--fd-space-4);
+    border-radius: var(--fd-radius-sm);
+    text-decoration: none;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation .is-active a {
+    background: var(--fd-color-primary-soft);
+    color: var(--fd-color-primary);
+    font-weight: 750;
+}
+
+@media (max-width: 768px) {
+    .woocommerce-cart .woocommerce,
+    .woocommerce-checkout .woocommerce,
+    .woocommerce-account .woocommerce {
+        width: min(100% - 1rem, 1180px);
+        padding-block: var(--fd-space-6);
+    }
+}

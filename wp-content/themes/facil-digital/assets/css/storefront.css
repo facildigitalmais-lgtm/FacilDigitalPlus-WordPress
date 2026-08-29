@@ -737,3 +737,31 @@ span {
 .fd-product-card__button {
     width: 100%;
 }
+
+/* M1 - contexto comercial das apostilas */
+.fd-catalog-card__meta {
+    margin:
+        calc(var(--fd-space-2) * -1)
+        0
+        var(--fd-space-3);
+    color: var(--fd-color-text-muted);
+    font-size: var(--fd-font-size-sm);
+    line-height: 1.45;
+}
+
+.fd-catalog-ordering {
+    flex-wrap: wrap;
+}
+
+.fd-catalog-ordering select[name="concurso"] {
+    min-height: 42px;
+    padding:
+        0
+        38px
+        0
+        var(--fd-space-3);
+    border: 1px solid var(--fd-color-border-strong);
+    border-radius: var(--fd-radius-sm);
+    background: var(--fd-color-surface);
+    color: var(--fd-color-text);
+}

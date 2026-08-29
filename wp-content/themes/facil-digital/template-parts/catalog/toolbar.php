@@ -28,7 +28,7 @@ $currentPage =
     );
 
 $first = 0;
-$last  = 0;
+$last = 0;
 
 if (
     $total > 0
@@ -40,9 +40,7 @@ if (
 
     $last =
         min(
-            $first
-            + $perPage
-            - 1,
+            $first + $perPage - 1,
             $total
         );
 }
@@ -53,8 +51,20 @@ $orderby =
 $options =
     fd_theme_catalog_orderby_options();
 
-?>
+$contests =
+    function_exists(
+        'fd_theme_catalog_contests'
+    )
+        ? fd_theme_catalog_contests()
+        : [];
 
+$currentContest =
+    function_exists(
+        'fd_theme_catalog_current_contest'
+    )
+        ? fd_theme_catalog_current_contest()
+        : '';
+?>
 <div class="fd-catalog-toolbar">
     <p class="fd-catalog-toolbar__count">
         <?php
@@ -90,7 +100,60 @@ $options =
     <form
         class="fd-catalog-ordering"
         method="get"
+        action="<?php
+            echo esc_url(
+                wc_get_page_permalink('shop')
+            );
+        ?>"
     >
+        <?php if ($contests !== []) : ?>
+            <label for="fd-catalog-contest">
+                <?php
+                echo esc_html__(
+                    'Concurso',
+                    'facil-digital'
+                );
+                ?>
+            </label>
+
+            <select
+                id="fd-catalog-contest"
+                name="concurso"
+                data-fd-autosubmit
+            >
+                <option value="">
+                    <?php
+                    echo esc_html__(
+                        'Todos',
+                        'facil-digital'
+                    );
+                    ?>
+                </option>
+
+                <?php foreach ($contests as $contest) : ?>
+                    <option
+                        value="<?php
+                            echo esc_attr(
+                                $contest->slug
+                            );
+                        ?>"
+                        <?php
+                        selected(
+                            $currentContest,
+                            $contest->slug
+                        );
+                        ?>
+                    >
+                        <?php
+                        echo esc_html(
+                            $contest->name
+                        );
+                        ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+
         <label for="fd-catalog-orderby">
             <?php
             echo esc_html__(
@@ -103,7 +166,7 @@ $options =
         <select
             id="fd-catalog-orderby"
             name="orderby"
-            data-fd-orderby
+            data-fd-autosubmit
         >
             <?php
             foreach (
@@ -143,6 +206,7 @@ $options =
                 null,
                 [
                     'orderby',
+                    'concurso',
                     'submit',
                     'paged',
                     'product-page',

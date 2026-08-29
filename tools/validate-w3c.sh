@@ -31,10 +31,10 @@ echo
 
 echo "=== REGRESSAO W3B ==="
 
-./tools/validate-w3b.sh \
-  >/tmp/fd-w3c-w3b.log
-
-tail -8 /tmp/fd-w3c-w3b.log
+if ! ./tools/validate-w3b.sh 2>&1 | tee /tmp/fd-w3c-w3b.log
+then
+  fail "regressao W3B"
+fi
 
 pass "W3B intacta"
 
@@ -67,11 +67,16 @@ CORE_VERSION="$(
     --field=version
 )"
 
-[[ "$CORE_VERSION" == "0.4.0" ]] \
-  || fail \
-    "Core esperado 0.4.0; atual: $CORE_VERSION"
+version_ge() {
+  printf '%s\n%s\n' "$2" "$1" \
+    | sort -V -C
+}
 
-pass "Core 0.4.0"
+version_ge "$CORE_VERSION" "0.4.0" \
+  || fail \
+    "Core esperado >= 0.4.0; atual: $CORE_VERSION"
+
+pass "Core >= 0.4.0"
 
 echo
 echo "=== MODULE REGISTRY ==="
@@ -82,7 +87,7 @@ use FacilDigital\Core\Core\ModuleRegistry;
 
 $modules = ModuleRegistry::defaults();
 
-$expected = [
+$required = [
     "FacilDigital\\Core\\Admin\\Menu",
     "FacilDigital\\Core\\API\\HealthController",
     "FacilDigital\\Core\\API\\StatusController",
@@ -95,20 +100,20 @@ $actual = array_map(
     $modules
 );
 
-if ($actual !== $expected) {
-    fwrite(
-        STDERR,
-        "Registry diferente do esperado."
-        . PHP_EOL
-    );
-    exit(1);
+foreach ($required as $class) {
+    if (!in_array($class, $actual, true)) {
+        fwrite(
+            STDERR,
+            "Modulo base ausente: "
+            . $class
+            . PHP_EOL
+        );
+        exit(1);
+    }
 }
 
 foreach ($modules as $module) {
-    if (
-        !$module
-        instanceof ModuleInterface
-    ) {
+    if (!$module instanceof ModuleInterface) {
         fwrite(
             STDERR,
             "Modulo fora do contrato: "
@@ -132,7 +137,7 @@ if (
 }
 '
 
-pass "registry central, tipado e sem duplicatas"
+pass "registry preserva modulos base e aceita expansao"
 
 echo
 echo "=== DIAGNOSTICS ==="

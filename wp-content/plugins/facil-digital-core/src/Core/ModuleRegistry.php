@@ -5,10 +5,16 @@ declare(strict_types=1);
 namespace FacilDigital\Core\Core;
 
 use FacilDigital\Core\Admin\Menu;
+use FacilDigital\Core\API\EntitlementController;
 use FacilDigital\Core\API\HealthController;
 use FacilDigital\Core\API\StatusController;
 use FacilDigital\Core\CLI\StatusCommand;
+use FacilDigital\Core\Contests\ContestModule;
 use FacilDigital\Core\Contracts\ModuleInterface;
+use FacilDigital\Core\Entitlements\EntitlementModule;
+use FacilDigital\Core\Products\ProductMetadata;
+use FacilDigital\Core\WooCommerce\CheckoutModule;
+use FacilDigital\Core\WooCommerce\MercadoPagoModule;
 
 final class ModuleRegistry
 {
@@ -22,6 +28,12 @@ final class ModuleRegistry
             new HealthController(),
             new StatusController(),
             new StatusCommand(),
+            new ContestModule(),
+            new ProductMetadata(),
+            new CheckoutModule(),
+            new MercadoPagoModule(),
+            new EntitlementModule(),
+            new EntitlementController(),
         ];
     }
 }

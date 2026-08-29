@@ -21,15 +21,20 @@ if (
 }
 
 $description =
-    $product
-        ->get_description();
+    $product->get_description();
 
 $sku =
-    $product
-        ->get_sku();
+    $product->get_sku();
 
+$factRows =
+    function_exists(
+        'fd_theme_product_fact_rows'
+    )
+        ? fd_theme_product_fact_rows(
+            (int) $product->get_id()
+        )
+        : [];
 ?>
-
 <section
     class="fd-product-section fd-product-details"
     id="descricao"
@@ -68,7 +73,7 @@ $sku =
             <p class="fd-product-description">
                 <?php
                 echo esc_html__(
-                    'As informacoes detalhadas deste material serao publicadas no cadastro do produto.',
+                    'As informações detalhadas deste material serão publicadas no cadastro do produto.',
                     'facil-digital'
                 );
                 ?>
@@ -80,7 +85,7 @@ $sku =
         <h3>
             <?php
             echo esc_html__(
-                'Informacoes',
+                'Informações',
                 'facil-digital'
             );
             ?>
@@ -96,7 +101,6 @@ $sku =
                     );
                     ?>
                 </dt>
-
                 <dd>
                     <?php
                     echo esc_html__(
@@ -107,32 +111,24 @@ $sku =
                 </dd>
             </div>
 
-            <div>
-                <dt>
-                    <?php
-                    echo esc_html__(
-                        'Tipo',
-                        'facil-digital'
-                    );
-                    ?>
-                </dt>
-
-                <dd>
-                    <?php
-                    echo esc_html(
-                        $product->is_virtual()
-                            ? __(
-                                'Produto virtual',
-                                'facil-digital'
-                            )
-                            : __(
-                                'Produto WooCommerce',
-                                'facil-digital'
-                            )
-                    );
-                    ?>
-                </dd>
-            </div>
+            <?php foreach ($factRows as $row) : ?>
+                <div>
+                    <dt>
+                        <?php
+                        echo esc_html(
+                            $row['label']
+                        );
+                        ?>
+                    </dt>
+                    <dd>
+                        <?php
+                        echo esc_html(
+                            $row['value']
+                        );
+                        ?>
+                    </dd>
+                </div>
+            <?php endforeach; ?>
 
             <div>
                 <dt>
@@ -143,7 +139,6 @@ $sku =
                     );
                     ?>
                 </dt>
-
                 <dd>
                     <?php
                     echo esc_html(
@@ -157,10 +152,7 @@ $sku =
 
             <?php if ($sku !== '') : ?>
                 <div>
-                    <dt>
-                        SKU
-                    </dt>
-
+                    <dt>SKU</dt>
                     <dd>
                         <?php
                         echo esc_html(

@@ -8,7 +8,7 @@ use WP_Role;
 
 final class Capabilities
 {
-    public const VERSION = '1.0.0';
+    public const VERSION = '1.1.0';
     public const OPTION_VERSION = 'facil_digital_core_capabilities_version';
 
     public const ACCESS_ADMIN = 'facil_digital_access_admin';
@@ -27,6 +27,31 @@ final class Capabilities
 
     public const ROLE_MANAGER = 'facil_digital_manager';
     public const ROLE_QUESTION_EDITOR = 'facil_digital_question_editor';
+
+    /**
+     * Capacidades nativas mínimas para o Gerente administrar
+     * produtos/apostilas sem receber manage_woocommerce,
+     * manage_options, usuários ou plugins.
+     *
+     * @var list<string>
+     */
+    private const MANAGER_PRODUCT_CAPABILITIES = [
+        'upload_files',
+        'edit_products',
+        'read_private_products',
+        'publish_products',
+        'delete_products',
+        'edit_others_products',
+        'edit_private_products',
+        'edit_published_products',
+        'delete_others_products',
+        'delete_private_products',
+        'delete_published_products',
+        'manage_product_terms',
+        'edit_product_terms',
+        'delete_product_terms',
+        'assign_product_terms',
+    ];
 
     /**
      * @return list<string>
@@ -67,6 +92,14 @@ final class Capabilities
     /**
      * @return list<string>
      */
+    public static function managerProductCapabilities(): array
+    {
+        return self::MANAGER_PRODUCT_CAPABILITIES;
+    }
+
+    /**
+     * @return list<string>
+     */
     public static function questionEditorCapabilities(): array
     {
         return [
@@ -77,7 +110,10 @@ final class Capabilities
 
     public static function installedVersion(): string
     {
-        return (string) get_option(self::OPTION_VERSION, '0.0.0');
+        return (string) get_option(
+            self::OPTION_VERSION,
+            '0.0.0'
+        );
     }
 
     public static function maybeRun(): void
@@ -87,7 +123,8 @@ final class Capabilities
                 self::installedVersion(),
                 self::VERSION,
                 '>='
-            ) && self::isReady()
+            )
+            && self::isReady()
         ) {
             return;
         }
@@ -98,15 +135,19 @@ final class Capabilities
     public static function install(): void
     {
         self::syncAdministrator();
+
         self::syncCustomRole(
             self::ROLE_MANAGER,
             __('Gerente Fácil Digital+', 'facil-digital-core'),
-            self::managerCapabilities()
+            self::managerCapabilities(),
+            self::managerProductCapabilities()
         );
+
         self::syncCustomRole(
             self::ROLE_QUESTION_EDITOR,
             __('Editor de Questões', 'facil-digital-core'),
-            self::questionEditorCapabilities()
+            self::questionEditorCapabilities(),
+            []
         );
 
         update_option(
@@ -130,25 +171,46 @@ final class Capabilities
 
         $administrator = get_role('administrator');
         $manager = get_role(self::ROLE_MANAGER);
-        $questionEditor = get_role(self::ROLE_QUESTION_EDITOR);
+        $questionEditor = get_role(
+            self::ROLE_QUESTION_EDITOR
+        );
 
         if (
-            !$administrator instanceof WP_Role ||
-            !$manager instanceof WP_Role ||
-            !$questionEditor instanceof WP_Role
+            !$administrator instanceof WP_Role
+            || !$manager instanceof WP_Role
+            || !$questionEditor instanceof WP_Role
         ) {
             return false;
         }
 
-        if (!self::roleHasCapabilities($administrator, self::all())) {
+        if (
+            !self::roleHasCapabilities(
+                $administrator,
+                self::all()
+            )
+        ) {
             return false;
         }
 
-        if (!self::roleHasCapabilities($manager, self::managerCapabilities())) {
+        if (
+            !self::roleHasCapabilities(
+                $manager,
+                array_merge(
+                    self::managerCapabilities(),
+                    self::managerProductCapabilities()
+                )
+            )
+        ) {
             return false;
         }
 
-        if ($manager->has_cap(self::MANAGE_SETTINGS)) {
+        if (
+            $manager->has_cap(self::MANAGE_SETTINGS)
+            || $manager->has_cap('manage_options')
+            || $manager->has_cap('manage_woocommerce')
+            || $manager->has_cap('edit_users')
+            || $manager->has_cap('activate_plugins')
+        ) {
             return false;
         }
 
@@ -168,7 +230,19 @@ final class Capabilities
                 true
             );
 
-            if ($questionEditor->has_cap($capability) !== $shouldHave) {
+            if (
+                $questionEditor->has_cap($capability)
+                !== $shouldHave
+            ) {
+                return false;
+            }
+        }
+
+        foreach (
+            self::managerProductCapabilities()
+            as $capability
+        ) {
+            if ($questionEditor->has_cap($capability)) {
                 return false;
             }
         }
@@ -185,17 +259,22 @@ final class Capabilities
         }
 
         foreach (self::all() as $capability) {
-            $administrator->add_cap($capability, true);
+            $administrator->add_cap(
+                $capability,
+                true
+            );
         }
     }
 
     /**
      * @param list<string> $capabilities
+     * @param list<string> $nativeCapabilities
      */
     private static function syncCustomRole(
         string $roleKey,
         string $displayName,
-        array $capabilities
+        array $capabilities,
+        array $nativeCapabilities
     ): void {
         $role = get_role($roleKey);
 
@@ -203,8 +282,11 @@ final class Capabilities
             add_role(
                 $roleKey,
                 $displayName,
-                ['read' => true]
+                [
+                    'read' => true,
+                ]
             );
+
             $role = get_role($roleKey);
         }
 
@@ -215,8 +297,38 @@ final class Capabilities
         $role->add_cap('read', true);
 
         foreach (self::all() as $capability) {
-            if (in_array($capability, $capabilities, true)) {
-                $role->add_cap($capability, true);
+            if (
+                in_array(
+                    $capability,
+                    $capabilities,
+                    true
+                )
+            ) {
+                $role->add_cap(
+                    $capability,
+                    true
+                );
+                continue;
+            }
+
+            $role->remove_cap($capability);
+        }
+
+        foreach (
+            self::managerProductCapabilities()
+            as $capability
+        ) {
+            if (
+                in_array(
+                    $capability,
+                    $nativeCapabilities,
+                    true
+                )
+            ) {
+                $role->add_cap(
+                    $capability,
+                    true
+                );
                 continue;
             }
 

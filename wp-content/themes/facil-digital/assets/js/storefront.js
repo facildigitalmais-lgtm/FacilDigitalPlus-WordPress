@@ -1,12 +1,12 @@
 (() => {
     "use strict";
 
-    const orderingFields =
+    const fields =
         document.querySelectorAll(
-            "[data-fd-orderby]"
+            "[data-fd-orderby], [data-fd-autosubmit]"
         );
 
-    orderingFields.forEach((field) => {
+    fields.forEach((field) => {
         field.addEventListener(
             "change",
             () => {

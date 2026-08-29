@@ -6,6 +6,7 @@ namespace FacilDigital\Core\Support;
 
 use FacilDigital\Core\Core\Capabilities;
 use FacilDigital\Core\Core\Database;
+use FacilDigital\Core\WooCommerce\MercadoPagoModule;
 
 final class Diagnostics
 {
@@ -14,10 +15,17 @@ final class Diagnostics
      */
     public function snapshot(): array
     {
-        $requirementsErrors = (new Requirements())->validate();
-        $missingTables = Database::missingTables();
-        $databaseReady = Database::isReady();
-        $capabilitiesReady = Capabilities::isReady();
+        $requirementsErrors =
+            (new Requirements())->validate();
+
+        $missingTables =
+            Database::missingTables();
+
+        $databaseReady =
+            Database::isReady();
+
+        $capabilitiesReady =
+            Capabilities::isReady();
 
         return [
             'ready' =>
@@ -25,26 +33,49 @@ final class Diagnostics
                 && $databaseReady
                 && $capabilitiesReady,
 
-            'core_version' => defined('FACIL_DIGITAL_CORE_VERSION')
-                ? FACIL_DIGITAL_CORE_VERSION
-                : 'unknown',
+            'core_version' =>
+                defined('FACIL_DIGITAL_CORE_VERSION')
+                    ? FACIL_DIGITAL_CORE_VERSION
+                    : 'unknown',
 
-            'schema_version' => Database::installedVersion(),
-            'schema_target' => Database::SCHEMA_VERSION,
-            'database_ready' => $databaseReady,
-            'missing_tables' => $missingTables,
+            'schema_version' =>
+                Database::installedVersion(),
 
-            'capabilities_version' => Capabilities::installedVersion(),
-            'capabilities_target' => Capabilities::VERSION,
-            'capabilities_ready' => $capabilitiesReady,
+            'schema_target' =>
+                Database::SCHEMA_VERSION,
 
-            'woocommerce_active' => class_exists('WooCommerce'),
+            'database_ready' =>
+                $databaseReady,
 
-            'wordpress_version' => get_bloginfo('version'),
-            'php_version' => PHP_VERSION,
-            'environment' => wp_get_environment_type(),
+            'missing_tables' =>
+                $missingTables,
 
-            'requirements_errors' => $requirementsErrors,
+            'capabilities_version' =>
+                Capabilities::installedVersion(),
+
+            'capabilities_target' =>
+                Capabilities::VERSION,
+
+            'capabilities_ready' =>
+                $capabilitiesReady,
+
+            'woocommerce_active' =>
+                class_exists('WooCommerce'),
+
+            'mercado_pago_active' =>
+                MercadoPagoModule::isOfficialPluginActive(),
+
+            'wordpress_version' =>
+                get_bloginfo('version'),
+
+            'php_version' =>
+                PHP_VERSION,
+
+            'environment' =>
+                wp_get_environment_type(),
+
+            'requirements_errors' =>
+                $requirementsErrors,
         ];
     }
 }

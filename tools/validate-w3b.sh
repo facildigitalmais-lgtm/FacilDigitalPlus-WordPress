@@ -18,8 +18,11 @@ echo "=================================================="
 echo
 
 echo "=== REGRESSAO W3A ==="
-./tools/validate-w3a.sh >/tmp/fd-w3b-w3a.log
-tail -8 /tmp/fd-w3b-w3a.log
+if ! ./tools/validate-w3a.sh 2>&1 | tee /tmp/fd-w3b-w3a.log
+then
+  fail "regressao W3A"
+fi
+
 pass "W3A intacta"
 
 echo
@@ -46,12 +49,25 @@ echo "=== CAPABILITIES ==="
 wpcli eval '\FacilDigital\Core\Core\Capabilities::install();'
 wpcli eval '\FacilDigital\Core\Core\Capabilities::install();'
 
-CAP_VERSION="$(wpcli eval 'echo \FacilDigital\Core\Core\Capabilities::installedVersion();')"
-[[ "$CAP_VERSION" == "1.0.0" ]] || fail "capabilities esperada 1.0.0; atual: $CAP_VERSION"
+CAP_VERSION="$(
+  wpcli eval 'echo \FacilDigital\Core\Core\Capabilities::installedVersion();'
+)"
 
-READY="$(wpcli eval 'echo \FacilDigital\Core\Core\Capabilities::isReady() ? "yes" : "no";')"
-[[ "$READY" == "yes" ]] || fail "Capabilities::isReady() retornou false"
-pass "capabilities 1.0.0 e instalacao idempotente"
+cap_version_ge() {
+  printf '%s\n%s\n' "$2" "$1" | sort -V -C
+}
+
+cap_version_ge "$CAP_VERSION" "1.0.0" \
+  || fail "capabilities esperada >= 1.0.0; atual: $CAP_VERSION"
+
+READY="$(
+  wpcli eval 'echo \FacilDigital\Core\Core\Capabilities::isReady() ? "yes" : "no";'
+)"
+
+[[ "$READY" == "yes" ]] \
+  || fail "Capabilities::isReady() retornou false"
+
+pass "capabilities >= 1.0.0 e instalacao idempotente"
 
 echo
 echo "=== ROLES ==="

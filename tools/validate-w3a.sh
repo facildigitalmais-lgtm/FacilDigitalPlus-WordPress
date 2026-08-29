@@ -19,8 +19,11 @@ echo "=================================================="
 
 echo
 echo "=== REGRESSAO W2C ==="
-./tools/validate-w2c.sh >/tmp/fd-w3a-w2c.log
-tail -8 /tmp/fd-w3a-w2c.log
+if ! ./tools/validate-w2c.sh 2>&1 | tee /tmp/fd-w3a-w2c.log
+then
+  fail "regressao W2C"
+fi
+
 pass "W2C intacta"
 
 echo
