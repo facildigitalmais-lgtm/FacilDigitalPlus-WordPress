@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace FacilDigital\Core\Core;
 
 use FacilDigital\Core\Admin\Menu;
+use FacilDigital\Core\Admin\OperationsAdminModule;
 use FacilDigital\Core\API\EntitlementController;
 use FacilDigital\Core\API\HealthController;
 use FacilDigital\Core\API\PdfController;
 use FacilDigital\Core\API\SimulationController;
 use FacilDigital\Core\API\StatusController;
+use FacilDigital\Core\CLI\QaCommand;
+use FacilDigital\Core\CLI\QuestionImportCommand;
 use FacilDigital\Core\CLI\StatusCommand;
 use FacilDigital\Core\Contests\ContestModule;
 use FacilDigital\Core\Contracts\ModuleInterface;
 use FacilDigital\Core\Entitlements\EntitlementModule;
+use FacilDigital\Core\Import\ImportAdminModule;
 use FacilDigital\Core\PDFs\DownloadModule;
 use FacilDigital\Core\PDFs\PdfGenerationModule;
 use FacilDigital\Core\PDFs\PdfMasterModule;
@@ -36,6 +40,8 @@ final class ModuleRegistry
             new HealthController(),
             new StatusController(),
             new StatusCommand(),
+            new QaCommand(),
+            new QuestionImportCommand(),
             new ContestModule(),
             new ProductMetadata(),
             new CheckoutModule(),
@@ -52,6 +58,8 @@ final class ModuleRegistry
             new SimulationFrontendModule(),
             new SimulationAccountModule(),
             new SimulationController(),
+            new OperationsAdminModule(),
+            new ImportAdminModule(),
         ];
     }
 }
