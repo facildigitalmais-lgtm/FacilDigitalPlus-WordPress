@@ -32,8 +32,14 @@ echo
 echo "=== CORE ==="
 wpcli plugin is-active facil-digital-core >/dev/null || fail "Core inativo"
 CORE_VERSION="$(wpcli plugin get facil-digital-core --field=version)"
-[[ "$CORE_VERSION" == "0.3.0" ]] || fail "Core esperado 0.3.0; atual: $CORE_VERSION"
-pass "Core 0.3.0"
+
+version_ge() {
+  printf '%s\n%s\n' "$2" "$1" | sort -V -C
+}
+
+version_ge "$CORE_VERSION" "0.3.0"   || fail "Core esperado >= 0.3.0; atual: $CORE_VERSION"
+
+pass "Core >= 0.3.0"
 
 echo
 echo "=== CAPABILITIES ==="

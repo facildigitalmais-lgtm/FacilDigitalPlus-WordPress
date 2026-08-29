@@ -182,6 +182,21 @@ wpcli plugin activate \
 echo "✅ Core ativo."
 
 echo
+echo "=== AMBIENTE WORDPRESS ==="
+
+CURRENT_ENV="$(
+  wpcli eval     'echo wp_get_environment_type();'
+)"
+
+if [[ "$CURRENT_ENV" != "development" ]]; then
+  wpcli config set     WP_ENVIRONMENT_TYPE     development
+
+  echo "✅ WP_ENVIRONMENT_TYPE corrigido para development."
+else
+  echo "✅ WP_ENVIRONMENT_TYPE = development."
+fi
+
+echo
 echo "=== CONFIGURACAO BASE ==="
 
 wpcli eval-file \
