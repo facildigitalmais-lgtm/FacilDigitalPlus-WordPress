@@ -11,7 +11,30 @@ O macrolote M5 reúne W20, W21, W22 e W23. Diferentemente dos macrolotes anterio
 5. Confirmar entitlement ativo, PDF personalizado pronto e download autenticado.
 6. Executar `./tools/m5-sandbox-gate.sh <ORDER_ID>`.
 
-O gate técnico só aceita um pedido cujo gateway seja Mercado Pago, esteja pago, tenha transaction id, entitlement ativo e PDF pronto.
+O gate técnico só aceita um pedido cujo gateway seja Mercado Pago, esteja pago, possua referência oficial de pagamento registrada (transaction ID nativo do WooCommerce ou _Mercado_Pago_Payment_IDs), entitlement ativo e PDF pronto.
+
+## Estado atual do W20
+
+Os gates manuais de compra, download autenticado e notificacao/webhook
+ficam deliberadamente adiados para o ambiente hospedado na Hostinger.
+
+O ambiente de desenvolvimento/Codespaces pode validar a estrutura,
+readiness, integracao do Core e gates automatizados, mas nao deve ser
+utilizado como prova final de homologacao E2E de pagamento.
+
+Antes de declarar W20 concluido na Hostinger, sera obrigatorio validar:
+
+- compra de teste aprovada com comprador distinto;
+- pedido refletido corretamente no WooCommerce;
+- referencia oficial do pagamento Mercado Pago;
+- entitlement ativo;
+- PDF personalizado pronto;
+- download autenticado pela conta do aluno;
+- registro do download;
+- notificacao/webhook refletindo corretamente no pedido.
+
+W20 permanece PENDENTE ate essas provas serem executadas no ambiente
+hospedado.
 
 ## W21 — Migração de domínio
 
