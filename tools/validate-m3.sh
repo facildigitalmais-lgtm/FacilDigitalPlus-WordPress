@@ -57,7 +57,7 @@ pass "autoload atualizado"
 echo
 echo "=== CORE ==="
 CORE_VERSION="$(wpcli plugin get facil-digital-core --field=version)"
-[[ "$CORE_VERSION" == "0.7.0" || "$CORE_VERSION" == "0.8.0" ]] || fail "Core esperado >= 0.7.0; atual: $CORE_VERSION"
+printf '%s\n%s\n' "0.7.0" "$CORE_VERSION" | sort -V -C || fail "Core esperado >= 0.7.0; atual: $CORE_VERSION"
 pass "Core >= 0.7.0 ($CORE_VERSION)"
 
 echo

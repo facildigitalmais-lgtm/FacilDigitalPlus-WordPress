@@ -22,6 +22,8 @@ use FacilDigital\Core\PDFs\DownloadModule;
 use FacilDigital\Core\PDFs\PdfGenerationModule;
 use FacilDigital\Core\PDFs\PdfMasterModule;
 use FacilDigital\Core\Products\ProductMetadata;
+use FacilDigital\Core\Release\ReleaseAdminModule;
+use FacilDigital\Core\Release\ReleaseCommand;
 use FacilDigital\Core\Questions\QuestionAdminModule;
 use FacilDigital\Core\Simulations\SimulationAdminModule;
 use FacilDigital\Core\Simulations\SimulationFrontendModule;
@@ -41,6 +43,8 @@ final class ModuleRegistry
             new StatusController(),
             new StatusCommand(),
             new QaCommand(),
+            new ReleaseCommand(),
+            new ReleaseAdminModule(),
             new QuestionImportCommand(),
             new ContestModule(),
             new ProductMetadata(),
