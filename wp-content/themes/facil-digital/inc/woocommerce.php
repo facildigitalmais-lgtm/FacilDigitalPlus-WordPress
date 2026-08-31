@@ -618,3 +618,11 @@ add_filter(
     20,
     3
 );
+
+/* P3 - titulo consistente da Area do Aluno */
+add_filter(
+    'woocommerce_endpoint_edit-account_title',
+    static function (): string {
+        return __('Meus dados', 'facil-digital');
+    }
+);
