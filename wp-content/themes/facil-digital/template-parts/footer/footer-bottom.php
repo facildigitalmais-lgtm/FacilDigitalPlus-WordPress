@@ -17,13 +17,13 @@ if (!defined('ABSPATH')) {
                 wp_date('Y')
             );
             ?>
-            Facil Digital+.
+            Fácil Digital+.
             Todos os direitos reservados.
         </p>
 
         <p>
             Plataforma de materiais digitais
-            para concursos publicos.
+            para concursos públicos.
         </p>
     </div>
 </div>

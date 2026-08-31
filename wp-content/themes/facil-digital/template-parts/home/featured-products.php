@@ -13,14 +13,120 @@ if (
         'wc_get_products'
     )
 ) {
-    $products =
+    $isApostila =
+        static function ($product): bool {
+            if (
+                !$product
+                || !is_a(
+                    $product,
+                    WC_Product::class
+                )
+            ) {
+                return false;
+            }
+
+            if (
+                fd_theme_core_product_metadata_available()
+            ) {
+                return
+                    \FacilDigital\Core\Products\ProductMetadata::isApostila(
+                        (int) $product->get_id()
+                    );
+            }
+
+            return true;
+        };
+
+    /*
+     * WooCommerce e a fonte oficial para definir
+     * produtos em destaque. A Home apenas aplica
+     * a regra adicional de exibir apostilas.
+     */
+    $featuredProducts =
         wc_get_products(
             [
-                'status'  => 'publish',
-                'limit'   => 6,
-                'orderby' => 'date',
-                'order'   => 'DESC',
+                'status' =>
+                    'publish',
+
+                'featured' =>
+                    true,
+
+                'limit' =>
+                    12,
+
+                'orderby' =>
+                    'date',
+
+                'order' =>
+                    'DESC',
             ]
+        );
+
+    $featuredProducts =
+        array_values(
+            array_filter(
+                $featuredProducts,
+                $isApostila
+            )
+        );
+
+    /*
+     * Completa a vitrine com materiais recentes
+     * quando houver menos de seis destaques.
+     */
+    $recentProducts =
+        wc_get_products(
+            [
+                'status' =>
+                    'publish',
+
+                'limit' =>
+                    24,
+
+                'orderby' =>
+                    'date',
+
+                'order' =>
+                    'DESC',
+            ]
+        );
+
+    $recentProducts =
+        array_values(
+            array_filter(
+                $recentProducts,
+                $isApostila
+            )
+        );
+
+    $indexedProducts = [];
+
+    foreach (
+        array_merge(
+            $featuredProducts,
+            $recentProducts
+        )
+        as $product
+    ) {
+        if (
+            !$product
+            instanceof WC_Product
+        ) {
+            continue;
+        }
+
+        $indexedProducts[
+            (int) $product->get_id()
+        ] = $product;
+    }
+
+    $products =
+        array_slice(
+            array_values(
+                $indexedProducts
+            ),
+            0,
+            6
         );
 }
 
@@ -40,10 +146,10 @@ if (
                     'Materiais em destaque',
 
                 'title' =>
-                    'Escolha sua proxima apostila',
+                    'Escolha sua próxima apostila',
 
                 'text' =>
-                    'Materiais digitais organizados para tornar sua preparacao mais simples e objetiva.',
+                    'Materiais digitais organizados para tornar sua preparação mais simples e objetiva.',
             ]
         );
         ?>
@@ -70,10 +176,10 @@ if (
                 null,
                 [
                     'title' =>
-                        'Novas apostilas em preparacao',
+                        'Novas apostilas em preparação',
 
                     'text' =>
-                        'O catalogo esta sendo preparado. Em breve os materiais publicados aparecerao automaticamente aqui.',
+                        'O catálogo esta sendo preparado. Em breve os materiais publicados aparecerao automaticamente aqui.',
                 ]
             );
             ?>
@@ -88,7 +194,7 @@ if (
                     );
                 ?>"
             >
-                Explorar catalogo completo
+                Explorar catálogo completo
             </a>
         </div>
     </div>

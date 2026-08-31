@@ -17,6 +17,10 @@ get_header();
     );
 
     get_template_part(
+        'template-parts/home/featured-contests'
+    );
+
+    get_template_part(
         'template-parts/home/featured-products'
     );
 

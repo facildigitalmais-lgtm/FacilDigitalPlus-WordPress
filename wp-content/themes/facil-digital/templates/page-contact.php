@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Facil Digital - Contato
+Template Name: Fácil Digital - Contato
 */
 
 declare(strict_types=1);
@@ -45,7 +45,7 @@ get_header();
             </span>
 
             <h2>
-                Fale com a Facil Digital+
+                Fale com a Fácil Digital+
             </h2>
 
             <p>
@@ -80,7 +80,7 @@ get_header();
 
             <ul>
                 <li>
-                    Consulte nossa pagina
+                    Consulte nossa página
                     de perguntas frequentes.
                 </li>
 

@@ -8,12 +8,15 @@ if (!defined('ABSPATH')) {
 
 ?>
 
-<section class="fd-product-section fd-product-benefits">
+<section
+    class="fd-product-section fd-product-benefits"
+    id="beneficios"
+>
     <div class="fd-product-section__heading">
         <span class="fd-eyebrow">
             <?php
             echo esc_html__(
-                'Facil Digital+',
+                'Fácil Digital+',
                 'facil-digital'
             );
             ?>
@@ -22,7 +25,7 @@ if (!defined('ABSPATH')) {
         <h2>
             <?php
             echo esc_html__(
-                'Preparacao digital em uma unica plataforma',
+                'Sua preparação organizada em um só lugar',
                 'facil-digital'
             );
             ?>
@@ -32,61 +35,31 @@ if (!defined('ABSPATH')) {
     <div class="fd-product-benefit-grid">
         <article>
             <strong>
-                <?php
-                echo esc_html__(
-                    'Material digital',
-                    'facil-digital'
-                );
-                ?>
+                Material digital
             </strong>
 
             <p>
-                <?php
-                echo esc_html__(
-                    'Produto comercializado em formato digital, sem envio fisico.',
-                    'facil-digital'
-                );
-                ?>
+                Apostila em formato digital, sem envio físico.
             </p>
         </article>
 
         <article>
             <strong>
-                <?php
-                echo esc_html__(
-                    'Conta do aluno',
-                    'facil-digital'
-                );
-                ?>
+                Área do aluno
             </strong>
 
             <p>
-                <?php
-                echo esc_html__(
-                    'Pedidos e recursos ficam associados ao cliente autenticado.',
-                    'facil-digital'
-                );
-                ?>
+                Após a liberação do pedido, os recursos vinculados ficam associados à sua conta.
             </p>
         </article>
 
         <article>
             <strong>
-                <?php
-                echo esc_html__(
-                    'Preco transparente',
-                    'facil-digital'
-                );
-                ?>
+                Compra simples
             </strong>
 
             <p>
-                <?php
-                echo esc_html__(
-                    'O produto possui um unico preco base, independentemente do meio de pagamento.',
-                    'facil-digital'
-                );
-                ?>
+                Confira o valor da apostila e finalize a compra pelo checkout da loja.
             </p>
         </article>
     </div>

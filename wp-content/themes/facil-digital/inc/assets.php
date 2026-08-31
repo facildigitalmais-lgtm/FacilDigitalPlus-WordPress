@@ -139,12 +139,25 @@ function fd_theme_enqueue_assets(): void
         ]
     );
 
+    if (
+        is_front_page()
+        || fd_theme_is_storefront_context()
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-product-card',
+            '/assets/css/product-card.css',
+            [
+                'fd-components',
+            ]
+        );
+    }
+
     if (is_front_page()) {
         fd_theme_enqueue_style_file(
             'fd-home',
             '/assets/css/home.css',
             [
-                'fd-components',
+                'fd-product-card',
             ]
         );
     }
@@ -194,7 +207,7 @@ function fd_theme_enqueue_assets(): void
             'fd-storefront',
             '/assets/css/storefront.css',
             [
-                'fd-components',
+                'fd-product-card',
             ]
         );
 

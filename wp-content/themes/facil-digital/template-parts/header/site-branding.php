@@ -24,7 +24,7 @@ if (!defined('ABSPATH')) {
             rel="home"
         >
             <span>
-                Facil Digital
+                Fácil Digital
             </span>
 
             <strong>

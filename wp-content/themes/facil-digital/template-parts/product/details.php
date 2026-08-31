@@ -73,7 +73,7 @@ $factRows =
             <p class="fd-product-description">
                 <?php
                 echo esc_html__(
-                    'As informações detalhadas deste material serão publicadas no cadastro do produto.',
+                    'Esta apostila ainda não possui uma descrição detalhada. Consulte as informações técnicas ao lado.',
                     'facil-digital'
                 );
                 ?>

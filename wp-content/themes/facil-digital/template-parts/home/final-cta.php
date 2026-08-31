@@ -18,12 +18,12 @@ if (!defined('ABSPATH')) {
 
                 <h2>
                     Encontre o material
-                    certo para sua preparacao.
+                    certo para sua preparação.
                 </h2>
 
                 <p>
-                    Explore o catalogo Facil Digital+
-                    e escolha sua proxima apostila.
+                    Explore o catálogo da Fácil Digital+
+                    e escolha sua próxima apostila.
                 </p>
             </div>
 

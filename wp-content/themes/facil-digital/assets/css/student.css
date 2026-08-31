@@ -65,3 +65,201 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* P2F.3C - resultados / estados vazios */
+
+.fd-student-library__header p {
+    max-width: 720px;
+
+    color:
+        var(--fd-color-text-muted);
+}
+
+.fd-results-table-wrap {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border:
+        1px solid
+        var(--fd-color-border);
+
+    border-radius:
+        var(--fd-radius-lg);
+}
+
+.fd-results-table {
+    width: 100%;
+
+    min-width: 620px;
+
+    margin: 0;
+
+    border: 0;
+
+    border-collapse: collapse;
+}
+
+.fd-results-table th {
+    background:
+        var(--fd-color-surface-soft);
+
+    color:
+        var(--fd-color-text-muted);
+
+    font-size:
+        var(--fd-font-size-sm);
+
+    text-align: left;
+}
+
+.fd-results-table th,
+.fd-results-table td {
+    padding:
+        var(--fd-space-4);
+
+    border-top:
+        1px solid
+        var(--fd-color-border);
+}
+
+.fd-results-table thead th {
+    border-top: 0;
+}
+
+.fd-results-table tbody th a {
+    color:
+        var(--fd-color-primary);
+
+    font-weight: 750;
+
+    text-decoration: none;
+}
+
+.fd-results-table a:focus-visible {
+    outline:
+        3px solid
+        rgb(11 92 255 / 0.22);
+
+    outline-offset:
+        3px;
+}
+
+.fd-student-empty-state {
+    margin: 0;
+
+    padding:
+        var(--fd-space-5);
+
+    border:
+        1px dashed
+        var(--fd-color-border-strong);
+
+    border-radius:
+        var(--fd-radius-lg);
+
+    background:
+        var(--fd-color-surface-soft);
+}
+
+.fd-student-empty-state::before {
+    display: none;
+}
+
+@media (
+    max-width: 700px
+) {
+    .fd-results-table-wrap {
+        overflow: visible;
+
+        border: 0;
+    }
+
+    .fd-results-table {
+        min-width: 0;
+    }
+
+    .fd-results-table thead {
+        position: absolute;
+
+        width: 1px;
+        height: 1px;
+
+        overflow: hidden;
+
+        clip: rect(
+            0,
+            0,
+            0,
+            0
+        );
+
+        white-space: nowrap;
+    }
+
+    .fd-results-table tbody {
+        display: grid;
+
+        gap:
+            var(--fd-space-4);
+    }
+
+    .fd-results-table tr {
+        display: grid;
+
+        overflow: hidden;
+
+        border:
+            1px solid
+            var(--fd-color-border);
+
+        border-radius:
+            var(--fd-radius-lg);
+
+        background:
+            var(--fd-color-surface);
+    }
+
+    .fd-results-table td,
+    .fd-results-table tbody th {
+        display: grid;
+
+        grid-template-columns:
+            minmax(
+                100px,
+                0.8fr
+            )
+            minmax(
+                0,
+                1fr
+            );
+
+        gap:
+            var(--fd-space-3);
+
+        align-items: center;
+
+        padding:
+            var(--fd-space-4);
+
+        text-align: right;
+    }
+
+    .fd-results-table td::before,
+    .fd-results-table tbody th::before {
+        color:
+            var(--fd-color-text-muted);
+
+        content:
+            attr(
+                data-title
+            );
+
+        font-size:
+            var(--fd-font-size-sm);
+
+        font-weight: 750;
+
+        text-align: left;
+    }
+}

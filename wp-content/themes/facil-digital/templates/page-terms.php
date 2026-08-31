@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Facil Digital - Termos
+Template Name: Fácil Digital - Termos
 */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ get_header();
 
         <p>
             Condicoes gerais de utilizacao
-            da plataforma Facil Digital+.
+            da plataforma Fácil Digital+.
         </p>
     </div>
 </section>
@@ -48,18 +48,18 @@ get_header();
         </h2>
 
         <p>
-            A Facil Digital+ disponibiliza
+            A Fácil Digital+ disponibiliza
             produtos digitais e recursos
-            relacionados a preparacao para
-            concursos publicos.
+            relacionados à preparação para
+            concursos públicos.
         </p>
 
         <h2>
-            2. Conta do usuario
+            2. Conta do usuário
         </h2>
 
         <p>
-            O usuario e responsavel por
+            O usuário é responsável por
             manter seus dados cadastrais
             corretos e por preservar a
             confidencialidade de sua senha.
@@ -71,9 +71,9 @@ get_header();
 
         <p>
             As condicoes especificas,
-            caracteristicas e conteudos
+            características e conteúdos
             de cada produto sao apresentados
-            em sua respectiva pagina.
+            em sua respectiva página.
         </p>
 
         <h2>
@@ -93,20 +93,20 @@ get_header();
 
         <p>
             Podem ocorrer manutencoes,
-            atualizacoes ou indisponibilidades
+            atualizações ou indisponibilidades
             temporarias necessarias a
             operacao e seguranca do servico.
         </p>
 
         <h2>
-            6. Alteracoes
+            6. Alterações
         </h2>
 
         <p>
             Estes termos podem ser
             atualizados quando necessario.
             A versao disponibilizada nesta
-            pagina representa os termos
+            página representa os termos
             vigentes publicados no site.
         </p>
     </div>

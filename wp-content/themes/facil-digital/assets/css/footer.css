@@ -141,3 +141,21 @@
     font-size:
         var(--fd-font-size-sm);
 }
+
+/*
+ * P2B - acessibilidade de teclado.
+ */
+
+.fd-footer-brand__logo:focus-visible,
+.fd-footer-menu a:focus-visible,
+.fd-footer-column .menu a:focus-visible {
+    outline:
+        3px solid
+        rgb(255 255 255 / 0.35);
+
+    outline-offset:
+        4px;
+
+    border-radius:
+        var(--fd-radius-sm);
+}

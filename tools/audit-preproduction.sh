@@ -243,12 +243,13 @@ if git grep \
   'localhost|127\.0\.0\.1|app\.github\.dev' \
   -- \
   wp-content \
+  ':!wp-content/plugins/facil-digital-core/src/Release/ReleaseReadinessService.php' \
   >"$HARDCODED" 2>/dev/null
 then
   cat "$HARDCODED"
   warn "URLs de ambiente encontradas em wp-content"
 else
-  pass "nenhuma URL de ambiente hardcoded em wp-content"
+  pass "nenhuma URL de ambiente hardcoded em wp-content; denylist de ReleaseReadiness excluida"
 fi
 
 #
@@ -549,8 +550,9 @@ EXPECTED_THEME_FILES=(
   "$THEME/header.php"
   "$THEME/footer.php"
   "$THEME/front-page.php"
-  "$THEME/archive-product.php"
-  "$THEME/single-product.php"
+  "$THEME/woocommerce/archive-product.php"
+  "$THEME/woocommerce/single-product.php"
+  "$THEME/woocommerce/content-product.php"
 )
 
 for file in "${EXPECTED_THEME_FILES[@]}"

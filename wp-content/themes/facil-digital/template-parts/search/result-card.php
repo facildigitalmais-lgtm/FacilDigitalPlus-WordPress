@@ -26,7 +26,7 @@ if (!is_string($url)) {
                 get_post_type()
             )?->labels?->singular_name
             ?? __(
-                'Conteudo',
+                'Conteúdo',
                 'facil-digital'
             )
         );

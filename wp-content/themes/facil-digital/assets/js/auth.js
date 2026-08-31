@@ -47,6 +47,13 @@
                         ? "Mostrar senha"
                         : "Ocultar senha"
                 );
+
+                toggle.setAttribute(
+                    "aria-pressed",
+                    showing
+                        ? "false"
+                        : "true"
+                );
             }
         );
     });
@@ -102,7 +109,7 @@
         message.textContent =
             matches
                 ? "As senhas coincidem."
-                : "As senhas nao coincidem.";
+                : "As senhas não coincidem.";
 
         message.dataset.state =
             matches
@@ -112,7 +119,7 @@
         confirmation.setCustomValidity(
             matches
                 ? ""
-                : "As senhas nao coincidem."
+                : "As senhas não coincidem."
         );
     }
 

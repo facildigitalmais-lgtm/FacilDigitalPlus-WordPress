@@ -335,7 +335,7 @@ function fd_theme_footer_fallback_items(
         'footer-legal' => [
             [
                 'label' =>
-                    'Politica de Privacidade',
+                    'Política de Privacidade',
                 'url' =>
                     fd_theme_get_privacy_url(),
             ],

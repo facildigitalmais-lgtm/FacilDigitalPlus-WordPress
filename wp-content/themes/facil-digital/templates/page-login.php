@@ -17,7 +17,7 @@ get_header();
     <div class="fd-container fd-auth-layout">
         <div class="fd-auth-intro">
             <span class="fd-eyebrow">
-                Area do aluno
+                Área do aluno
             </span>
 
             <h1>
@@ -27,7 +27,7 @@ get_header();
             <p>
                 Entre para acessar seus
                 pedidos e recursos da
-                Facil Digital+.
+                Fácil Digital+.
             </p>
 
             <ul class="fd-auth-benefits">
@@ -37,7 +37,7 @@ get_header();
                         'check'
                     );
                     ?>
-                    Seus pedidos em uma unica conta
+                    Seus pedidos em uma única conta
                 </li>
 
                 <li>
@@ -55,7 +55,7 @@ get_header();
                         'lock'
                     );
                     ?>
-                    Autenticacao protegida pelo WordPress
+                    Autenticação protegida pelo WordPress
                 </li>
             </ul>
         </div>
@@ -68,7 +68,7 @@ get_header();
 
                 <p>
                     Use seu e-mail ou
-                    nome de usuario.
+                    nome de usuário.
                 </p>
             </header>
 
@@ -108,7 +108,7 @@ get_header();
 
                 <div class="fd-form-field">
                     <label for="fd-login-user">
-                        E-mail ou usuario
+                        E-mail ou usuário
                     </label>
 
                     <input
@@ -146,6 +146,7 @@ get_header();
                             class="fd-password-toggle"
                             data-fd-password-toggle
                             aria-label="Mostrar senha"
+                            aria-pressed="false"
                         >
                             Mostrar
                         </button>
@@ -185,7 +186,7 @@ get_header();
             </form>
 
             <p class="fd-auth-switch">
-                Ainda nao possui conta?
+                Ainda não possui conta?
 
                 <a
                     href="<?php

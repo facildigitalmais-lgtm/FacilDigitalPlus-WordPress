@@ -111,7 +111,8 @@
     }
 
     function setSearchState(
-        open
+        open,
+        restoreFocus = false
     ) {
         if (
             !searchToggle
@@ -119,6 +120,11 @@
         ) {
             return;
         }
+
+        const wasOpen =
+            searchToggle.getAttribute(
+                "aria-expanded"
+            ) === "true";
 
         searchPanel.hidden =
             !open;
@@ -154,6 +160,19 @@
                     }
                 );
             }
+
+            return;
+        }
+
+        if (
+            restoreFocus
+            && wasOpen
+        ) {
+            window.requestAnimationFrame(
+                () => {
+                    searchToggle.focus();
+                }
+            );
         }
     }
 
@@ -271,7 +290,8 @@
             }
 
             setSearchState(
-                false
+                false,
+                true
             );
 
             setMenuState(

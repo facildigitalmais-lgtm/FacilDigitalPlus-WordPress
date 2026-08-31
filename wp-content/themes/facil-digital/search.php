@@ -78,7 +78,7 @@ $isProductSearch =
                 class="fd-search-pagination"
                 aria-label="<?php
                     echo esc_attr__(
-                        'Paginacao dos resultados',
+                        'Paginação dos resultados',
                         'facil-digital'
                     );
                 ?>"
@@ -94,7 +94,7 @@ $isProductSearch =
                             ),
                         'next_text' =>
                             __(
-                                'Proxima',
+                                'Próxima',
                                 'facil-digital'
                             ),
                     ]
@@ -111,7 +111,7 @@ $isProductSearch =
                         'Nenhum resultado encontrado',
 
                     'text' =>
-                        'Tente uma busca diferente ou explore o catalogo completo de apostilas.',
+                        'Tente uma busca diferente ou explore o catálogo completo de apostilas.',
                 ]
             );
             ?>

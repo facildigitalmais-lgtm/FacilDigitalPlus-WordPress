@@ -368,3 +368,19 @@ span:nth-child(3) {
     backdrop-filter:
         blur(2px);
 }
+
+/*
+ * P2B - acessibilidade de teclado.
+ */
+
+.fd-header-search-toggle:focus-visible,
+.fd-header-account:focus-visible,
+.fd-header-cart:focus-visible,
+.fd-menu-toggle:focus-visible {
+    outline:
+        3px solid
+        rgb(11 92 255 / 0.22);
+
+    outline-offset:
+        3px;
+}

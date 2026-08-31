@@ -25,7 +25,7 @@ get_header();
     <div class="fd-container fd-auth-layout">
         <div class="fd-auth-intro">
             <span class="fd-eyebrow">
-                Recuperacao de acesso
+                Recuperação de acesso
             </span>
 
             <h1>
@@ -35,7 +35,7 @@ get_header();
 
             <p>
                 Informe seu e-mail
-                ou nome de usuario.
+                ou nome de usuário.
             </p>
         </div>
 
@@ -46,7 +46,7 @@ get_header();
                 </h2>
 
                 <p>
-                    Enviaremos as instrucoes
+                    Enviaremos as instruções
                     do fluxo oficial do
                     WordPress.
                 </p>
@@ -59,7 +59,7 @@ get_header();
                 [
                     'success' =>
                         $sent
-                            ? 'Se existir uma conta correspondente aos dados informados, as instrucoes de recuperacao serao enviadas.'
+                            ? 'Se existir uma conta correspondente aos dados informados, as instruções de recuperação serão enviadas.'
                             : '',
                 ]
             );
@@ -86,7 +86,7 @@ get_header();
 
                     <div class="fd-form-field">
                         <label for="fd-lost-user">
-                            E-mail ou usuario
+                            E-mail ou usuário
                         </label>
 
                         <input
@@ -109,7 +109,7 @@ get_header();
                         type="submit"
                         class="fd-button fd-button--primary fd-auth-submit"
                     >
-                        Enviar instrucoes
+                        Enviar instruções
                     </button>
                 </form>
             <?php endif; ?>

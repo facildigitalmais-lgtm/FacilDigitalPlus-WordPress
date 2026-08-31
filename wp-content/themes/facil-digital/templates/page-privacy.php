@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Facil Digital - Privacidade
+Template Name: Fácil Digital - Privacidade
 */
 
 declare(strict_types=1);
@@ -20,13 +20,13 @@ get_header();
         </span>
 
         <h1>
-            Politica de Privacidade
+            Política de Privacidade
         </h1>
 
         <p>
-            Informacoes gerais sobre
+            Informações gerais sobre
             tratamento de dados na
-            plataforma Facil Digital+.
+            plataforma Fácil Digital+.
         </p>
     </div>
 </section>
@@ -51,7 +51,7 @@ get_header();
         <p>
             A plataforma pode tratar dados
             necessarios para cadastro,
-            autenticacao, compras,
+            autenticação, compras,
             atendimento, seguranca e
             disponibilizacao de produtos
             digitais.
@@ -77,9 +77,9 @@ get_header();
         <p>
             Dados de pagamento processados
             por provedores externos seguem
-            tambem as politicas e medidas
+            também as políticas e medidas
             de seguranca desses provedores.
-            A Facil Digital+ nao deve
+            A Fácil Digital+ não deve
             armazenar dados completos de
             cartao em sua aplicacao.
         </p>
@@ -94,7 +94,7 @@ get_header();
             com a natureza da plataforma
             para reduzir riscos de acesso
             indevido, perda ou alteracao
-            de informacoes.
+            de informações.
         </p>
 
         <h2>
@@ -104,9 +104,9 @@ get_header();
         <p>
             O titular pode utilizar os
             canais oficiais de atendimento
-            para solicitar informacoes
+            para solicitar informações
             relacionadas aos seus dados,
-            observadas as obrigacoes legais
+            observadas as obrigações legais
             e contratuais aplicaveis.
         </p>
 
@@ -115,8 +115,8 @@ get_header();
         </h2>
 
         <p>
-            Para solicitacoes relacionadas
-            a privacidade, utilize a pagina
+            Para solicitações relacionadas
+            a privacidade, utilize a página
             oficial de contato da plataforma.
         </p>
     </div>

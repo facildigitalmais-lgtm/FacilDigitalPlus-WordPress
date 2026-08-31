@@ -12,19 +12,19 @@ if (!defined('ABSPATH')) {
     <div class="fd-container fd-home-hero__grid">
         <div class="fd-home-hero__content">
             <span class="fd-eyebrow">
-                Sua preparacao com mais foco
+                Sua preparação começa aqui
             </span>
 
             <h1>
                 Apostilas e simulados
-                para transformar estudo
-                em resultado.
+                para estudar com foco
+                no seu concurso.
             </h1>
 
             <p class="fd-home-hero__lead">
-                Encontre materiais digitais
-                organizados para concursos
-                publicos e estude onde estiver.
+                Encontre apostilas digitais para
+                seu concurso, pratique com simulados
+                e acompanhe sua preparação em um só lugar.
             </p>
 
             <form
@@ -33,7 +33,7 @@ if (!defined('ABSPATH')) {
                 method="get"
                 action="<?php
                     echo esc_url(
-                        home_url('/')
+                        fd_theme_get_shop_url()
                     );
                 ?>"
             >
@@ -54,15 +54,10 @@ if (!defined('ABSPATH')) {
                     <input
                         id="fd-home-search-input"
                         type="search"
-                        name="s"
-                        placeholder="Qual concurso ou cargo voce procura?"
+                        name="busca"
+                        placeholder="Qual concurso ou cargo você procura?"
                     >
 
-                    <input
-                        type="hidden"
-                        name="post_type"
-                        value="product"
-                    >
 
                     <button
                         type="submit"
@@ -93,7 +88,7 @@ if (!defined('ABSPATH')) {
                         );
                     ?>"
                 >
-                    Area do aluno
+                    Área do aluno
                 </a>
             </div>
 
@@ -138,8 +133,8 @@ if (!defined('ABSPATH')) {
 
                 <div class="fd-home-book__middle">
                     <span>
-                        Preparacao para
-                        concursos publicos
+                        Preparação para
+                        concursos públicos
                     </span>
 
                     <strong>

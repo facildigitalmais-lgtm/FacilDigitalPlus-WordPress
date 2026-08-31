@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Facil Digital - Sobre
+Template Name: Fácil Digital - Sobre
 */
 
 declare(strict_types=1);
@@ -16,16 +16,16 @@ get_header();
 <section class="fd-page-hero fd-page-about">
     <div class="fd-container fd-page-hero__inner">
         <span class="fd-eyebrow">
-            Sobre a Facil Digital+
+            Sobre a Fácil Digital+
         </span>
 
         <h1>
             Educacao digital
-            com foco em preparacao.
+            com foco em preparação.
         </h1>
 
         <p>
-            A Facil Digital+ nasceu para tornar
+            A Fácil Digital+ nasceu para tornar
             materiais de estudo e ferramentas
             de pratica mais acessiveis,
             organizados e simples de utilizar.
@@ -43,7 +43,7 @@ get_header();
             <p>
                 Reunir apostilas digitais,
                 simulados e recursos para
-                concursos publicos em uma
+                concursos públicos em uma
                 plataforma centralizada.
             </p>
         </article>
@@ -67,7 +67,7 @@ get_header();
             </h2>
 
             <p>
-                O projeto combina conteudo
+                O projeto combina conteúdo
                 de estudo com ferramentas
                 de pratica e acompanhamento.
             </p>
@@ -82,9 +82,9 @@ get_header();
         </h2>
 
         <p>
-            A estrutura da Facil Digital+
+            A estrutura da Fácil Digital+
             foi planejada para integrar
-            catalogo, compras, materiais,
+            catálogo, compras, materiais,
             simulados e resultados em uma
             experiencia unica para o aluno.
         </p>

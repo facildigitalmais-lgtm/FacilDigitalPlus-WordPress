@@ -28,7 +28,7 @@ get_header();
             <?php endwhile; ?>
         <?php else : ?>
             <p>
-                Nenhum conteudo encontrado.
+                Nenhum conteúdo encontrado.
             </p>
         <?php endif; ?>
     </div>

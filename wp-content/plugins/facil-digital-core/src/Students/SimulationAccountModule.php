@@ -123,7 +123,7 @@ final class SimulationAccountModule implements ModuleInterface
         echo '<h2>' . esc_html__('Simulados', 'facil-digital-core') . '</h2>';
         echo '<p>' . esc_html__('Treine com cronômetro, autosave e correção pelo servidor.', 'facil-digital-core') . '</p></header>';
         if ($items === []) {
-            echo '<div class="woocommerce-info">' . esc_html__('Nenhum simulado está liberado para suas apostilas.', 'facil-digital-core') . '</div></section>';
+            echo '<div class="woocommerce-info fd-student-empty-state" role="status">' . esc_html__('Nenhum simulado está liberado para suas apostilas.', 'facil-digital-core') . '</div></section>';
             return;
         }
         echo '<div class="fd-student-library__grid">';
@@ -145,25 +145,183 @@ final class SimulationAccountModule implements ModuleInterface
 
     public function renderResults(): void
     {
-        $userId = get_current_user_id();
+        $userId =
+            get_current_user_id();
+
         if ($userId <= 0) {
             return;
         }
-        $history = $this->attempts->history($userId, 200);
-        echo '<section class="fd-student-results"><h2>' . esc_html__('Resultados', 'facil-digital-core') . '</h2>';
+
+        $history =
+            $this->attempts->history(
+                $userId,
+                200
+            );
+
+        echo '<section class="fd-student-results">';
+
+        echo '<header class="fd-student-library__header">';
+        echo '<span class="fd-student-eyebrow">';
+        echo esc_html__(
+            'Seu desempenho',
+            'facil-digital-core'
+        );
+        echo '</span>';
+
+        echo '<h2>';
+        echo esc_html__(
+            'Resultados',
+            'facil-digital-core'
+        );
+        echo '</h2>';
+
+        echo '<p>';
+        echo esc_html__(
+            'Consulte o histórico dos simulados que você já finalizou.',
+            'facil-digital-core'
+        );
+        echo '</p>';
+        echo '</header>';
+
         if ($history === []) {
-            echo '<div class="woocommerce-info">' . esc_html__('Você ainda não finalizou simulados.', 'facil-digital-core') . '</div></section>';
+            echo '<div class="woocommerce-info fd-student-empty-state" role="status">';
+            echo esc_html__(
+                'Você ainda não finalizou simulados.',
+                'facil-digital-core'
+            );
+            echo '</div>';
+
+            echo '</section>';
             return;
         }
-        echo '<div class="fd-results-table-wrap"><table class="shop_table shop_table_responsive"><thead><tr>';
-        echo '<th>' . esc_html__('Simulado', 'facil-digital-core') . '</th><th>' . esc_html__('Resultado', 'facil-digital-core') . '</th><th>' . esc_html__('Tempo', 'facil-digital-core') . '</th><th>' . esc_html__('Status', 'facil-digital-core') . '</th></tr></thead><tbody>';
+
+        echo '<div class="fd-results-table-wrap">';
+
+        echo '<table class="shop_table shop_table_responsive fd-results-table" aria-label="';
+        echo esc_attr__(
+            'Histórico de resultados',
+            'facil-digital-core'
+        );
+        echo '">';
+
+        echo '<thead><tr>';
+
+        echo '<th scope="col">';
+        echo esc_html__(
+            'Simulado',
+            'facil-digital-core'
+        );
+        echo '</th>';
+
+        echo '<th scope="col">';
+        echo esc_html__(
+            'Resultado',
+            'facil-digital-core'
+        );
+        echo '</th>';
+
+        echo '<th scope="col">';
+        echo esc_html__(
+            'Tempo',
+            'facil-digital-core'
+        );
+        echo '</th>';
+
+        echo '<th scope="col">';
+        echo esc_html__(
+            'Status',
+            'facil-digital-core'
+        );
+        echo '</th>';
+
+        echo '</tr></thead><tbody>';
+
         foreach ($history as $row) {
-            echo '<tr><td><a href="' . esc_url(home_url('/simulado/' . rawurlencode((string) $row['slug']) . '/')) . '">' . esc_html((string) $row['title']) . '</a></td>';
-            echo '<td>' . esc_html(number_format_i18n((float) $row['percentage'], 1) . '%') . '</td>';
-            echo '<td>' . esc_html($this->time((int) $row['elapsed_seconds'])) . '</td>';
-            echo '<td>' . esc_html($row['passed'] ? __('Aprovado', 'facil-digital-core') : __('Abaixo da nota mínima', 'facil-digital-core')) . '</td></tr>';
+            $url =
+                home_url(
+                    '/simulado/'
+                    . rawurlencode(
+                        (string) $row['slug']
+                    )
+                    . '/'
+                );
+
+            $result =
+                number_format_i18n(
+                    (float) $row['percentage'],
+                    1
+                )
+                . '%';
+
+            $status =
+                !empty($row['passed'])
+                    ? __(
+                        'Aprovado',
+                        'facil-digital-core'
+                    )
+                    : __(
+                        'Abaixo da nota mínima',
+                        'facil-digital-core'
+                    );
+
+            echo '<tr>';
+
+            echo '<th scope="row" data-title="';
+            echo esc_attr__(
+                'Simulado',
+                'facil-digital-core'
+            );
+            echo '">';
+
+            echo '<a href="';
+            echo esc_url($url);
+            echo '">';
+            echo esc_html(
+                (string) $row['title']
+            );
+            echo '</a>';
+
+            echo '</th>';
+
+            echo '<td data-title="';
+            echo esc_attr__(
+                'Resultado',
+                'facil-digital-core'
+            );
+            echo '">';
+            echo esc_html($result);
+            echo '</td>';
+
+            echo '<td data-title="';
+            echo esc_attr__(
+                'Tempo',
+                'facil-digital-core'
+            );
+            echo '">';
+            echo esc_html(
+                $this->time(
+                    (int) $row[
+                        'elapsed_seconds'
+                    ]
+                )
+            );
+            echo '</td>';
+
+            echo '<td data-title="';
+            echo esc_attr__(
+                'Status',
+                'facil-digital-core'
+            );
+            echo '">';
+            echo esc_html($status);
+            echo '</td>';
+
+            echo '</tr>';
         }
-        echo '</tbody></table></div></section>';
+
+        echo '</tbody></table>';
+        echo '</div>';
+        echo '</section>';
     }
 
     /** @return list<array<string,mixed>> */

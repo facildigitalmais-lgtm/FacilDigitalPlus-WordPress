@@ -406,6 +406,87 @@
     }
 }
 
+/* P2D - catalogo responsivo */
+
+@media (
+    max-width: 1023px
+) {
+    .fd-catalog-filter-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+}
+
+@media (
+    max-width: 640px
+) {
+    .fd-catalog-toolbar__top {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+    .fd-catalog-filter-grid,
+    .fd-catalog-price {
+        grid-template-columns:
+            1fr;
+    }
+
+    .fd-catalog-filter-actions {
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
+    }
+
+    .fd-catalog-filter-actions
+    .fd-button {
+        width: 100%;
+    }
+}
+
+/* P2E - produto responsivo */
+
+@media (
+    max-width: 640px
+) {
+    .fd-product-context {
+        grid-template-columns:
+            1fr;
+    }
+
+    .fd-product-cover-fallback {
+        width: 100%;
+    }
+
+    .fd-product-jump-links {
+        display: grid;
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .fd-product-jump-links a {
+        justify-content: center;
+    }
+
+    .fd-product-purchase {
+        padding:
+            var(--fd-space-3);
+    }
+
+    .fd-product-purchase
+    .single_add_to_cart_button {
+        width: 100%;
+    }
+}
+
 @media (
     prefers-reduced-motion:
     reduce

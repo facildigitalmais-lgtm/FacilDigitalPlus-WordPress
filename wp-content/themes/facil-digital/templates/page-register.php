@@ -21,8 +21,8 @@ get_header();
             </span>
 
             <h1>
-                Sua area de estudos
-                comeca aqui.
+                Sua área de estudos
+                começa aqui.
             </h1>
 
             <p>
@@ -157,6 +157,7 @@ get_header();
                             minlength="8"
                             required
                             data-fd-password
+                            aria-describedby="fd-password-help"
                         >
 
                         <button
@@ -164,13 +165,14 @@ get_header();
                             class="fd-password-toggle"
                             data-fd-password-toggle
                             aria-label="Mostrar senha"
+                            aria-pressed="false"
                         >
                             Mostrar
                         </button>
                     </div>
 
-                    <small>
-                        Minimo de 8 caracteres.
+                    <small id="fd-password-help">
+                        Mínimo de 8 caracteres.
                     </small>
                 </div>
 
@@ -188,6 +190,7 @@ get_header();
                             minlength="8"
                             required
                             data-fd-password-confirm
+                            aria-describedby="fd-password-match"
                         >
 
                         <button
@@ -195,12 +198,14 @@ get_header();
                             class="fd-password-toggle"
                             data-fd-password-toggle
                             aria-label="Mostrar senha"
+                            aria-pressed="false"
                         >
                             Mostrar
                         </button>
                     </div>
 
                     <small
+                        id="fd-password-match"
                         class="fd-password-match"
                         data-fd-password-match
                         aria-live="polite"
@@ -240,7 +245,7 @@ get_header();
                             target="_blank"
                             rel="noopener"
                         >
-                            Politica de Privacidade
+                            Política de Privacidade
                         </a>.
                     </span>
                 </label>
@@ -254,7 +259,7 @@ get_header();
             </form>
 
             <p class="fd-auth-switch">
-                Ja possui uma conta?
+                Já possui uma conta?
 
                 <a
                     href="<?php

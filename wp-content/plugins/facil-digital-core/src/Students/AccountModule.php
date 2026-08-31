@@ -52,6 +52,27 @@ final class AccountModule implements ModuleInterface
             [$this, 'renderDashboard'],
             5
         );
+
+        add_action(
+            'wp_loaded',
+            [$this, 'replaceWooDownloadsEndpoint'],
+            60
+        );
+    }
+
+    public function replaceWooDownloadsEndpoint(): void
+    {
+        remove_action(
+            'woocommerce_account_downloads_endpoint',
+            'woocommerce_account_downloads',
+            10
+        );
+
+        add_action(
+            'woocommerce_account_downloads_endpoint',
+            [$this, 'renderDownloads'],
+            10
+        );
     }
 
     public function registerEndpoint(): void
@@ -153,6 +174,250 @@ final class AccountModule implements ModuleInterface
         echo '</section>';
     }
 
+    public function renderDownloads(): void
+    {
+        $userId =
+            get_current_user_id();
+
+        if ($userId <= 0) {
+            return;
+        }
+
+        $rows =
+            $this->files->readyForUser(
+                $userId
+            );
+
+        echo '<section class="fd-student-downloads">';
+
+        echo '<header class="fd-student-library__header">';
+        echo '<span class="fd-student-eyebrow">';
+        echo esc_html__(
+            'Arquivos protegidos',
+            'facil-digital-core'
+        );
+        echo '</span>';
+
+        echo '<h2>';
+        echo esc_html__(
+            'Downloads',
+            'facil-digital-core'
+        );
+        echo '</h2>';
+
+        echo '<p>';
+        echo esc_html__(
+            'Acesse os PDFs personalizados disponíveis para sua conta e acompanhe o limite de downloads de cada compra.',
+            'facil-digital-core'
+        );
+        echo '</p>';
+        echo '</header>';
+
+        if ($rows === []) {
+            echo '<div class="woocommerce-info fd-student-empty-state" role="status">';
+            echo esc_html__(
+                'Você ainda não possui arquivos prontos para download.',
+                'facil-digital-core'
+            );
+            echo '</div>';
+
+            echo '</section>';
+            return;
+        }
+
+        echo '<div class="fd-student-downloads__grid">';
+
+        foreach ($rows as $pdf) {
+            $productId =
+                (int) (
+                    $pdf['product_id']
+                    ?? 0
+                );
+
+            $entitlementId =
+                (int) (
+                    $pdf['entitlement_id']
+                    ?? 0
+                );
+
+            $pdfId =
+                (int) (
+                    $pdf['id']
+                    ?? 0
+                );
+
+            $orderId =
+                (int) (
+                    $pdf['order_id']
+                    ?? 0
+                );
+
+            $product =
+                wc_get_product(
+                    $productId
+                );
+
+            $limit =
+                max(
+                    1,
+                    (int) ProductMetadata::get(
+                        $productId,
+                        ProductMetadata::DOWNLOAD_LIMIT,
+                        '5'
+                    )
+                );
+
+            $used =
+                $this->downloads
+                    ->countForEntitlement(
+                        $entitlementId
+                    );
+
+            $remaining =
+                max(
+                    0,
+                    $limit - $used
+                );
+
+            $generatedAt =
+                isset($pdf['generated_at'])
+                && is_string(
+                    $pdf['generated_at']
+                )
+                    ? trim(
+                        $pdf['generated_at']
+                    )
+                    : '';
+
+            echo '<article class="fd-student-download">';
+
+            echo '<div class="fd-student-download__header">';
+
+            echo '<span class="fd-student-download__type">';
+            echo esc_html__(
+                'PDF personalizado',
+                'facil-digital-core'
+            );
+            echo '</span>';
+
+            echo '<h3>';
+            echo esc_html(
+                $product
+                    ? $product->get_name()
+                    : __(
+                        'Apostila',
+                        'facil-digital-core'
+                    )
+            );
+            echo '</h3>';
+
+            echo '</div>';
+
+            echo '<dl class="fd-student-download__facts">';
+
+            echo '<div>';
+            echo '<dt>';
+            echo esc_html__(
+                'Pedido',
+                'facil-digital-core'
+            );
+            echo '</dt>';
+            echo '<dd>#';
+            echo esc_html(
+                (string) $orderId
+            );
+            echo '</dd>';
+            echo '</div>';
+
+            if ($generatedAt !== '') {
+                echo '<div>';
+                echo '<dt>';
+                echo esc_html__(
+                    'Gerado em',
+                    'facil-digital-core'
+                );
+                echo '</dt>';
+                echo '<dd>';
+                echo esc_html(
+                    get_date_from_gmt(
+                        $generatedAt,
+                        get_option(
+                            'date_format'
+                        )
+                    )
+                );
+                echo '</dd>';
+                echo '</div>';
+            }
+
+            echo '<div>';
+            echo '<dt>';
+            echo esc_html__(
+                'Downloads usados',
+                'facil-digital-core'
+            );
+            echo '</dt>';
+            echo '<dd>';
+            echo esc_html(
+                sprintf(
+                    __('%1$d de %2$d', 'facil-digital-core'),
+                    $used,
+                    $limit
+                )
+            );
+            echo '</dd>';
+            echo '</div>';
+
+            echo '<div>';
+            echo '<dt>';
+            echo esc_html__(
+                'Restantes',
+                'facil-digital-core'
+            );
+            echo '</dt>';
+            echo '<dd>';
+            echo esc_html(
+                (string) $remaining
+            );
+            echo '</dd>';
+            echo '</div>';
+
+            echo '</dl>';
+
+            if (
+                $remaining > 0
+                && $pdfId > 0
+            ) {
+                echo '<a class="button alt fd-student-download__button" href="';
+                echo esc_url(
+                    DownloadModule::url(
+                        $pdfId
+                    )
+                );
+                echo '">';
+
+                echo esc_html__(
+                    'Baixar apostila',
+                    'facil-digital-core'
+                );
+
+                echo '</a>';
+            } else {
+                echo '<p class="fd-student-book__status is-limit">';
+                echo esc_html__(
+                    'Limite de downloads atingido',
+                    'facil-digital-core'
+                );
+                echo '</p>';
+            }
+
+            echo '</article>';
+        }
+
+        echo '</div>';
+        echo '</section>';
+    }
+
     public function renderApostilas(): void
     {
         $userId = get_current_user_id();
@@ -169,7 +434,7 @@ final class AccountModule implements ModuleInterface
         echo '</header>';
 
         if ($rows === []) {
-            echo '<div class="woocommerce-info">';
+            echo '<div class="woocommerce-info fd-student-empty-state" role="status">';
             echo esc_html__('Você ainda não possui apostilas liberadas.', 'facil-digital-core');
             echo '</div></section>';
             return;

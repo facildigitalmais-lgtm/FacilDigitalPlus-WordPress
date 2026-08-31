@@ -54,6 +54,35 @@ final class ProductMetadata implements ModuleInterface
             [$this, 'saveProductData'],
             20
         );
+
+        /*
+         * Apostilas geram um unico direito de acesso
+         * por produto para a conta compradora.
+         *
+         * Quantidade superior a 1 nao representa
+         * direitos adicionais de entitlement.
+         */
+        add_filter(
+            'woocommerce_is_sold_individually',
+            [$this, 'soldIndividually'],
+            20,
+            2
+        );
+    }
+
+    public function soldIndividually(
+        bool $soldIndividually,
+        WC_Product $product
+    ): bool {
+        if (
+            self::isApostila(
+                (int) $product->get_id()
+            )
+        ) {
+            return true;
+        }
+
+        return $soldIndividually;
     }
 
     /**
