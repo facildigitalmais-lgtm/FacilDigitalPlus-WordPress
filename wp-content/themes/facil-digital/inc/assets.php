@@ -296,6 +296,19 @@ function fd_theme_enqueue_assets(): void
         ]
     );
 
+    /*
+     * UX-B: acabamento visual do catalogo e da pagina de produto.
+     * Carregado depois do UX-A sem substituir regras do WooCommerce/Core.
+     */
+    if (fd_theme_is_storefront_context()) {
+        fd_theme_enqueue_style_file(
+            'fd-ux-b',
+            '/assets/css/ux-b.css',
+            [
+                'fd-ux-a',
+            ]
+        );
+    }
     fd_theme_enqueue_script_file(
         'fd-navigation',
         '/assets/js/navigation.js'
