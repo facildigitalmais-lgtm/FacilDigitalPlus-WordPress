@@ -1,4 +1,3 @@
-cat > wp-content/themes/facil-digital/assets/css/reset.css <<'CSS'
 *,
 *::before,
 *::after {
@@ -66,4 +65,3 @@ ol {
 [hidden] {
     display: none !important;
 }
-CSS

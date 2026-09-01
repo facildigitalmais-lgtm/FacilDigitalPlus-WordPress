@@ -282,6 +282,20 @@ function fd_theme_enqueue_assets(): void
         ]
     );
 
+    /*
+     * UX-A: acabamento visual global.
+     *
+     * Carregado por ultimo para refinar header, footer e Home sem
+     * substituir a logica do WooCommerce ou do Facil Digital Core.
+     */
+    fd_theme_enqueue_style_file(
+        'fd-ux-a',
+        '/assets/css/ux-a.css',
+        [
+            'fd-responsive',
+        ]
+    );
+
     fd_theme_enqueue_script_file(
         'fd-navigation',
         '/assets/js/navigation.js'

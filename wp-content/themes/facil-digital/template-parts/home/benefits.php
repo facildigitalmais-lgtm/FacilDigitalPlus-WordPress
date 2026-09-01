@@ -9,23 +9,23 @@ if (!defined('ABSPATH')) {
 $benefits = [
     [
         'number' => '01',
-        'title'  => 'Conteúdo organizado',
-        'text'   => 'Apostilas estruturadas para ajudar você a estudar com mais foco e organização.',
+        'title'  => 'Apostilas digitais',
+        'text'   => 'Materiais organizados para ajudar você a estudar com mais foco e objetividade.',
     ],
     [
         'number' => '02',
+        'title'  => 'Área do Aluno',
+        'text'   => 'Compras, apostilas e recursos liberados reunidos em uma experiência simples.',
+    ],
+    [
+        'number' => '03',
         'title'  => 'Simulados online',
         'text'   => 'Pratique questões, acompanhe resultados e identifique sua evolução.',
     ],
     [
-        'number' => '03',
-        'title'  => 'Tudo na sua conta',
-        'text'   => 'Acesse apostilas, simulados, resultados e recursos liberados para você.',
-    ],
-    [
         'number' => '04',
-        'title'  => 'Compra segura',
-        'text'   => 'Finalize sua compra em um fluxo seguro e tenha o acesso associado à sua conta.',
+        'title'  => 'Acesso seguro',
+        'text'   => 'Conteúdo vinculado à sua conta e protegido pelos controles da plataforma.',
     ],
 ];
 
@@ -42,10 +42,10 @@ $benefits = [
                     'Fácil Digital+',
 
                 'title' =>
-                    'Uma plataforma para organizar sua preparação',
+                    'Sua preparação em um único lugar',
 
                 'text' =>
-                    'Da escolha da apostila à prática com simulados, tudo reunido em uma única experiência.',
+                    'Escolha seu material, estude, pratique e acompanhe sua evolução com uma experiência integrada.',
 
                 'center' =>
                     true,

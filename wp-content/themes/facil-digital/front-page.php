@@ -17,6 +17,10 @@ get_header();
     );
 
     get_template_part(
+        'template-parts/home/benefits'
+    );
+
+    get_template_part(
         'template-parts/home/featured-contests'
     );
 
@@ -25,15 +29,11 @@ get_header();
     );
 
     get_template_part(
-        'template-parts/home/benefits'
+        'template-parts/home/simulations'
     );
 
     get_template_part(
         'template-parts/home/steps'
-    );
-
-    get_template_part(
-        'template-parts/home/simulations'
     );
 
     get_template_part(

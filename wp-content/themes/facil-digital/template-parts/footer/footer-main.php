@@ -6,6 +6,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$contactEmail =
+    sanitize_email(
+        (string) get_option(
+            'admin_email'
+        )
+    );
+
 ?>
 
 <div class="fd-footer-main">
@@ -23,11 +30,27 @@ if (!defined('ABSPATH')) {
             </a>
 
             <p>
-                Apostilas digitais e simulados
-                para quem busca uma preparação
-                objetiva e eficiente para
-                concursos públicos.
+                Apostilas digitais, simulados e
+                ferramentas para uma preparação
+                mais organizada para concursos públicos.
             </p>
+
+            <?php if ($contactEmail !== '') : ?>
+                <a
+                    class="fd-footer-brand__contact"
+                    href="mailto:<?php
+                        echo esc_attr(
+                            $contactEmail
+                        );
+                    ?>"
+                >
+                    <?php
+                    echo esc_html(
+                        $contactEmail
+                    );
+                    ?>
+                </a>
+            <?php endif; ?>
         </section>
 
         <section class="fd-footer-column">
