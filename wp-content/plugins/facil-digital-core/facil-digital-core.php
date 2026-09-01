@@ -128,3 +128,60 @@ add_action(
     },
     20
 );
+
+/*
+ * ADMIN-A bootstrap
+ *
+ * Mantido fora do ModuleRegistry nesta primeira entrega para permitir
+ * rollout isolado e rollback simples. O modulo continua dentro do
+ * Facil Digital+ Core e usa o autoload PSR-4 existente.
+ */
+if (
+    !defined(
+        'FACIL_DIGITAL_ADMIN_A_BOOTSTRAPPED'
+    )
+) {
+    define(
+        'FACIL_DIGITAL_ADMIN_A_BOOTSTRAPPED',
+        true
+    );
+
+    add_action(
+        'plugins_loaded',
+        static function (): void {
+            if (
+                !class_exists(
+                    \FacilDigital\Core\Admin\AdminDashboardModule::class
+                )
+            ) {
+                return;
+            }
+
+            $module =
+                new \FacilDigital\Core\Admin\AdminDashboardModule();
+
+            $module->register();
+        },
+        40
+    );
+}
+
+/*
+ * ADMIN-B bootstrap
+ * Central administrativa de conteudo. Os modulos de Questoes,
+ * Simulados e Importacao continuam sendo as autoridades funcionais.
+ */
+if (!defined('FACIL_DIGITAL_ADMIN_B_BOOTSTRAPPED')) {
+    define('FACIL_DIGITAL_ADMIN_B_BOOTSTRAPPED', true);
+    add_action(
+        'plugins_loaded',
+        static function (): void {
+            if (!class_exists(\FacilDigital\Core\Admin\AdminContentModule::class)) {
+                return;
+            }
+            $module = new \FacilDigital\Core\Admin\AdminContentModule();
+            $module->register();
+        },
+        41
+    );
+}
