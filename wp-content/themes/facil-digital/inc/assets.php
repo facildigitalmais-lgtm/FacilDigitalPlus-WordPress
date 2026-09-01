@@ -139,12 +139,25 @@ function fd_theme_enqueue_assets(): void
         ]
     );
 
+    if (
+        is_front_page()
+        || fd_theme_is_storefront_context()
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-product-card',
+            '/assets/css/product-card.css',
+            [
+                'fd-components',
+            ]
+        );
+    }
+
     if (is_front_page()) {
         fd_theme_enqueue_style_file(
             'fd-home',
             '/assets/css/home.css',
             [
-                'fd-components',
+                'fd-product-card',
             ]
         );
     }
@@ -194,7 +207,7 @@ function fd_theme_enqueue_assets(): void
             'fd-storefront',
             '/assets/css/storefront.css',
             [
-                'fd-components',
+                'fd-product-card',
             ]
         );
 
@@ -214,6 +227,36 @@ function fd_theme_enqueue_assets(): void
             [
                 'fd-storefront',
             ]
+        );
+    }
+
+    if (
+        function_exists('is_account_page')
+        && is_account_page()
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-student',
+            '/assets/css/student.css',
+            [
+                'fd-components',
+            ]
+        );
+    }
+
+    if (
+        (string) get_query_var('fd_simulation') !== ''
+    ) {
+        fd_theme_enqueue_style_file(
+            'fd-simulation',
+            '/assets/css/simulation.css',
+            [
+                'fd-components',
+            ]
+        );
+
+        fd_theme_enqueue_script_file(
+            'fd-simulation',
+            '/assets/js/simulation.js'
         );
     }
 

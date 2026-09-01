@@ -61,3 +61,6 @@ storage/
 *.db
 *.sql
 *.sql.gz
+
+# Runtime privado do Facil Digital+
+.runtime/

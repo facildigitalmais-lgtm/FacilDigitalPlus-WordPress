@@ -18,7 +18,7 @@ $description =
     <span class="fd-eyebrow">
         <?php
         echo esc_html__(
-            'Catalogo Facil Digital+',
+            'Catálogo Fácil Digital+',
             'facil-digital'
         );
         ?>
@@ -46,7 +46,7 @@ $description =
         method="get"
         action="<?php
             echo esc_url(
-                home_url('/')
+                fd_theme_get_shop_url()
             );
         ?>"
     >
@@ -72,20 +72,20 @@ $description =
             <input
                 id="fd-catalog-search"
                 type="search"
-                name="s"
+                name="busca"
+                value="<?php
+                    echo esc_attr(
+                        fd_theme_catalog_current_search()
+                    );
+                ?>"
                 placeholder="<?php
                     echo esc_attr__(
-                        'Busque por concurso ou cargo...',
+                        'Busque por concurso, banca ou cargo...',
                         'facil-digital'
                     );
                 ?>"
             >
 
-            <input
-                type="hidden"
-                name="post_type"
-                value="product"
-            >
 
             <button
                 class="fd-button fd-button--primary"

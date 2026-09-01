@@ -21,6 +21,7 @@ $success =
     <div
         class="fd-notice fd-notice--error"
         role="alert"
+        aria-live="assertive"
     >
         <strong>
             Verifique os dados informados:
@@ -46,6 +47,7 @@ $success =
     <div
         class="fd-notice fd-notice--success"
         role="status"
+        aria-live="polite"
     >
         <?php
         echo esc_html(

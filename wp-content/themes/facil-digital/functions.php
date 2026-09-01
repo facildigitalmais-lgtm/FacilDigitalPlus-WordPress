@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
 define(
     'FD_THEME_VERSION',
-    '0.3.0'
+    '0.4.0'
 );
 
 define(
@@ -29,6 +29,7 @@ $fdThemeFiles = [
     '/inc/authentication.php',
     '/inc/catalog.php',
     '/inc/product.php',
+    '/inc/core-commerce.php',
 ];
 
 foreach ($fdThemeFiles as $fdThemeFile) {

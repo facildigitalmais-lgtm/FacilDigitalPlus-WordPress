@@ -104,30 +104,100 @@ function fd_theme_get_related_product_objects(
     WC_Product $product,
     int $limit = 3
 ): array {
-    $ids =
+    $limit =
+        max(
+            1,
+            $limit
+        );
+
+    $candidateIds =
         wc_get_related_products(
             $product->get_id(),
-            $limit,
+            max(
+                12,
+                $limit * 4
+            ),
             [
                 $product->get_id(),
             ]
         );
 
-    if ($ids === []) {
-        $ids =
+    $products = [];
+
+    $seen = [
+        (int) $product->get_id() =>
+            true,
+    ];
+
+    $appendProduct =
+        static function (
+            int $productId
+        ) use (
+            &$products,
+            &$seen,
+            $limit
+        ): void {
+            if (
+                isset($seen[$productId])
+                || count($products) >= $limit
+            ) {
+                return;
+            }
+
+            $seen[$productId] =
+                true;
+
+            $related =
+                wc_get_product(
+                    $productId
+                );
+
+            if (
+                !$related instanceof WC_Product
+                || !$related->is_visible()
+            ) {
+                return;
+            }
+
+            if (
+                fd_theme_core_product_metadata_available()
+                && !\FacilDigital\Core\Products\ProductMetadata::isApostila(
+                    $productId
+                )
+            ) {
+                return;
+            }
+
+            $products[] =
+                $related;
+        };
+
+    foreach ($candidateIds as $id) {
+        $appendProduct(
+            (int) $id
+        );
+    }
+
+    /*
+     * Quando os relacionados nativos do WooCommerce
+     * nao forem suficientes, completa somente com
+     * apostilas publicadas recentes.
+     */
+    if (count($products) < $limit) {
+        $recentIds =
             wc_get_products(
                 [
-                    'status'  =>
+                    'status' =>
                         'publish',
 
-                    'limit'   =>
-                        $limit,
+                    'limit' =>
+                        max(
+                            12,
+                            $limit * 4
+                        ),
 
                     'exclude' =>
-                        [
-                            $product
-                                ->get_id(),
-                        ],
+                        array_keys($seen),
 
                     'orderby' =>
                         'date',
@@ -139,28 +209,23 @@ function fd_theme_get_related_product_objects(
                         'ids',
                 ]
             );
-    }
 
-    $products = [];
-
-    foreach ($ids as $id) {
-        $related =
-            wc_get_product(
+        foreach ($recentIds as $id) {
+            $appendProduct(
                 (int) $id
             );
 
-        if (
-            !$related
-            || !$related->is_visible()
-        ) {
-            continue;
+            if (count($products) >= $limit) {
+                break;
+            }
         }
-
-        $products[] =
-            $related;
     }
 
-    return $products;
+    return array_slice(
+        $products,
+        0,
+        $limit
+    );
 }
 
 function fd_theme_product_stock_label(
@@ -168,13 +233,41 @@ function fd_theme_product_stock_label(
 ): string {
     if (!$product->is_in_stock()) {
         return __(
-            'Indisponivel',
+            'Indisponível',
             'facil-digital'
         );
     }
 
     return __(
-        'Disponivel',
+        'Disponível',
         'facil-digital'
     );
 }
+
+
+function fd_theme_single_add_to_cart_text(
+    string $text
+): string {
+    global $product;
+
+    if (
+        !$product instanceof WC_Product
+        || !fd_theme_core_product_metadata_available()
+        || !\FacilDigital\Core\Products\ProductMetadata::isApostila(
+            (int) $product->get_id()
+        )
+    ) {
+        return $text;
+    }
+
+    return __(
+        'Comprar apostila',
+        'facil-digital'
+    );
+}
+
+add_filter(
+    'woocommerce_product_single_add_to_cart_text',
+    'fd_theme_single_add_to_cart_text',
+    20
+);

@@ -253,3 +253,61 @@ echo wp_json_encode(
 );
 
 echo PHP_EOL;
+
+/*
+ * P2 COMPATIBILITY: W2C PRODUCTS ARE APOSTILAS
+ *
+ * O catálogo atual exibe somente produtos
+ * reconhecidos pelo Fácil Digital+ Core
+ * como apostilas.
+ *
+ * Estes são fixtures temporários de catálogo,
+ * portanto também devem respeitar o contrato
+ * comercial atual.
+ */
+$fdW2cApostilaMetaKey =
+    class_exists(
+        '\FacilDigital\Core\Products\ProductMetadata'
+    )
+        ? \FacilDigital\Core\Products\ProductMetadata::IS_APOSTILA
+        : '_fd_is_apostila';
+
+$fdW2cSeedProductIds =
+    get_posts(
+        [
+            'post_type' =>
+                'product',
+
+            'post_status' =>
+                'publish',
+
+            'posts_per_page' =>
+                -1,
+
+            'fields' =>
+                'ids',
+
+            'meta_key' =>
+                '_fd_w2c_seed',
+
+            'meta_value' =>
+                '1',
+        ]
+    );
+
+foreach (
+    $fdW2cSeedProductIds
+    as $fdW2cSeedProductId
+) {
+    update_post_meta(
+        (int) $fdW2cSeedProductId,
+        $fdW2cApostilaMetaKey,
+        'yes'
+    );
+}
+
+unset(
+    $fdW2cApostilaMetaKey,
+    $fdW2cSeedProductIds,
+    $fdW2cSeedProductId
+);

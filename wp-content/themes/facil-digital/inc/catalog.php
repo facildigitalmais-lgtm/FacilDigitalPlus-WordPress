@@ -169,7 +169,7 @@ function fd_theme_catalog_orderby_options(): array
     return [
         'menu_order' =>
             __(
-                'Ordenacao padrao',
+                'Ordenação padrão',
                 'facil-digital'
             ),
 
@@ -181,13 +181,13 @@ function fd_theme_catalog_orderby_options(): array
 
         'price' =>
             __(
-                'Menor preco',
+                'Menor preço',
                 'facil-digital'
             ),
 
         'price-desc' =>
             __(
-                'Maior preco',
+                'Maior preço',
                 'facil-digital'
             ),
     ];
@@ -274,7 +274,7 @@ function fd_theme_catalog_description(): string
     }
 
     return __(
-        'Encontre materiais digitais para sua preparacao e escolha a apostila adequada ao seu objetivo.',
+        'Encontre materiais digitais para sua preparação e escolha a apostila adequada ao seu objetivo.',
         'facil-digital'
     );
 }

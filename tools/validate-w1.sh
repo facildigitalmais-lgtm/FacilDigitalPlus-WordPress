@@ -198,10 +198,20 @@ COUNTRY="$(
     woocommerce_default_country
 )"
 
-[[ "$COUNTRY" == "BR" ]] \
-  || fail "Pais deve ser BR"
+[[ "${COUNTRY%%:*}" == "BR" ]] \
+  || fail "Pais deve ser BR; atual: $COUNTRY"
 
 pass "pais BR"
+
+COMING_SOON="$(
+  wpcli option get \
+    woocommerce_coming_soon
+)"
+
+[[ "$COMING_SOON" == "no" ]] \
+  || fail "loja WooCommerce esta em Coming Soon"
+
+pass "loja publica para testes E2E"
 
 GUEST="$(
   wpcli option get \

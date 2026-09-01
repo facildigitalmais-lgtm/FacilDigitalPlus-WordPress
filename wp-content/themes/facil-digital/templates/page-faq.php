@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Facil Digital - FAQ
+Template Name: Fácil Digital - FAQ
 */
 
 declare(strict_types=1);
@@ -12,15 +12,15 @@ if (!defined('ABSPATH')) {
 $faqs = [
     [
         'question' =>
-            'O que e a Facil Digital+?',
+            'O que é a Fácil Digital+?',
         'answer' =>
-            'E uma plataforma de materiais digitais e ferramentas de preparacao para concursos publicos.',
+            'É uma plataforma de materiais digitais e ferramentas de preparação para concursos públicos.',
     ],
     [
         'question' =>
             'Como encontro uma apostila?',
         'answer' =>
-            'Use a busca do site ou acesse o catalogo de apostilas para localizar o concurso e cargo desejados.',
+            'Use a busca do site ou acesse o catálogo de apostilas para localizar o concurso e cargo desejados.',
     ],
     [
         'question' =>
@@ -38,7 +38,7 @@ $faqs = [
         'question' =>
             'Esqueci minha senha. O que fazer?',
         'answer' =>
-            'Utilize a pagina Recuperar Senha. Se existir uma conta associada aos dados informados, o WordPress enviara as instrucoes de redefinicao.',
+            'Utilize a página Recuperar Senha. Se existir uma conta associada aos dados informados, o WordPress enviará as instruções de redefinição.',
     ],
     [
         'question' =>
@@ -48,7 +48,7 @@ $faqs = [
     ],
     [
         'question' =>
-            'Os simulados serao online?',
+            'Os simulados serão online?',
         'answer' =>
             'Sim. A plataforma foi projetada para disponibilizar simulados e resultados diretamente na conta do aluno.',
     ],
@@ -56,7 +56,7 @@ $faqs = [
         'question' =>
             'Como entro em contato?',
         'answer' =>
-            'Utilize a pagina Contato para consultar o canal oficial de atendimento.',
+            'Utilize a página Contato para consultar o canal oficial de atendimento.',
     ],
 ];
 
@@ -77,7 +77,7 @@ get_header();
         <p>
             Encontre respostas para
             as principais duvidas sobre
-            a Facil Digital+.
+            a Fácil Digital+.
         </p>
     </div>
 </section>

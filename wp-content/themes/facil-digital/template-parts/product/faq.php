@@ -9,40 +9,43 @@ if (!defined('ABSPATH')) {
 $faqs = [
     [
         'question' =>
-            'Este produto e digital?',
+            'Este produto é digital?',
 
         'answer' =>
-            'Sim. Esta pagina representa uma apostila digital comercializada pela plataforma Facil Digital+.',
+            'Sim. Esta apostila é comercializada em formato digital pela Fácil Digital+.',
     ],
 
     [
         'question' =>
-            'O preco muda conforme a forma de pagamento?',
+            'Como vejo o valor da compra?',
 
         'answer' =>
-            'Nao. A Facil Digital+ trabalha com um unico preco base para o produto. Condicoes operacionais do meio de pagamento nao alteram o cadastro comercial da apostila.',
+            'O valor da apostila é exibido nesta página. As opções disponíveis no checkout são apresentadas antes da finalização.',
     ],
 
     [
         'question' =>
-            'Preciso estar cadastrado?',
+            'Preciso ter uma conta?',
 
         'answer' =>
-            'Sim. A conta do cliente e utilizada para associar pedidos e os recursos digitais disponibilizados pela plataforma.',
+            'Sim. Sua conta é utilizada para associar pedidos, apostilas e outros recursos digitais disponibilizados pela plataforma.',
     ],
 
     [
         'question' =>
-            'Quando receberei o material protegido?',
+            'Como recebo o material?',
 
         'answer' =>
-            'O fluxo definitivo de liberacao e protecao do PDF sera integrado ao status de pagamento nas fases especificas de entitlement e documentos protegidos.',
+            'A liberação é vinculada ao pedido e à sua conta. Após o processamento, o material fica disponível na área do aluno conforme o status definido pela plataforma.',
     ],
 ];
 
 ?>
 
-<section class="fd-product-section fd-product-faq">
+<section
+    class="fd-product-section fd-product-faq"
+    id="duvidas"
+>
     <div class="fd-product-section__heading">
         <span class="fd-eyebrow">
             FAQ
@@ -51,7 +54,7 @@ $faqs = [
         <h2>
             <?php
             echo esc_html__(
-                'Duvidas sobre esta compra',
+                'Dúvidas sobre esta compra',
                 'facil-digital'
             );
             ?>
@@ -59,16 +62,12 @@ $faqs = [
     </div>
 
     <div class="fd-faq-list">
-        <?php
-        foreach ($faqs as $faq) :
-            ?>
+        <?php foreach ($faqs as $faq) : ?>
             <details class="fd-faq-item">
                 <summary>
                     <?php
                     echo esc_html(
-                        $faq[
-                            'question'
-                        ]
+                        $faq['question']
                     );
                     ?>
                 </summary>
@@ -77,9 +76,7 @@ $faqs = [
                     <p>
                         <?php
                         echo esc_html(
-                            $faq[
-                                'answer'
-                            ]
+                            $faq['answer']
                         );
                         ?>
                     </p>

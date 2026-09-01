@@ -32,7 +32,10 @@ if ($related === []) {
 
 ?>
 
-<section class="fd-product-section fd-product-related">
+<section
+    class="fd-product-section fd-product-related"
+    id="relacionadas"
+>
     <div class="fd-product-section__heading">
         <span class="fd-eyebrow">
             <?php

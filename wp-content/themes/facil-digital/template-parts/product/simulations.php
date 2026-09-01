@@ -6,9 +6,37 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$product =
+    $args['product']
+    ?? null;
+
+if (
+    !$product instanceof WC_Product
+    || !fd_theme_core_product_metadata_available()
+) {
+    return;
+}
+
+$productId =
+    (int) $product->get_id();
+
+$hasSimulations =
+    \FacilDigital\Core\Products\ProductMetadata::get(
+        $productId,
+        \FacilDigital\Core\Products\ProductMetadata::HAS_SIMULATIONS,
+        'no'
+    ) === 'yes';
+
+if (!$hasSimulations) {
+    return;
+}
+
 ?>
 
-<section class="fd-product-section fd-product-simulations">
+<section
+    class="fd-product-section fd-product-simulations"
+    id="simulados"
+>
     <div>
         <span class="fd-eyebrow">
             <?php
@@ -22,7 +50,7 @@ if (!defined('ABSPATH')) {
         <h2>
             <?php
             echo esc_html__(
-                'Pratica integrada a plataforma',
+                'Prática integrada à plataforma',
                 'facil-digital'
             );
             ?>
@@ -31,7 +59,7 @@ if (!defined('ABSPATH')) {
         <p>
             <?php
             echo esc_html__(
-                'Quando simulados forem vinculados a esta apostila, eles aparecerao aqui e na area do aluno. A vinculacao funcional sera implementada nas proximas fases do Facil Digital+ Core.',
+                'Os simulados vinculados a esta apostila ficam disponíveis na área do aluno conforme o acesso ativo. Tentativas, resultados, histórico e ranking permanecem vinculados à sua conta.',
                 'facil-digital'
             );
             ?>
@@ -51,7 +79,7 @@ if (!defined('ABSPATH')) {
         </strong>
 
         <small>
-            Estrutura preparada
+            Acesso pela área do aluno
         </small>
     </div>
 </section>

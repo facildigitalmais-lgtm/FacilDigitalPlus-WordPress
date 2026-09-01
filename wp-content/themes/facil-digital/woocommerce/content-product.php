@@ -2,9 +2,6 @@
 /**
  * Product content inside catalog loops.
  *
- * Base WooCommerce template compatibility:
- * content-product.php @version 9.4.0.
- *
  * @package FacilDigital
  */
 
@@ -15,10 +12,7 @@ defined('ABSPATH') || exit;
 global $product;
 
 if (
-    !is_a(
-        $product,
-        WC_Product::class
-    )
+    !$product instanceof WC_Product
     || !$product->is_visible()
 ) {
     return;
@@ -29,53 +23,24 @@ if (
 <li
     <?php
     wc_product_class(
-        'fd-catalog-card',
+        'fd-catalog-item',
         $product
     );
     ?>
     data-product-id="<?php
         echo esc_attr(
-            (string) $product
-                ->get_id()
+            (string) $product->get_id()
         );
     ?>"
 >
     <?php
-    do_action(
-        'woocommerce_before_shop_loop_item'
+    get_template_part(
+        'template-parts/components/product-card',
+        null,
+        [
+            'product' =>
+                $product,
+        ]
     );
     ?>
-
-    <div class="fd-catalog-card__media">
-        <?php
-        do_action(
-            'woocommerce_before_shop_loop_item_title'
-        );
-        ?>
-    </div>
-
-    <div class="fd-catalog-card__body">
-        <span class="fd-catalog-card__type">
-            <?php
-            echo esc_html__(
-                'Apostila digital',
-                'facil-digital'
-            );
-            ?>
-        </span>
-
-        <?php
-        do_action(
-            'woocommerce_shop_loop_item_title'
-        );
-
-        do_action(
-            'woocommerce_after_shop_loop_item_title'
-        );
-
-        do_action(
-            'woocommerce_after_shop_loop_item'
-        );
-        ?>
-    </div>
 </li>

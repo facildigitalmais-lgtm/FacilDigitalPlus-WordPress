@@ -11,6 +11,27 @@ $searchId =
         'fd-search-field-'
     );
 
+$currentSearch = '';
+
+if (
+    function_exists(
+        'fd_theme_catalog_current_search'
+    )
+) {
+    $currentSearch =
+        fd_theme_catalog_current_search();
+} elseif (
+    isset($_GET['busca'])
+    && is_string($_GET['busca'])
+) {
+    $currentSearch =
+        sanitize_text_field(
+            wp_unslash(
+                $_GET['busca']
+            )
+        );
+}
+
 ?>
 
 <form
@@ -19,7 +40,7 @@ $searchId =
     class="fd-search-form"
     action="<?php
         echo esc_url(
-            home_url('/')
+            fd_theme_get_shop_url()
         );
     ?>"
 >
@@ -33,7 +54,7 @@ $searchId =
     >
         <?php
         echo esc_html__(
-            'Buscar no site',
+            'Buscar apostilas',
             'facil-digital'
         );
         ?>
@@ -54,15 +75,15 @@ $searchId =
             ?>"
             type="search"
             class="fd-search-form__input"
-            name="s"
+            name="busca"
             value="<?php
                 echo esc_attr(
-                    get_search_query()
+                    $currentSearch
                 );
             ?>"
             placeholder="<?php
                 echo esc_attr__(
-                    'Busque por concurso, cargo ou apostila...',
+                    'Busque por concurso, cargo, banca ou apostila...',
                     'facil-digital'
                 );
             ?>"

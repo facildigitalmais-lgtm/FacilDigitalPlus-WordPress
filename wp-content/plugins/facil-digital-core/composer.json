@@ -4,7 +4,9 @@
   "type": "wordpress-plugin",
   "license": "proprietary",
   "require": {
-    "php": ">=8.2"
+    "php": ">=8.2",
+    "setasign/fpdi": "^2.6",
+    "tecnickcom/tcpdf": "6.11.*"
   },
   "autoload": {
     "psr-4": {

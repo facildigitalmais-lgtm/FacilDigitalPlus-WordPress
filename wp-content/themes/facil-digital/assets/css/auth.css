@@ -374,3 +374,39 @@
     color:
         var(--fd-color-danger);
 }
+/* P2F.2 - acessibilidade da autenticacao */
+
+.fd-auth-page
+.fd-form-field input:focus-visible {
+    outline:
+        3px solid
+        rgb(11 92 255 / 0.22);
+
+    outline-offset:
+        2px;
+}
+
+.fd-password-toggle:focus-visible,
+.fd-auth-page a:focus-visible,
+.fd-auth-page button:focus-visible {
+    outline:
+        3px solid
+        rgb(11 92 255 / 0.22);
+
+    outline-offset:
+        3px;
+}
+
+.fd-password-toggle[aria-pressed="true"] {
+    background:
+        var(--fd-color-primary-soft);
+}
+
+.fd-auth-terms a {
+    text-underline-offset: 3px;
+}
+
+.fd-auth-card
+.fd-notice:first-child {
+    margin-top: 0;
+}

@@ -19,7 +19,7 @@ get_header();
         <span class="fd-eyebrow">
             <?php
             echo esc_html__(
-                'Pagina nao encontrada',
+                'Página não encontrada',
                 'facil-digital'
             );
             ?>
@@ -28,7 +28,7 @@ get_header();
         <h1>
             <?php
             echo esc_html__(
-                'Este endereco nao existe ou foi movido.',
+                'Este endereço não existe ou foi movido.',
                 'facil-digital'
             );
             ?>
@@ -37,7 +37,7 @@ get_header();
         <p>
             <?php
             echo esc_html__(
-                'Use a busca para encontrar uma apostila ou retorne ao inicio.',
+                'Use a busca para encontrar uma apostila ou retorne ao início.',
                 'facil-digital'
             );
             ?>
@@ -76,7 +76,7 @@ get_header();
             >
                 <?php
                 echo esc_html__(
-                    'Voltar ao inicio',
+                    'Voltar ao início',
                     'facil-digital'
                 );
                 ?>

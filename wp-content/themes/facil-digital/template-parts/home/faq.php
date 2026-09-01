@@ -11,25 +11,25 @@ $items = [
         'question' =>
             'Como recebo minha apostila?',
         'answer' =>
-            'Os materiais digitais adquiridos ficam vinculados a sua conta de cliente conforme a liberacao do pedido.',
+            'Após a liberação do pedido, a apostila fica vinculada à sua conta e pode ser acessada pela área do aluno.',
     ],
     [
         'question' =>
             'Preciso criar uma conta?',
         'answer' =>
-            'Sim. A conta permite associar compras, materiais e futuramente resultados de simulados ao aluno correto.',
+            'Sim. Sua conta reúne compras, apostilas, simulados, tentativas e resultados em um só lugar.',
     ],
     [
         'question' =>
             'Posso acessar pelo celular?',
         'answer' =>
-            'Sim. A plataforma esta sendo desenvolvida para funcionar em computadores, tablets e celulares.',
+            'Sim. A plataforma possui interface responsiva para computadores, tablets e celulares.',
     ],
     [
         'question' =>
             'Os simulados ficam na mesma conta?',
         'answer' =>
-            'Sim. A arquitetura da plataforma foi preparada para centralizar materiais e simulados na area do aluno.',
+            'Sim. Os simulados liberados ficam disponíveis na área do aluno junto aos demais recursos da sua conta.',
     ],
 ];
 
@@ -43,13 +43,13 @@ $items = [
             null,
             [
                 'eyebrow' =>
-                    'Duvidas frequentes',
+                    'Dúvidas frequentes',
 
                 'title' =>
-                    'Antes de comecar',
+                    'Antes de começar',
 
                 'text' =>
-                    'Algumas respostas rapidas sobre a plataforma.',
+                    'Respostas rápidas para as principais dúvidas sobre a plataforma.',
             ]
         );
         ?>

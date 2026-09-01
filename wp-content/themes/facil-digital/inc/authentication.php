@@ -108,7 +108,7 @@ function fd_theme_auth_nonce_is_valid(
     ) {
         fd_theme_auth_add_error(
             __(
-                'Nao foi possivel validar esta solicitacao. Atualize a pagina e tente novamente.',
+                'Não foi possível validar esta solicitação. Atualize a página e tente novamente.',
                 'facil-digital'
             )
         );
@@ -198,7 +198,7 @@ function fd_theme_handle_login(): void
     ) {
         fd_theme_auth_add_error(
             __(
-                'Informe seu e-mail ou usuario e sua senha.',
+                'Informe seu e-mail ou usuário e sua senha.',
                 'facil-digital'
             )
         );
@@ -219,7 +219,7 @@ function fd_theme_handle_login(): void
     if (is_wp_error($user)) {
         fd_theme_auth_add_error(
             __(
-                'E-mail, usuario ou senha invalidos.',
+                'E-mail, usuário ou senha inválidos.',
                 'facil-digital'
             )
         );
@@ -351,7 +351,7 @@ function fd_theme_handle_register(): void
     ) {
         fd_theme_auth_add_error(
             __(
-                'O cadastro de novas contas esta temporariamente indisponivel.',
+                'O cadastro de novas contas está temporariamente indisponível.',
                 'facil-digital'
             )
         );
@@ -377,7 +377,7 @@ function fd_theme_handle_register(): void
     ) {
         fd_theme_auth_add_error(
             __(
-                'Informe um endereco de e-mail valido.',
+                'Informe um endereço de e-mail válido.',
                 'facil-digital'
             )
         );
@@ -389,7 +389,7 @@ function fd_theme_handle_register(): void
     ) {
         fd_theme_auth_add_error(
             __(
-                'Ja existe uma conta cadastrada com este e-mail.',
+                'Já existe uma conta cadastrada com este e-mail.',
                 'facil-digital'
             )
         );
@@ -411,7 +411,7 @@ function fd_theme_handle_register(): void
     ) {
         fd_theme_auth_add_error(
             __(
-                'As senhas informadas nao coincidem.',
+                'As senhas informadas não coincidem.',
                 'facil-digital'
             )
         );
@@ -420,7 +420,7 @@ function fd_theme_handle_register(): void
     if (!$acceptedTerms) {
         fd_theme_auth_add_error(
             __(
-                'Voce precisa aceitar os Termos de Uso e a Politica de Privacidade.',
+                'Você precisa aceitar os Termos de Uso e a Política de Privacidade.',
                 'facil-digital'
             )
         );
@@ -440,7 +440,7 @@ function fd_theme_handle_register(): void
     ) {
         fd_theme_auth_add_error(
             __(
-                'O servico de cadastro esta temporariamente indisponivel.',
+                'O serviço de cadastro está temporariamente indisponível.',
                 'facil-digital'
             )
         );
@@ -472,7 +472,7 @@ function fd_theme_handle_register(): void
     if (is_wp_error($customerId)) {
         fd_theme_auth_add_error(
             __(
-                'Nao foi possivel criar sua conta. Verifique os dados e tente novamente.',
+                'Não foi possível criar sua conta. Verifique os dados e tente novamente.',
                 'facil-digital'
             )
         );
@@ -546,7 +546,7 @@ function fd_theme_handle_lost_password(): void
     if ($identifier === '') {
         fd_theme_auth_add_error(
             __(
-                'Informe seu e-mail ou nome de usuario.',
+                'Informe seu e-mail ou nome de usuário.',
                 'facil-digital'
             )
         );

@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
 >
     <?php
     echo esc_html__(
-        'Ir para o conteudo',
+        'Ir para o conteúdo',
         'facil-digital'
     );
     ?>

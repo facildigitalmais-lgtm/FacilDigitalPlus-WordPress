@@ -94,20 +94,11 @@ extract_set_cookie() {
 
         sub(/\r$/, "", line)
 
-        if (
-          index(
-            tolower(line),
-            "set-cookie:"
-          ) != 1
-        ) {
+        if (index(tolower(line), "set-cookie:") != 1) {
           next
         }
 
-        sub(
-          /^[Ss][Ee][Tt]-[Cc][Oo][Oo][Kk][Ii][Ee]:[[:space:]]*/,
-          "",
-          line
-        )
+        sub(/^[Ss][Ee][Tt]-[Cc][Oo][Oo][Kk][Ii][Ee]:[[:space:]]*/, "", line)
 
         if (index(tolower(line), tolower(cookie_name)) == 1) {
           sub(/;.*/, "", line)

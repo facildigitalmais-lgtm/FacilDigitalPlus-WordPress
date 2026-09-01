@@ -19,14 +19,14 @@ if (!defined('ABSPATH')) {
                     );
                 ?>"
             >
-                Facil Digital<strong>+</strong>
+                Fácil Digital<strong>+</strong>
             </a>
 
             <p>
                 Apostilas digitais e simulados
-                para quem busca uma preparacao
+                para quem busca uma preparação
                 objetiva e eficiente para
-                concursos publicos.
+                concursos públicos.
             </p>
         </section>
 

@@ -12,19 +12,19 @@ if (!defined('ABSPATH')) {
     <div class="fd-container fd-home-simulations__grid">
         <div>
             <span class="fd-eyebrow">
-                Mais que leitura
+                Mais do que leitura
             </span>
 
             <h2>
                 Pratique com simulados
-                e acompanhe sua evolucao
+                e acompanhe sua evolução
             </h2>
 
             <p>
-                A plataforma Facil Digital+
-                foi planejada para reunir
-                apostilas, questoes, simulados
-                e resultados em um unico ambiente.
+                A Fácil Digital+ reúne
+                apostilas, questões, simulados,
+                tentativas e resultados
+                em um único ambiente.
             </p>
 
             <a
@@ -35,7 +35,7 @@ if (!defined('ABSPATH')) {
                     );
                 ?>"
             >
-                Acessar minha conta
+                Ir para a área do aluno
             </a>
         </div>
 

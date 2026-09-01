@@ -211,3 +211,45 @@
     color:
         var(--fd-color-text-muted);
 }
+
+/* P2G - institutional responsive */
+
+@media (
+    max-width: 1023px
+) {
+    .fd-content-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+    .fd-contact-grid {
+        grid-template-columns:
+            1fr;
+    }
+}
+
+@media (
+    max-width: 640px
+) {
+    .fd-page-hero {
+        padding:
+            var(--fd-space-10)
+            0;
+    }
+
+    .fd-content-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .fd-content-card,
+    .fd-contact-card,
+    .fd-contact-help,
+    .fd-faq-support {
+        padding:
+            var(--fd-space-5);
+    }
+}

@@ -10,7 +10,7 @@ $steps = [
     [
         'number' => '1',
         'title'  => 'Encontre',
-        'text'   => 'Busque pelo concurso ou cargo desejado.',
+        'text'   => 'Busque pelo concurso, banca ou cargo desejado.',
     ],
     [
         'number' => '2',
@@ -20,12 +20,12 @@ $steps = [
     [
         'number' => '3',
         'title'  => 'Compre',
-        'text'   => 'Finalize a compra pela plataforma.',
+        'text'   => 'Finalize seu pedido pelo checkout seguro da plataforma.',
     ],
     [
         'number' => '4',
         'title'  => 'Estude',
-        'text'   => 'Acesse sua conta e inicie sua preparacao.',
+        'text'   => 'Acesse sua área do aluno e comece sua preparação.',
     ],
 ];
 
@@ -42,7 +42,7 @@ $steps = [
                     'Como funciona',
 
                 'title' =>
-                    'Do primeiro clique ao estudo em quatro passos',
+                    'Da escolha da apostila ao início dos estudos',
 
                 'center' =>
                     true,

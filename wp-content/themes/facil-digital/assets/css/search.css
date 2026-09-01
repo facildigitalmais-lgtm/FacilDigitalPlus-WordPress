@@ -220,3 +220,57 @@
     gap:
         var(--fd-space-3);
 }
+
+
+/* P2G - search / 404 mobile */
+
+.fd-search-pagination
+a.page-numbers:focus-visible,
+.fd-not-found__actions a:focus-visible {
+    outline:
+        3px solid
+        rgb(11 92 255 / 0.22);
+
+    outline-offset:
+        3px;
+}
+
+@media (
+    max-width: 640px
+) {
+    .fd-search-header {
+        margin-bottom:
+            var(--fd-space-7);
+    }
+
+    .fd-search-form__field {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .fd-search-form__submit {
+        width: 100%;
+    }
+
+    .fd-not-found {
+        min-height: 60vh;
+    }
+
+    .fd-not-found__actions {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .fd-not-found__actions
+    .fd-button {
+        width: 100%;
+    }
+
+    .fd-search-pagination
+    .page-numbers {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
