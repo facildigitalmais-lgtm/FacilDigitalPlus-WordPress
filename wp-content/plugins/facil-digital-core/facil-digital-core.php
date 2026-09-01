@@ -185,3 +185,39 @@ if (!defined('FACIL_DIGITAL_ADMIN_B_BOOTSTRAPPED')) {
         41
     );
 }
+
+/*
+ * ADMIN-C bootstrap
+ *
+ * Central de leitura operacional: resultados, entrega digital
+ * e readiness. Nenhuma regra comercial ou de simulados e alterada.
+ */
+if (
+    !defined(
+        'FACIL_DIGITAL_ADMIN_C_BOOTSTRAPPED'
+    )
+) {
+    define(
+        'FACIL_DIGITAL_ADMIN_C_BOOTSTRAPPED',
+        true
+    );
+
+    add_action(
+        'plugins_loaded',
+        static function (): void {
+            if (
+                !class_exists(
+                    \FacilDigital\Core\Admin\AdminOperationsModule::class
+                )
+            ) {
+                return;
+            }
+
+            $module =
+                new \FacilDigital\Core\Admin\AdminOperationsModule();
+
+            $module->register();
+        },
+        42
+    );
+}
