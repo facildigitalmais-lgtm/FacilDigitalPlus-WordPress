@@ -11,107 +11,63 @@ if (!defined('ABSPATH')) {
 
 get_header();
 
-?>
+while (have_posts()) :
+    the_post();
+    ?>
 
-<section class="fd-page-hero">
-    <div class="fd-container fd-page-hero__inner">
-        <span class="fd-eyebrow">
-            Legal
-        </span>
+    <section class="fd-page-hero">
+        <div class="fd-container fd-page-hero__inner">
+            <span class="fd-eyebrow">
+                <?php
+                echo esc_html__(
+                    'Legal',
+                    'facil-digital'
+                );
+                ?>
+            </span>
 
-        <h1>
-            Termos de Uso
-        </h1>
+            <h1>
+                <?php
+                the_title();
+                ?>
+            </h1>
 
-        <p>
-            Condicoes gerais de utilizacao
-            da plataforma Fácil Digital+.
-        </p>
-    </div>
-</section>
+            <p>
+                <?php
+                echo esc_html__(
+                    'Condições gerais de utilização da plataforma Fácil Digital+.',
+                    'facil-digital'
+                );
+                ?>
+            </p>
+        </div>
+    </section>
 
-<section class="fd-section">
-    <div class="fd-container fd-legal-content">
-        <p class="fd-legal-content__updated">
-            Ultima atualizacao:
+    <section class="fd-section">
+        <div class="fd-container fd-legal-content">
+            <p class="fd-legal-content__updated">
+                <?php
+                printf(
+                    esc_html__(
+                        'Última atualização: %s',
+                        'facil-digital'
+                    ),
+                    esc_html(
+                        get_the_modified_date(
+                            'd/m/Y'
+                        )
+                    )
+                );
+                ?>
+            </p>
+
             <?php
-            echo esc_html(
-                wp_date(
-                    'd/m/Y'
-                )
-            );
+            the_content();
             ?>
-        </p>
+        </div>
+    </section>
 
-        <h2>
-            1. Plataforma
-        </h2>
-
-        <p>
-            A Fácil Digital+ disponibiliza
-            produtos digitais e recursos
-            relacionados à preparação para
-            concursos públicos.
-        </p>
-
-        <h2>
-            2. Conta do usuário
-        </h2>
-
-        <p>
-            O usuário é responsável por
-            manter seus dados cadastrais
-            corretos e por preservar a
-            confidencialidade de sua senha.
-        </p>
-
-        <h2>
-            3. Produtos digitais
-        </h2>
-
-        <p>
-            As condicoes especificas,
-            características e conteúdos
-            de cada produto sao apresentados
-            em sua respectiva página.
-        </p>
-
-        <h2>
-            4. Uso individual
-        </h2>
-
-        <p>
-            O acesso concedido ao comprador
-            destina-se ao uso pessoal
-            conforme as condicoes apresentadas
-            no momento da compra.
-        </p>
-
-        <h2>
-            5. Disponibilidade
-        </h2>
-
-        <p>
-            Podem ocorrer manutencoes,
-            atualizações ou indisponibilidades
-            temporarias necessarias a
-            operacao e seguranca do servico.
-        </p>
-
-        <h2>
-            6. Alterações
-        </h2>
-
-        <p>
-            Estes termos podem ser
-            atualizados quando necessario.
-            A versao disponibilizada nesta
-            página representa os termos
-            vigentes publicados no site.
-        </p>
-    </div>
-</section>
-
-<?php
+    <?php
+endwhile;
 
 get_footer();

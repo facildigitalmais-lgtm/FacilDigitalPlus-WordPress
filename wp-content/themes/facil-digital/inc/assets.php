@@ -349,6 +349,17 @@ function fd_theme_enqueue_assets(): void
             ]
         );
     }
+    /*
+     * UX-D: acabamento final de Carrinho, Checkout, Legal e responsivo.
+     * Carregado por ultimo; todos os seletores sao escopados.
+     */
+    fd_theme_enqueue_style_file(
+        'fd-ux-d',
+        '/assets/css/ux-d.css',
+        [
+            'fd-ux-a',
+        ]
+    );
     fd_theme_enqueue_script_file(
         'fd-navigation',
         '/assets/js/navigation.js'

@@ -626,3 +626,175 @@ add_filter(
         return __('Meus dados', 'facil-digital');
     }
 );
+
+
+/*
+ * UX-D.1 - fallback PT-BR de comercio
+ *
+ * A fonte principal continua sendo o pacote oficial pt_BR do WooCommerce.
+ * Este mapa cobre as strings comerciais mais visiveis caso algum pacote
+ * nao esteja carregado no ambiente.
+ */
+function fd_theme_woocommerce_ptbr_commerce_strings(
+    string $translation,
+    string $text,
+    string $domain
+): string {
+    if (
+        $domain !== 'woocommerce'
+        || get_locale() !== 'pt_BR'
+    ) {
+        return $translation;
+    }
+
+    $strings = [
+        'Cart' =>
+            'Carrinho',
+        'Product' =>
+            'Produto',
+        'Price' =>
+            'Preço',
+        'Quantity' =>
+            'Quantidade',
+        'Subtotal' =>
+            'Subtotal',
+        'Coupon code' =>
+            'Código do cupom',
+        'Apply coupon' =>
+            'Aplicar cupom',
+        'Update cart' =>
+            'Atualizar carrinho',
+        'Cart totals' =>
+            'Totais do carrinho',
+        'Proceed to checkout' =>
+            'Ir para o checkout',
+        'Remove this item' =>
+            'Remover este item',
+        'Your cart is currently empty.' =>
+            'Seu carrinho está vazio.',
+        'Return to shop' =>
+            'Voltar às apostilas',
+        'Shipping' =>
+            'Frete',
+        'Total' =>
+            'Total',
+
+        'Checkout' =>
+            'Finalizar compra',
+        'Billing details' =>
+            'Dados de cobrança',
+        'Additional information' =>
+            'Informações adicionais',
+        'Your order' =>
+            'Seu pedido',
+        'Place order' =>
+            'Finalizar pedido',
+        'Have a coupon?' =>
+            'Tem um cupom?',
+        'Click here to enter your code' =>
+            'Clique aqui para informar o código',
+        'Returning customer?' =>
+            'Já possui cadastro?',
+        'Click here to login' =>
+            'Clique aqui para entrar',
+        'First name' =>
+            'Nome',
+        'Last name' =>
+            'Sobrenome',
+        'Company name (optional)' =>
+            'Nome da empresa (opcional)',
+        'Country / Region' =>
+            'País / Região',
+        'Street address' =>
+            'Endereço',
+        'House number and street name' =>
+            'Rua e número',
+        'Apartment, suite, unit, etc. (optional)' =>
+            'Complemento (opcional)',
+        'Town / City' =>
+            'Cidade',
+        'State / County' =>
+            'Estado',
+        'Postcode / ZIP' =>
+            'CEP',
+        'Phone' =>
+            'Telefone',
+        'Email address' =>
+            'E-mail',
+        'Order notes (optional)' =>
+            'Observações do pedido (opcional)',
+        'Notes about your order, e.g. special notes for delivery.' =>
+            'Observações sobre o seu pedido.',
+        'Create an account?' =>
+            'Criar uma conta?',
+        'Ship to a different address?' =>
+            'Enviar para outro endereço?',
+        'Payment' =>
+            'Pagamento',
+        'Update totals' =>
+            'Atualizar totais',
+        'Terms and conditions' =>
+            'Termos e condições',
+        'Privacy policy' =>
+            'Política de Privacidade',
+
+        'Order details' =>
+            'Detalhes do pedido',
+        'Order received' =>
+            'Pedido recebido',
+        'Thank you. Your order has been received.' =>
+            'Obrigado. Seu pedido foi recebido.',
+        'Order number:' =>
+            'Número do pedido:',
+        'Date:' =>
+            'Data:',
+        'Email:' =>
+            'E-mail:',
+        'Payment method:' =>
+            'Forma de pagamento:',
+        'My account' =>
+            'Minha conta',
+        'Orders' =>
+            'Pedidos',
+        'Addresses' =>
+            'Endereços',
+        'Account details' =>
+            'Dados da conta',
+        'Logout' =>
+            'Sair',
+    ];
+
+    return
+        $strings[$text]
+        ?? $translation;
+}
+
+add_filter(
+    'gettext_woocommerce',
+    'fd_theme_woocommerce_ptbr_commerce_strings',
+    40,
+    3
+);
+
+/**
+ * Algumas strings Woo usam contexto gettext.
+ */
+function fd_theme_woocommerce_ptbr_commerce_context_strings(
+    string $translation,
+    string $text,
+    string $context,
+    string $domain
+): string {
+    return fd_theme_woocommerce_ptbr_commerce_strings(
+        $translation,
+        $text,
+        $domain
+    );
+}
+
+add_filter(
+    'gettext_with_context_woocommerce',
+    'fd_theme_woocommerce_ptbr_commerce_context_strings',
+    40,
+    4
+);
