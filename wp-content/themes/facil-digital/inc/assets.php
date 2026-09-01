@@ -260,7 +260,47 @@ function fd_theme_enqueue_assets(): void
         );
     }
 
+    
+    /*
+     * UX-C: acabamento visual da Area do Aluno e dos simulados.
+     * O Core/WooCommerce continuam responsaveis por dados e regras.
+     */
     if (
+        (
+            function_exists('is_account_page')
+            && is_account_page()
+        )
+        || (string) get_query_var('fd_simulation') !== ''
+    ) {
+        $fdUxCDependencies = [
+            'fd-components',
+        ];
+
+        if (
+            function_exists('is_account_page')
+            && is_account_page()
+        ) {
+            $fdUxCDependencies[] =
+                'fd-student';
+        }
+
+        if (
+            (string) get_query_var('fd_simulation') !== ''
+        ) {
+            $fdUxCDependencies[] =
+                'fd-simulation';
+        }
+
+        fd_theme_enqueue_style_file(
+            'fd-ux-c',
+            '/assets/css/ux-c.css',
+            array_values(
+                array_unique(
+                    $fdUxCDependencies
+                )
+            )
+        );
+    }if (
         is_search()
         || is_404()
     ) {
