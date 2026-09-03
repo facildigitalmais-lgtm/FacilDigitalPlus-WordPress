@@ -351,8 +351,10 @@ final class PdfGenerationService
             'C'
         );
 
-        $pdf->SetTextColor(210, 210, 210);
+        $pdf->SetTextColor(0, 0, 0);
         $pdf->SetFont('helvetica', 'B', 22);
+        $pdf->SetAlpha(0.10, 'Normal');
+
         $pdf->StartTransform();
         $pdf->Rotate(
             35,
@@ -369,6 +371,8 @@ final class PdfGenerationService
             'C'
         );
         $pdf->StopTransform();
+
+        $pdf->SetAlpha(1.0, 'Normal');
 
         $pdf->SetTextColor(95, 95, 95);
         $pdf->SetFont('helvetica', '', 6.5);

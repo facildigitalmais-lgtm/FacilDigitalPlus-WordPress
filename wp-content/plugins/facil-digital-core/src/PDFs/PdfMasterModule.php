@@ -30,9 +30,25 @@ final class PdfMasterModule implements ModuleInterface
         );
 
         add_action(
+            'post_edit_form_tag',
+            [$this, 'enableMultipartForm'],
+            10,
+            1
+        );
+
+        add_action(
             'admin_notices',
             [$this, 'renderNotice']
         );
+    }
+
+    public function enableMultipartForm(\WP_Post $post): void
+    {
+        if ($post->post_type !== 'product') {
+            return;
+        }
+
+        echo ' enctype="multipart/form-data"';
     }
 
     public function renderFields(int $productId): void
@@ -77,7 +93,18 @@ final class PdfMasterModule implements ModuleInterface
             return;
         }
 
-        if ((int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+        $uploadError = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+
+        if ($uploadError === UPLOAD_ERR_NO_FILE) {
+            return;
+        }
+
+        if ($uploadError !== UPLOAD_ERR_OK) {
+            $this->storeNotice(
+                'error',
+                __('O servidor não conseguiu receber o PDF master. Tente enviar o arquivo novamente.', 'facil-digital-core')
+            );
+
             return;
         }
 
