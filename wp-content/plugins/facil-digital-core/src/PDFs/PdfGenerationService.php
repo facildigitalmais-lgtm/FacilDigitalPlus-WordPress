@@ -334,6 +334,7 @@ final class PdfGenerationService
         float $height,
         array $data
     ): void {
+        $pdf->SetAlpha(1.0);
         $pdf->SetTextColor(90, 90, 90);
         $pdf->SetFont('helvetica', '', 7);
         $pdf->SetXY(8, 5);
