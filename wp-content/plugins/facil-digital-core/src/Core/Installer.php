@@ -18,6 +18,7 @@ final class Installer
         $questionOptions = Database::table('question_options');
         $simulations = Database::table('simulations');
         $simulationQuestions = Database::table('simulation_questions');
+        $simulationProducts = Database::table('simulation_products');
         $attempts = Database::table('attempts');
         $attemptAnswers = Database::table('attempt_answers');
         $entitlements = Database::table('entitlements');
@@ -98,6 +99,16 @@ final class Installer
                 KEY simulation_id (simulation_id),
                 KEY question_id (question_id),
                 KEY simulation_order (simulation_id,sort_order)
+            ) {$charsetCollate};",
+            "CREATE TABLE {$simulationProducts} (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                simulation_id bigint(20) unsigned NOT NULL,
+                product_id bigint(20) unsigned NOT NULL,
+                created_at datetime NOT NULL,
+                PRIMARY KEY  (id),
+                UNIQUE KEY simulation_product (simulation_id,product_id),
+                KEY simulation_id (simulation_id),
+                KEY product_id (product_id)
             ) {$charsetCollate};",
             "CREATE TABLE {$attempts} (
                 id bigint(20) unsigned NOT NULL AUTO_INCREMENT,

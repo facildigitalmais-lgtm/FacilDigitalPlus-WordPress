@@ -24,6 +24,12 @@ final class Migrations
         }
 
         self::run();
+
+        if (!Database::isReady()) {
+            throw new RuntimeException(
+                'Schema do Facil Digital+ Core nao ficou pronto.'
+            );
+        }
     }
 
     public static function run(): void

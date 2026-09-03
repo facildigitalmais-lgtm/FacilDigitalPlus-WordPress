@@ -8,6 +8,7 @@ use FacilDigital\Core\Admin\Menu;
 use FacilDigital\Core\Contests\ContestModule;
 use FacilDigital\Core\Contracts\ModuleInterface;
 use FacilDigital\Core\Core\Capabilities;
+use FacilDigital\Core\Products\ProductMetadata;
 use FacilDigital\Core\Questions\QuestionRepository;
 
 final class SimulationAdminModule implements ModuleInterface
@@ -90,10 +91,13 @@ final class SimulationAdminModule implements ModuleInterface
             'position_name' => '', 'duration_seconds' => 7200, 'attempt_limit' => 3,
             'minimum_score' => '60.00', 'show_answer_key' => 1,
             'comment_policy' => 'after_finish', 'ranking_enabled' => 1,
-            'selection_mode' => 'manual', 'status' => 'draft', 'question_ids' => [],
+            'selection_mode' => 'manual', 'status' => 'draft',
+            'question_ids' => [], 'product_ids' => [],
         ];
         $selected = array_map('intval', (array) ($row['question_ids'] ?? []));
+        $selectedProducts = array_map('intval', (array) ($row['product_ids'] ?? []));
         $questions = $this->questions->list(['status' => 'active'], 300);
+        $products = $this->apostilaProducts();
         $terms = get_terms(['taxonomy' => ContestModule::TAXONOMY, 'hide_empty' => false]);
         ?>
         <div class="wrap"><h1><?php echo esc_html($id > 0 ? 'Editar simulado' : 'Adicionar simulado'); ?></h1>
@@ -105,6 +109,19 @@ final class SimulationAdminModule implements ModuleInterface
                 <tr><th>Descrição</th><td><textarea class="large-text" rows="4" name="description"><?php echo esc_textarea((string) $row['description']); ?></textarea></td></tr>
                 <tr><th>Concurso</th><td><select name="contest_term_id"><option value="0">—</option><?php if (!is_wp_error($terms)) : foreach ($terms as $term) : ?><option value="<?php echo esc_attr((string) $term->term_id); ?>" <?php selected((int) $row['contest_term_id'], (int) $term->term_id); ?>><?php echo esc_html($term->name); ?></option><?php endforeach; endif; ?></select></td></tr>
                 <tr><th>Cargo</th><td><input class="regular-text" name="position_name" value="<?php echo esc_attr((string) $row['position_name']); ?>"></td></tr>
+                <tr>
+                    <th>Apostilas vinculadas</th>
+                    <td>
+                        <select name="product_ids[]" multiple size="12" style="min-width:680px;max-width:100%">
+                            <?php foreach ($products as $product) : ?>
+                                <option value="<?php echo esc_attr((string) $product['id']); ?>" <?php selected(in_array((int) $product['id'], $selectedProducts, true), true); ?>>
+                                    <?php echo esc_html((string) $product['label']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="description">O vínculo explícito tem prioridade sobre a comparação por concurso e cargo. Deixe sem seleção para manter o mecanismo legado.</p>
+                    </td>
+                </tr>
                 <tr><th>Duração</th><td><input type="number" min="1" max="1440" name="duration_minutes" value="<?php echo esc_attr((string) max(1, (int) ceil((int) $row['duration_seconds'] / 60))); ?>"> minutos</td></tr>
                 <tr><th>Tentativas permitidas</th><td><input type="number" min="1" max="1000" name="attempt_limit" value="<?php echo esc_attr($row['attempt_limit'] === null ? '' : (string) $row['attempt_limit']); ?>"><p class="description">Deixe vazio para ilimitado.</p></td></tr>
                 <tr><th>Nota mínima</th><td><input type="number" min="0" max="100" step="0.01" name="minimum_score" value="<?php echo esc_attr((string) $row['minimum_score']); ?>">%</td></tr>
@@ -116,6 +133,84 @@ final class SimulationAdminModule implements ModuleInterface
             </tbody></table><?php submit_button($id > 0 ? 'Atualizar simulado' : 'Criar simulado'); ?>
         </form></div>
         <?php
+    }
+
+    /** @return list<array{id:int,label:string}> */
+    private function apostilaProducts(): array
+    {
+        if (!function_exists('wc_get_products')) {
+            return [];
+        }
+
+        $ids = wc_get_products([
+            'status' => ['publish', 'draft', 'private'],
+            'limit' => -1,
+            'return' => 'ids',
+        ]);
+
+        $rows = [];
+
+        foreach (is_array($ids) ? $ids : [] as $rawId) {
+            $productId = (int) $rawId;
+
+            if ($productId <= 0 || !ProductMetadata::isApostila($productId)) {
+                continue;
+            }
+
+            $product = wc_get_product($productId);
+
+            if (!$product instanceof \WC_Product) {
+                continue;
+            }
+
+            $position = ProductMetadata::get(
+                $productId,
+                ProductMetadata::POSITION_NAME
+            );
+
+            $terms = wp_get_post_terms(
+                $productId,
+                ContestModule::TAXONOMY,
+                ['fields' => 'names']
+            );
+
+            $contest = is_wp_error($terms)
+                ? ''
+                : implode(', ', $terms);
+
+            $label = '#' . $productId . ' — ' . $product->get_name();
+
+            if ($position !== '') {
+                $label .= ' — Cargo: ' . $position;
+            }
+
+            if ($contest !== '') {
+                $label .= ' — Concurso: ' . $contest;
+            }
+
+            if (
+                ProductMetadata::get(
+                    $productId,
+                    ProductMetadata::HAS_SIMULATIONS,
+                    'no'
+                ) !== 'yes'
+            ) {
+                $label .= ' — SIMULADOS DESATIVADOS';
+            }
+
+            $rows[] = [
+                'id' => $productId,
+                'label' => $label,
+            ];
+        }
+
+        usort(
+            $rows,
+            static fn (array $a, array $b): int =>
+                strcasecmp($a['label'], $b['label'])
+        );
+
+        return $rows;
     }
 
     public function save(): void
@@ -130,6 +225,9 @@ final class SimulationAdminModule implements ModuleInterface
             'description' => wp_unslash((string) ($_POST['description'] ?? '')),
             'contest_term_id' => absint($_POST['contest_term_id'] ?? 0),
             'position_name' => wp_unslash((string) ($_POST['position_name'] ?? '')),
+            'product_ids' => is_array($_POST['product_ids'] ?? null)
+                ? array_map('absint', wp_unslash($_POST['product_ids']))
+                : [],
             'duration_seconds' => max(1, absint($_POST['duration_minutes'] ?? 120)) * 60,
             'attempt_limit' => $attemptLimitRaw === '' ? null : absint($attemptLimitRaw),
             'minimum_score' => (float) ($_POST['minimum_score'] ?? 0),

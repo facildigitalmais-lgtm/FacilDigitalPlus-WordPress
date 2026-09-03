@@ -22,6 +22,7 @@ final class SimulationRepository
             return null;
         }
         $row['question_ids'] = $this->questionIds($id);
+        $row['product_ids'] = $this->productIds($id);
         return $row;
     }
 
@@ -38,6 +39,7 @@ final class SimulationRepository
             return null;
         }
         $row['question_ids'] = $this->questionIds((int) $row['id']);
+        $row['product_ids'] = $this->productIds((int) $row['id']);
         return $row;
     }
 
@@ -98,6 +100,29 @@ final class SimulationRepository
         return array_values(array_map('intval', is_array($ids) ? $ids : []));
     }
 
+    /** @return list<int> */
+    public function productIds(int $simulationId): array
+    {
+        global $wpdb;
+        $table = Database::table('simulation_products');
+        $ids = $wpdb->get_col(
+            $wpdb->prepare(
+                "SELECT product_id FROM {$table}
+                 WHERE simulation_id = %d
+                 ORDER BY id ASC",
+                $simulationId
+            )
+        );
+
+        if ($wpdb->last_error !== '') {
+            throw new RuntimeException('simulation_products_read_failed');
+        }
+
+        return array_values(
+            array_map('intval', is_array($ids) ? $ids : [])
+        );
+    }
+
     /** @return list<array<string,mixed>> */
     public function questionRows(int $simulationId): array
     {
@@ -131,8 +156,8 @@ final class SimulationRepository
         ) > 0;
     }
 
-    /** @param array<string,mixed> $data @param list<int> $questionIds */
-    public function create(array $data, array $questionIds): int
+    /** @param array<string,mixed> $data @param list<int> $questionIds @param list<int> $productIds */
+    public function create(array $data, array $questionIds, array $productIds): int
     {
         global $wpdb;
         $table = Database::table('simulations');
@@ -144,6 +169,7 @@ final class SimulationRepository
             }
             $id = (int) $wpdb->insert_id;
             $this->replaceQuestions($id, $questionIds);
+            $this->replaceProducts($id, $productIds);
             $wpdb->query('COMMIT');
             return $id;
         } catch (\Throwable $exception) {
@@ -152,8 +178,8 @@ final class SimulationRepository
         }
     }
 
-    /** @param array<string,mixed> $data @param list<int> $questionIds */
-    public function update(int $id, array $data, array $questionIds): void
+    /** @param array<string,mixed> $data @param list<int> $questionIds @param list<int> $productIds */
+    public function update(int $id, array $data, array $questionIds, array $productIds): void
     {
         global $wpdb;
         $table = Database::table('simulations');
@@ -164,6 +190,7 @@ final class SimulationRepository
                 throw new RuntimeException('simulation_update_failed');
             }
             $this->replaceQuestions($id, $questionIds);
+            $this->replaceProducts($id, $productIds);
             $wpdb->query('COMMIT');
         } catch (\Throwable $exception) {
             $wpdb->query('ROLLBACK');
@@ -202,6 +229,53 @@ final class SimulationRepository
         }
     }
 
+    /** @param list<int> $productIds */
+    private function replaceProducts(int $simulationId, array $productIds): void
+    {
+        global $wpdb;
+        $table = Database::table('simulation_products');
+
+        $deleted = $wpdb->delete(
+            $table,
+            ['simulation_id' => $simulationId],
+            ['%d']
+        );
+
+        if ($deleted === false) {
+            throw new RuntimeException('simulation_products_delete_failed');
+        }
+
+        $now = current_time('mysql', true);
+
+        foreach (
+            array_values(
+                array_unique(
+                    array_filter(
+                        array_map('intval', $productIds)
+                    )
+                )
+            ) as $productId
+        ) {
+            if ($productId <= 0) {
+                continue;
+            }
+
+            $inserted = $wpdb->insert(
+                $table,
+                [
+                    'simulation_id' => $simulationId,
+                    'product_id' => $productId,
+                    'created_at' => $now,
+                ],
+                ['%d', '%d', '%s']
+            );
+
+            if ($inserted === false) {
+                throw new RuntimeException('simulation_product_insert_failed');
+            }
+        }
+    }
+
     public function setStatus(int $id, string $status): void
     {
         global $wpdb;
@@ -231,9 +305,33 @@ final class SimulationRepository
         }
         $table = Database::table('simulations');
         $map = Database::table('simulation_questions');
+        $products = Database::table('simulation_products');
         $wpdb->query('START TRANSACTION');
         try {
-            $wpdb->delete($map, ['simulation_id' => $id], ['%d']);
+            $questionsDeleted = $wpdb->delete(
+                $map,
+                ['simulation_id' => $id],
+                ['%d']
+            );
+
+            if ($questionsDeleted === false) {
+                throw new RuntimeException(
+                    'simulation_questions_delete_failed'
+                );
+            }
+
+            $productsDeleted = $wpdb->delete(
+                $products,
+                ['simulation_id' => $id],
+                ['%d']
+            );
+
+            if ($productsDeleted === false) {
+                throw new RuntimeException(
+                    'simulation_products_delete_failed'
+                );
+            }
+
             $deleted = $wpdb->delete($table, ['id' => $id], ['%d']);
             if ($deleted === false) {
                 throw new RuntimeException('simulation_delete_failed');

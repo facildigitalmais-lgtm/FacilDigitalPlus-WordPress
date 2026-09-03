@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 final class Database
 {
-    public const SCHEMA_VERSION = '1.0.0';
+    public const SCHEMA_VERSION = '1.1.0';
     public const OPTION_SCHEMA_VERSION = 'facil_digital_core_db_version';
 
     /**
@@ -19,6 +19,7 @@ final class Database
         'question_options' => 'fd_question_options',
         'simulations' => 'fd_simulations',
         'simulation_questions' => 'fd_simulation_questions',
+        'simulation_products' => 'fd_simulation_products',
         'attempts' => 'fd_attempts',
         'attempt_answers' => 'fd_attempt_answers',
         'entitlements' => 'fd_entitlements',

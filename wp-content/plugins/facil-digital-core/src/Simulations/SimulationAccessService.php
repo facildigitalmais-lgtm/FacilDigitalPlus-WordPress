@@ -32,10 +32,51 @@ final class SimulationAccessService
             return false;
         }
 
+        $activeEntitlements = $this->entitlements->activeForUser($userId);
+
+        $linkedProductIds = array_values(
+            array_unique(
+                array_filter(
+                    array_map(
+                        'intval',
+                        (array) ($simulation['product_ids'] ?? [])
+                    )
+                )
+            )
+        );
+
+        if ($linkedProductIds !== []) {
+            foreach ($activeEntitlements as $entitlement) {
+                $productId = (int) ($entitlement['product_id'] ?? 0);
+
+                if (
+                    $productId <= 0
+                    || !in_array($productId, $linkedProductIds, true)
+                    || !ProductMetadata::isApostila($productId)
+                ) {
+                    continue;
+                }
+
+                if (
+                    ProductMetadata::get(
+                        $productId,
+                        ProductMetadata::HAS_SIMULATIONS,
+                        'no'
+                    ) !== 'yes'
+                ) {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         $contestTermId = (int) ($simulation['contest_term_id'] ?? 0);
         $position = $this->normalize((string) ($simulation['position_name'] ?? ''));
 
-        foreach ($this->entitlements->activeForUser($userId) as $entitlement) {
+        foreach ($activeEntitlements as $entitlement) {
             $productId = (int) ($entitlement['product_id'] ?? 0);
             if ($productId <= 0) {
                 continue;

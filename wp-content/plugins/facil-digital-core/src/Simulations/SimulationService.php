@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace FacilDigital\Core\Simulations;
 
+use FacilDigital\Core\Products\ProductMetadata;
 use FacilDigital\Core\Questions\QuestionRepository;
 use InvalidArgumentException;
+use WC_Product;
 
 final class SimulationService
 {
@@ -18,8 +20,8 @@ final class SimulationService
     /** @param array<string,mixed> $input */
     public function create(array $input, int $userId): int
     {
-        [$data, $questionIds] = $this->normalize($input, $userId, true);
-        return $this->repository->create($data, $questionIds);
+        [$data, $questionIds, $productIds] = $this->normalize($input, $userId, true);
+        return $this->repository->create($data, $questionIds, $productIds);
     }
 
     /** @param array<string,mixed> $input */
@@ -28,8 +30,8 @@ final class SimulationService
         if ($this->repository->findById($id) === null) {
             throw new InvalidArgumentException('simulation_not_found');
         }
-        [$data, $questionIds] = $this->normalize($input, $userId, false);
-        $this->repository->update($id, $data, $questionIds);
+        [$data, $questionIds, $productIds] = $this->normalize($input, $userId, false);
+        $this->repository->update($id, $data, $questionIds, $productIds);
     }
 
     public function setStatus(int $id, string $status): void
@@ -45,7 +47,7 @@ final class SimulationService
         return $this->repository->delete($id);
     }
 
-    /** @param array<string,mixed> $input @return array{0:array<string,mixed>,1:list<int>} */
+    /** @param array<string,mixed> $input @return array{0:array<string,mixed>,1:list<int>,2:list<int>} */
     private function normalize(array $input, int $userId, bool $creating): array
     {
         $title = sanitize_text_field((string) ($input['title'] ?? ''));
@@ -91,6 +93,8 @@ final class SimulationService
             throw new InvalidArgumentException('simulation_questions_required');
         }
 
+        $productIds = $this->resolveProducts($input);
+
         $now = current_time('mysql', true);
         $data = [
             'title' => $title,
@@ -114,7 +118,43 @@ final class SimulationService
             $data['created_at'] = $now;
         }
 
-        return [$data, $questionIds];
+        return [$data, $questionIds, $productIds];
+    }
+
+    /** @param array<string,mixed> $input @return list<int> */
+    private function resolveProducts(array $input): array
+    {
+        $raw = $input['product_ids'] ?? [];
+
+        if (!is_array($raw)) {
+            return [];
+        }
+
+        $ids = array_values(
+            array_unique(
+                array_filter(
+                    array_map('absint', $raw)
+                )
+            )
+        );
+
+        $valid = [];
+
+        foreach ($ids as $productId) {
+            if ($productId <= 0 || !ProductMetadata::isApostila($productId)) {
+                continue;
+            }
+
+            $product = wc_get_product($productId);
+
+            if (!$product instanceof WC_Product) {
+                continue;
+            }
+
+            $valid[] = $productId;
+        }
+
+        return $valid;
     }
 
     /** @param array<string,mixed> $input @return list<int> */
