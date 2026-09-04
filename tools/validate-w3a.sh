@@ -47,15 +47,15 @@ echo "=== MIGRATIONS ==="
 wpcli eval '\FacilDigital\Core\Core\Migrations::run();'
 wpcli eval '\FacilDigital\Core\Core\Migrations::run();'
 SCHEMA_VERSION="$(wpcli eval 'echo \FacilDigital\Core\Core\Database::installedVersion();')"
-[[ "$SCHEMA_VERSION" == "1.0.0" ]] || fail "schema esperado 1.0.0; atual: $SCHEMA_VERSION"
+[[ "$SCHEMA_VERSION" == "1.1.0" ]] || fail "schema esperado 1.1.0; atual: $SCHEMA_VERSION"
 READY="$(wpcli eval 'echo \FacilDigital\Core\Core\Database::isReady() ? "yes" : "no";')"
 [[ "$READY" == "yes" ]] || fail "Database::isReady() retornou false"
-pass "schema 1.0.0 e migration idempotente"
+pass "schema 1.1.0 e migration idempotente"
 
 echo
 echo "=== TABELAS ==="
 COUNT="$(wpcli eval 'echo count(\FacilDigital\Core\Core\Database::tables());')"
-[[ "$COUNT" == "9" ]] || fail "esperadas 9 tabelas; atual: $COUNT"
+[[ "$COUNT" == "10" ]] || fail "esperadas 10 tabelas; atual: $COUNT"
 wpcli eval '
   global $wpdb;
   $tables = \FacilDigital\Core\Core\Database::tables();
@@ -72,7 +72,7 @@ wpcli eval '
       echo $table . PHP_EOL;
   }
 '
-pass "9 tabelas com prefixo dinamico"
+pass "10 tabelas com prefixo dinamico"
 
 if grep -R --line-number --fixed-string 'wp_fd_' wp-content/plugins/facil-digital-core/src >/tmp/fd-w3a-prefix.log; then
   cat /tmp/fd-w3a-prefix.log
@@ -89,6 +89,7 @@ wpcli eval '
       "question_options" => ["question_id", "option_key", "is_correct"],
       "simulations" => ["slug", "duration_seconds", "attempt_limit"],
       "simulation_questions" => ["simulation_id", "question_id"],
+      "simulation_products" => ["simulation_id", "product_id", "created_at"],
       "attempts" => ["simulation_id", "user_id", "expires_at", "percentage"],
       "attempt_answers" => ["attempt_id", "question_id", "selected_option_id"],
       "entitlements" => ["user_id", "product_id", "order_id", "status"],
@@ -114,6 +115,30 @@ wpcli eval '
   }
 '
 pass "schema critico e LGPD estrutural"
+
+echo
+echo "=== SIMULATION PRODUCT LINKS ==="
+
+[[ -f tools/test-simulation-product-link.php ]] \
+  || fail "teste simulation-product-link ausente"
+
+if ! wpcli eval-file \
+    /workspace/tools/test-simulation-product-link.php \
+    --use-include \
+    2>&1 | tee /tmp/fd-simulation-product-link.log
+then
+  fail "teste funcional simulation-product-link"
+fi
+
+grep -q '^SIMULATION_PRODUCT_LINK_FUNCTIONAL=PASS$' \
+  /tmp/fd-simulation-product-link.log \
+  || fail "marcador funcional simulation-product-link ausente"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-simulation-product-link.log \
+  || fail "cleanup simulation-product-link nao confirmado"
+
+pass "vinculo explicito de apostila e fallback legado"
 
 echo
 echo "=== PHP / SHELL / GIT ==="

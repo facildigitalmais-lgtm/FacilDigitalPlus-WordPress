@@ -1,4 +1,3 @@
-cat > tools/wp-configure.php <<'PHP'
 <?php
 
 if (!defined('ABSPATH')) {
@@ -282,6 +281,23 @@ update_option(
 update_option(
     'woocommerce_currency',
     'BRL'
+);
+
+/*
+ * Ambiente DEV/E2E deve manter a loja publica.
+ *
+ * WooCommerce pode ativar Coming Soon em
+ * instalacoes novas.
+ */
+
+update_option(
+    'woocommerce_coming_soon',
+    'no'
+);
+
+update_option(
+    'woocommerce_store_pages_only',
+    'no'
 );
 
 /*
