@@ -134,6 +134,40 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "recursos privados e persistencia de matriculas"
 
 echo
+echo "=== PROGRESS / CERTIFICATES ==="
+
+[[ -f tools/test-courses-progress-certificates.php ]] \
+  || fail "teste progress-certificates ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-progress-certificates.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-progress-certificates.log
+then
+  fail "teste funcional progress-certificates"
+fi
+
+grep -q '^COURSES_PROGRESS_IDEMPOTENCY=PASS$' \
+  /tmp/fd-courses-progress-certificates.log \
+  || fail "idempotencia do progresso nao confirmada"
+
+grep -q '^COURSES_CERTIFICATE_IDEMPOTENCY=PASS$' \
+  /tmp/fd-courses-progress-certificates.log \
+  || fail "idempotencia do certificado nao confirmada"
+
+grep -q '^COURSES_PROGRESS_CERTIFICATES=PASS$' \
+  /tmp/fd-courses-progress-certificates.log \
+  || fail "progress-certificates nao confirmado"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-progress-certificates.log \
+  || fail "cleanup progress-certificates nao confirmado"
+
+pass "persistencia de progresso e certificados"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -162,6 +196,11 @@ docker compose exec -T wordpress \
 docker compose exec -T wordpress \
   php -l \
   /workspace/tools/test-courses-resources-enrollments.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-progress-certificates.php \
   >/dev/null
 
 bash -n tools/validate-courses-lms.sh
