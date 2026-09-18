@@ -100,6 +100,40 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "CRUD de cursos, modulos e aulas"
 
 echo
+echo "=== LESSON RESOURCES / ENROLLMENTS ==="
+
+[[ -f tools/test-courses-resources-enrollments.php ]] \
+  || fail "teste resources-enrollments ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-resources-enrollments.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-resources-enrollments.log
+then
+  fail "teste funcional resources-enrollments"
+fi
+
+grep -q '^COURSES_RESOURCE_INTEGRITY=PASS$' \
+  /tmp/fd-courses-resources-enrollments.log \
+  || fail "integridade dos recursos nao confirmada"
+
+grep -q '^COURSES_ENROLLMENT_IDEMPOTENCY=PASS$' \
+  /tmp/fd-courses-resources-enrollments.log \
+  || fail "idempotencia de matricula nao confirmada"
+
+grep -q '^COURSES_RESOURCES_ENROLLMENTS=PASS$' \
+  /tmp/fd-courses-resources-enrollments.log \
+  || fail "resources-enrollments nao confirmado"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-resources-enrollments.log \
+  || fail "cleanup resources-enrollments nao confirmado"
+
+pass "recursos privados e persistencia de matriculas"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -123,6 +157,11 @@ docker compose exec -T wordpress \
 docker compose exec -T wordpress \
   php -l \
   /workspace/tools/test-courses-domain.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-resources-enrollments.php \
   >/dev/null
 
 bash -n tools/validate-courses-lms.sh
