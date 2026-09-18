@@ -70,6 +70,36 @@ grep -q '^SCHEMA_TEST_NO_FIXTURES=OK$' \
 pass "schema LMS 1.2.0 e tabelas legadas preservados"
 
 echo
+echo "=== COURSES DOMAIN REPOSITORIES ==="
+
+[[ -f tools/test-courses-domain.php ]] \
+  || fail "teste courses-domain ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-domain.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-domain.log
+then
+  fail "teste funcional courses-domain"
+fi
+
+grep -q '^COURSES_RELATION_INTEGRITY=PASS$' \
+  /tmp/fd-courses-domain.log \
+  || fail "integridade relacional do dominio nao confirmada"
+
+grep -q '^COURSES_REPOSITORIES_CRUD=PASS$' \
+  /tmp/fd-courses-domain.log \
+  || fail "CRUD dos repositories nao confirmado"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-domain.log \
+  || fail "cleanup courses-domain nao confirmado"
+
+pass "CRUD de cursos, modulos e aulas"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -88,6 +118,11 @@ done < <(
 docker compose exec -T wordpress \
   php -l \
   /workspace/tools/test-courses-schema.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-domain.php \
   >/dev/null
 
 bash -n tools/validate-courses-lms.sh
