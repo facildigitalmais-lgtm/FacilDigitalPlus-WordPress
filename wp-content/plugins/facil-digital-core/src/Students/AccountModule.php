@@ -440,6 +440,41 @@ final class AccountModule implements ModuleInterface
             return;
         }
 
+        $hasPasswordProtected = false;
+
+        foreach ($rows as $entitlement) {
+            $protectedProductId = (int) (
+                $entitlement['product_id'] ?? 0
+            );
+
+            if (
+                $protectedProductId > 0
+                && ProductMetadata::get(
+                    $protectedProductId,
+                    ProductMetadata::PDF_PASSWORD_ENABLED,
+                    'yes'
+                ) === 'yes'
+            ) {
+                $hasPasswordProtected = true;
+                break;
+            }
+        }
+
+        if ($hasPasswordProtected) {
+            echo '<div class="woocommerce-info fd-student-password-notice" role="status">';
+            echo '<strong>';
+            echo esc_html__(
+                'Senha para abrir suas apostilas',
+                'facil-digital-core'
+            );
+            echo '</strong><br>';
+            echo esc_html__(
+                'A senha dos PDFs protegidos é o CPF informado no momento da compra. Digite os 11 números do CPF, sem pontos e sem traço.',
+                'facil-digital-core'
+            );
+            echo '</div>';
+        }
+
         echo '<div class="fd-student-library__grid">';
 
         foreach ($rows as $entitlement) {
@@ -450,6 +485,11 @@ final class AccountModule implements ModuleInterface
                 ProductMetadata::MATERIAL_VERSION,
                 '1'
             );
+            $passwordEnabled = ProductMetadata::get(
+                $productId,
+                ProductMetadata::PDF_PASSWORD_ENABLED,
+                'yes'
+            ) === 'yes';
             $pdf = $this->files->findForEntitlementVersion(
                 (int) ($entitlement['id'] ?? 0),
                 $version
@@ -491,6 +531,21 @@ final class AccountModule implements ModuleInterface
                         $limit
                     )
                 ) . '</p>';
+
+                if ($passwordEnabled) {
+                    echo '<p class="fd-student-book__password">';
+                    echo '<strong>';
+                    echo esc_html__(
+                        'Senha do PDF:',
+                        'facil-digital-core'
+                    );
+                    echo '</strong> ';
+                    echo esc_html__(
+                        'CPF informado na compra, somente os 11 números.',
+                        'facil-digital-core'
+                    );
+                    echo '</p>';
+                }
 
                 if ($used < $limit) {
                     echo '<a class="button alt" href="';

@@ -141,6 +141,21 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "vinculo explicito de apostila e fallback legado"
 
 echo
+echo "=== APOSTILA PASSWORD GUIDANCE ==="
+
+[[ -f tools/test-apostila-password-guidance.php ]] || fail "teste apostila-password-guidance ausente"
+
+if ! wpcli eval-file /workspace/tools/test-apostila-password-guidance.php --use-include 2>&1 | tee /tmp/fd-apostila-password-guidance.log; then
+  fail "teste funcional apostila-password-guidance"
+fi
+
+grep -q "^APOSTILA_PASSWORD_GUIDANCE_FUNCTIONAL=PASS$" /tmp/fd-apostila-password-guidance.log || fail "marcador funcional apostila-password-guidance ausente"
+
+grep -q "^FIXTURES_CLEANUP=OK$" /tmp/fd-apostila-password-guidance.log || fail "cleanup apostila-password-guidance nao confirmado"
+
+pass "orientacao de senha por CPF na area do aluno"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 while IFS= read -r file; do
   docker compose exec -T wordpress php -l "/workspace/$file" >/dev/null
