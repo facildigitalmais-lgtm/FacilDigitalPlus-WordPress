@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 final class Database
 {
-    public const SCHEMA_VERSION = '1.1.0';
+    public const SCHEMA_VERSION = '1.2.0';
     public const OPTION_SCHEMA_VERSION = 'facil_digital_core_db_version';
 
     /**
@@ -25,6 +25,13 @@ final class Database
         'entitlements' => 'fd_entitlements',
         'pdf_files' => 'fd_pdf_files',
         'downloads' => 'fd_downloads',
+        'courses' => 'fd_courses',
+        'course_modules' => 'fd_course_modules',
+        'course_lessons' => 'fd_course_lessons',
+        'lesson_resources' => 'fd_lesson_resources',
+        'course_enrollments' => 'fd_course_enrollments',
+        'lesson_progress' => 'fd_lesson_progress',
+        'certificates' => 'fd_certificates',
     ];
 
     public static function installedVersion(): string

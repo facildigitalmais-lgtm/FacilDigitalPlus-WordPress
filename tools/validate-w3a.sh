@@ -46,19 +46,38 @@ echo
 echo "=== MIGRATIONS ==="
 wpcli eval '\FacilDigital\Core\Core\Migrations::run();'
 wpcli eval '\FacilDigital\Core\Core\Migrations::run();'
+DECLARED_SCHEMA_VERSION="$(wpcli eval 'echo \FacilDigital\Core\Core\Database::SCHEMA_VERSION;')"
 SCHEMA_VERSION="$(wpcli eval 'echo \FacilDigital\Core\Core\Database::installedVersion();')"
-[[ "$SCHEMA_VERSION" == "1.1.0" ]] || fail "schema esperado 1.1.0; atual: $SCHEMA_VERSION"
+[[ "$SCHEMA_VERSION" == "$DECLARED_SCHEMA_VERSION" ]] || fail "schema instalado $SCHEMA_VERSION difere do declarado $DECLARED_SCHEMA_VERSION"
 READY="$(wpcli eval 'echo \FacilDigital\Core\Core\Database::isReady() ? "yes" : "no";')"
 [[ "$READY" == "yes" ]] || fail "Database::isReady() retornou false"
-pass "schema 1.1.0 e migration idempotente"
+pass "schema declarado e instalado alinhados; migration idempotente"
 
 echo
 echo "=== TABELAS ==="
 COUNT="$(wpcli eval 'echo count(\FacilDigital\Core\Core\Database::tables());')"
-[[ "$COUNT" == "10" ]] || fail "esperadas 10 tabelas; atual: $COUNT"
+[[ "$COUNT" -ge "10" ]] || fail "esperadas ao menos 10 tabelas; atual: $COUNT"
 wpcli eval '
   global $wpdb;
   $tables = \FacilDigital\Core\Core\Database::tables();
+  $requiredLegacy = [
+      "questions",
+      "question_options",
+      "simulations",
+      "simulation_questions",
+      "simulation_products",
+      "attempts",
+      "attempt_answers",
+      "entitlements",
+      "pdf_files",
+      "downloads",
+  ];
+  foreach ($requiredLegacy as $key) {
+      if (!isset($tables[$key])) {
+          fwrite(STDERR, "Tabela legada ausente do mapa: {$key}" . PHP_EOL);
+          exit(1);
+      }
+  }
   $missing = \FacilDigital\Core\Core\Database::missingTables();
   if ($missing !== []) {
       fwrite(STDERR, "Ausentes: " . implode(", ", $missing) . PHP_EOL);
@@ -72,7 +91,7 @@ wpcli eval '
       echo $table . PHP_EOL;
   }
 '
-pass "10 tabelas com prefixo dinamico"
+pass "tabelas legadas preservadas e prefixo dinamico"
 
 if grep -R --line-number --fixed-string 'wp_fd_' wp-content/plugins/facil-digital-core/src >/tmp/fd-w3a-prefix.log; then
   cat /tmp/fd-w3a-prefix.log
