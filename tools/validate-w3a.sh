@@ -156,6 +156,22 @@ grep -q "^FIXTURES_CLEANUP=OK$" /tmp/fd-apostila-password-guidance.log || fail "
 pass "orientacao de senha por CPF na area do aluno"
 
 echo
+echo "=== APOSTILA READY EMAIL ==="
+
+[[ -f tools/test-apostila-ready-email.php ]] || fail "teste apostila-ready-email ausente"
+
+if ! wpcli eval-file /workspace/tools/test-apostila-ready-email.php --use-include 2>&1 | tee /tmp/fd-apostila-ready-email.log
+then
+  fail "teste funcional apostila-ready-email"
+fi
+
+grep -q "^APOSTILA_READY_EMAIL_FUNCTIONAL=PASS$" /tmp/fd-apostila-ready-email.log || fail "marcador funcional apostila-ready-email ausente"
+
+grep -q "^FIXTURES_CLEANUP=OK$" /tmp/fd-apostila-ready-email.log || fail "cleanup apostila-ready-email nao confirmado"
+
+pass "email de apostila pronta, privacidade e idempotencia"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 while IFS= read -r file; do
   docker compose exec -T wordpress php -l "/workspace/$file" >/dev/null

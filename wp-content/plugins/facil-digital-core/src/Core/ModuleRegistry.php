@@ -19,6 +19,7 @@ use FacilDigital\Core\Contracts\ModuleInterface;
 use FacilDigital\Core\Entitlements\EntitlementModule;
 use FacilDigital\Core\Import\ImportAdminModule;
 use FacilDigital\Core\PDFs\DownloadModule;
+use FacilDigital\Core\Emails\ApostilaEmailModule;
 use FacilDigital\Core\PDFs\PdfGenerationModule;
 use FacilDigital\Core\PDFs\PdfMasterModule;
 use FacilDigital\Core\Products\ProductMetadata;
@@ -54,6 +55,7 @@ final class ModuleRegistry
             new EntitlementController(),
             new PdfMasterModule(),
             new PdfGenerationModule(),
+            new ApostilaEmailModule(),
             new DownloadModule(),
             new AccountModule(),
             new PdfController(),

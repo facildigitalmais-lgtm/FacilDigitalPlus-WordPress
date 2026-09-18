@@ -115,7 +115,7 @@ final class PdfGenerationModule implements ModuleInterface
     public function run(int $entitlementId): void
     {
         try {
-            $this->service->generateForEntitlement(
+            $ready = $this->service->generateForEntitlement(
                 $entitlementId
             );
         } catch (PdfGenerationException $exception) {
@@ -126,10 +126,36 @@ final class PdfGenerationModule implements ModuleInterface
                     sanitize_key($exception->errorCode())
                 )
             );
+            return;
         } catch (\Throwable) {
             error_log(
                 sprintf(
                     'FD_PDF_GENERATION_FAILED entitlement_id=%d error_code=unknown',
+                    $entitlementId
+                )
+            );
+            return;
+        }
+
+        $pdfId = (int) ($ready['id'] ?? 0);
+
+        if (
+            $pdfId <= 0
+            || ($ready['status'] ?? '') !== 'ready'
+        ) {
+            return;
+        }
+
+        try {
+            do_action(
+                'facil_digital_pdf_ready',
+                $pdfId
+            );
+        } catch (\Throwable) {
+            error_log(
+                sprintf(
+                    'FD_APOSTILA_READY_NOTIFICATION_FAILED pdf_id=%d entitlement_id=%d',
+                    $pdfId,
                     $entitlementId
                 )
             );
