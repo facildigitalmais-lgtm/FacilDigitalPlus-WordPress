@@ -87,11 +87,17 @@ final class CourseBuilderService
             )
         );
 
-        $slug = sanitize_title(
+        $slugInput = trim(
             (string) (
                 $payload['slug']
-                ?? $title
+                ?? ''
             )
+        );
+
+        $slug = sanitize_title(
+            $slugInput !== ''
+                ? $slugInput
+                : $title
         );
 
         if ($title === '' || $slug === '') {

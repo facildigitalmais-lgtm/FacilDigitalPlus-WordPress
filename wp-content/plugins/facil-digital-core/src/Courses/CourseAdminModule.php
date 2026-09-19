@@ -620,46 +620,235 @@ final class CourseAdminModule implements ModuleInterface
     {
         $rows =
             $this->builder->listCourses();
+
+        $totalCourses = count($rows);
+        $publishedCourses = 0;
+        $draftCourses = 0;
+        $archivedCourses = 0;
+
+        foreach ($rows as $summaryRow) {
+            switch ((string) ($summaryRow['status'] ?? 'draft')) {
+                case 'published':
+                    $publishedCourses++;
+                    break;
+
+                case 'archived':
+                    $archivedCourses++;
+                    break;
+
+                default:
+                    $draftCourses++;
+                    break;
+            }
+        }
         ?>
-        <div class="wrap fd-courses-admin">
-            <h1 class="wp-heading-inline"><?php echo esc_html__('Cursos', 'facil-digital-core'); ?></h1>
-            <a class="page-title-action" href="<?php echo esc_url(add_query_arg(['page' => self::SLUG, 'action' => 'new'], admin_url('admin.php'))); ?>"><?php echo esc_html__('Novo curso', 'facil-digital-core'); ?></a>
+        <div class="wrap fd-courses-admin fd-courses-listing">
+            <div class="fd-courses-listing__header">
+                <div>
+                    <p class="fd-course-heading__eyebrow">
+                        Fácil Digital+ LMS
+                    </p>
+
+                    <h1>
+                        <?php echo esc_html__('Cursos', 'facil-digital-core'); ?>
+                    </h1>
+
+                    <p class="fd-courses-listing__description">
+                        Gerencie os cursos online, produtos vinculados e estado de publicação.
+                    </p>
+                </div>
+
+                <a
+                    class="button button-primary fd-courses-listing__new"
+                    href="<?php echo esc_url(add_query_arg(['page' => self::SLUG, 'action' => 'new'], admin_url('admin.php'))); ?>"
+                >
+                    <span
+                        class="dashicons dashicons-plus-alt2"
+                        aria-hidden="true"
+                    ></span>
+                    <?php echo esc_html__('Novo curso', 'facil-digital-core'); ?>
+                </a>
+            </div>
+
             <hr class="wp-header-end">
 
-            <div class="fd-course-card">
-                <table class="widefat striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Curso</th>
-                            <th>Produto</th>
-                            <th>Carga horária</th>
-                            <th>Status</th>
-                            <th>Atualizado</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php if ($rows === []) : ?>
-                        <tr><td colspan="7">Nenhum curso cadastrado.</td></tr>
-                    <?php endif; ?>
-                    <?php foreach ($rows as $row) : ?>
+            <div
+                class="fd-course-stats"
+                aria-label="<?php echo esc_attr__('Resumo dos cursos', 'facil-digital-core'); ?>"
+            >
+                <div class="fd-course-stat">
+                    <span class="fd-course-stat__label">Total de cursos</span>
+                    <strong class="fd-course-stat__value">
+                        <?php echo esc_html((string) $totalCourses); ?>
+                    </strong>
+                </div>
+
+                <div class="fd-course-stat fd-course-stat--published">
+                    <span class="fd-course-stat__label">Publicados</span>
+                    <strong class="fd-course-stat__value">
+                        <?php echo esc_html((string) $publishedCourses); ?>
+                    </strong>
+                </div>
+
+                <div class="fd-course-stat fd-course-stat--draft">
+                    <span class="fd-course-stat__label">Rascunhos</span>
+                    <strong class="fd-course-stat__value">
+                        <?php echo esc_html((string) $draftCourses); ?>
+                    </strong>
+                </div>
+
+                <div class="fd-course-stat fd-course-stat--archived">
+                    <span class="fd-course-stat__label">Arquivados</span>
+                    <strong class="fd-course-stat__value">
+                        <?php echo esc_html((string) $archivedCourses); ?>
+                    </strong>
+                </div>
+            </div>
+
+            <div class="fd-course-card fd-course-list-card">
+                <div class="fd-course-list-card__header">
+                    <div>
+                        <h2>Cursos cadastrados</h2>
+                        <p>
+                            Consulte o produto associado, carga horária e status de cada curso.
+                        </p>
+                    </div>
+
+                    <span class="fd-course-list-card__count">
                         <?php
-                        $courseId = (int) $row['id'];
-                        $product = wc_get_product((int) $row['product_id']);
+                        echo esc_html(
+                            sprintf(
+                                _n(
+                                    '%d curso',
+                                    '%d cursos',
+                                    $totalCourses,
+                                    'facil-digital-core'
+                                ),
+                                $totalCourses
+                            )
+                        );
                         ?>
-                        <tr>
-                            <td><?php echo esc_html((string) $courseId); ?></td>
-                            <td><strong><?php echo esc_html((string) $row['title']); ?></strong></td>
-                            <td><?php echo esc_html($product instanceof WC_Product ? '#' . $product->get_id() . ' — ' . $product->get_name() : 'Produto indisponível'); ?></td>
-                            <td><?php echo esc_html(number_format(((int) $row['workload_minutes']) / 60, 1, ',', '.') . ' h'); ?></td>
-                            <td><?php echo esc_html((string) $row['status']); ?></td>
-                            <td><?php echo esc_html((string) $row['updated_at']); ?></td>
-                            <td><a href="<?php echo esc_url(add_query_arg(['page' => self::SLUG, 'action' => 'edit', 'id' => $courseId], admin_url('admin.php'))); ?>">Editar / currículo</a></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
+                    </span>
+                </div>
+
+                <?php if ($rows === []) : ?>
+                    <div class="fd-course-empty">
+                        <span
+                            class="dashicons dashicons-welcome-learn-more"
+                            aria-hidden="true"
+                        ></span>
+
+                        <h2>Nenhum curso cadastrado</h2>
+
+                        <p>
+                            Crie o primeiro curso para começar a montar módulos, aulas e materiais.
+                        </p>
+
+                        <a
+                            class="button button-primary"
+                            href="<?php echo esc_url(add_query_arg(['page' => self::SLUG, 'action' => 'new'], admin_url('admin.php'))); ?>"
+                        >
+                            Criar primeiro curso
+                        </a>
+                    </div>
+                <?php else : ?>
+                    <div class="fd-course-table-wrap">
+                        <table class="widefat striped fd-course-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Curso</th>
+                                    <th>Produto</th>
+                                    <th>Carga horária</th>
+                                    <th>Status</th>
+                                    <th>Atualizado</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            <?php foreach ($rows as $row) : ?>
+                                <?php
+                                $courseId = (int) $row['id'];
+                                $product = wc_get_product((int) $row['product_id']);
+
+                                $courseStatus =
+                                    (string) $row['status'];
+
+                                $courseStatusLabel = match ($courseStatus) {
+                                    'published' => 'Publicado',
+                                    'archived' => 'Arquivado',
+                                    default => 'Rascunho',
+                                };
+                                ?>
+
+                                <tr>
+                                    <td class="fd-course-table__id">
+                                        #<?php echo esc_html((string) $courseId); ?>
+                                    </td>
+
+                                    <td class="fd-course-table__course">
+                                        <strong>
+                                            <?php echo esc_html((string) $row['title']); ?>
+                                        </strong>
+
+                                        <span class="fd-course-table__slug">
+                                            <?php echo esc_html((string) $row['slug']); ?>
+                                        </span>
+                                    </td>
+
+                                    <td class="fd-course-table__product">
+                                        <?php
+                                        echo esc_html(
+                                            $product instanceof WC_Product
+                                                ? '#' . $product->get_id() . ' — ' . $product->get_name()
+                                                : 'Produto indisponível'
+                                        );
+                                        ?>
+                                    </td>
+
+                                    <td>
+                                        <?php
+                                        echo esc_html(
+                                            number_format(
+                                                ((int) $row['workload_minutes']) / 60,
+                                                1,
+                                                ',',
+                                                '.'
+                                            ) . ' h'
+                                        );
+                                        ?>
+                                    </td>
+
+                                    <td>
+                                        <span class="fd-course-status fd-course-status--<?php echo esc_attr($courseStatus); ?>">
+                                            <?php echo esc_html($courseStatusLabel); ?>
+                                        </span>
+                                    </td>
+
+                                    <td class="fd-course-table__updated">
+                                        <?php echo esc_html((string) $row['updated_at']); ?>
+                                    </td>
+
+                                    <td class="fd-course-table__actions">
+                                        <a
+                                            class="button button-secondary"
+                                            href="<?php echo esc_url(add_query_arg(['page' => self::SLUG, 'action' => 'edit', 'id' => $courseId], admin_url('admin.php'))); ?>"
+                                            aria-label="<?php echo esc_attr('Editar curso ' . (string) $row['title']); ?>"
+                                        >
+                                            <span
+                                                class="dashicons dashicons-edit"
+                                                aria-hidden="true"
+                                            ></span>
+                                            Editar
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
         <?php
@@ -717,29 +906,48 @@ final class CourseAdminModule implements ModuleInterface
         <div class="wrap fd-courses-admin">
             <div class="fd-course-heading">
                 <div>
-                    <h1><?php echo esc_html($courseId > 0 ? 'Editar curso' : 'Novo curso'); ?></h1>
-                    <?php if ($courseId > 0) : ?><p>Curso #<?php echo esc_html((string) $courseId); ?></p><?php endif; ?>
+                    <p class="fd-course-heading__eyebrow">Cursos online</p>
+                    <h1><?php echo esc_html($courseId > 0 ? (string) $course['title'] : 'Novo curso'); ?></h1>
+                    <?php if ($courseId > 0) : ?>
+                        <div class="fd-course-heading__meta">
+                            <span>Curso #<?php echo esc_html((string) $courseId); ?></span>
+                            <span class="fd-course-status fd-course-status--<?php echo esc_attr((string) $course['status']); ?>">
+                                <?php
+                                echo esc_html(
+                                    match ((string) $course['status']) {
+                                        'published' => 'Publicado',
+                                        'archived' => 'Arquivado',
+                                        default => 'Rascunho',
+                                    }
+                                );
+                                ?>
+                            </span>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <a class="button" href="<?php echo esc_url(add_query_arg(['page' => self::SLUG], admin_url('admin.php'))); ?>">Voltar aos cursos</a>
+                <a class="button" href="<?php echo esc_url(add_query_arg(['page' => self::SLUG], admin_url('admin.php'))); ?>">← Voltar aos cursos</a>
             </div>
 
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <form class="fd-course-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <input type="hidden" name="action" value="fd_course_save">
                 <input type="hidden" name="course_id" value="<?php echo esc_attr((string) $courseId); ?>">
                 <?php wp_nonce_field('fd_course_save'); ?>
 
                 <div class="fd-course-grid">
-                    <section class="fd-course-card">
+                    <section class="fd-course-card fd-course-card--primary">
                         <h2>Informações do curso</h2>
+                        <p class="fd-course-card__intro">Defina como o curso será apresentado ao aluno.</p>
 
-                        <p><label><strong>Título</strong><br>
+                        <p class="fd-course-field"><label><strong>Título do curso</strong><br>
                         <input class="large-text" name="title" required value="<?php echo esc_attr((string) $course['title']); ?>"></label></p>
 
-                        <p><label><strong>Slug</strong><br>
-                        <input class="regular-text" name="slug" value="<?php echo esc_attr((string) $course['slug']); ?>"></label></p>
+                        <p class="fd-course-field"><label><strong>Endereço amigável</strong><br>
+                        <input class="regular-text" name="slug" value="<?php echo esc_attr((string) $course['slug']); ?>"></label>
+                        <span class="fd-course-field__help">Usado internamente na URL. Pode deixar o sistema gerar a partir do título.</span></p>
 
-                        <p><label><strong>Resumo acadêmico</strong><br>
-                        <textarea class="large-text" rows="4" name="short_description"><?php echo esc_textarea((string) $course['short_description']); ?></textarea></label></p>
+                        <p class="fd-course-field"><label><strong>Resumo do curso</strong><br>
+                        <textarea class="large-text" rows="4" name="short_description"><?php echo esc_textarea((string) $course['short_description']); ?></textarea></label>
+                        <span class="fd-course-field__help">Uma descrição curta para apresentar rapidamente o conteúdo ao aluno.</span></p>
 
                         <p><strong>Descrição / apresentação</strong></p>
                         <?php
@@ -755,16 +963,19 @@ final class CourseAdminModule implements ModuleInterface
                         ?>
                     </section>
 
-                    <aside class="fd-course-card">
-                        <h2>Configurações</h2>
+                    <aside class="fd-course-card fd-course-card--settings">
+                        <h2>Configurações de aprendizagem</h2>
+                        <p class="fd-course-card__intro">Controle progresso, navegação e emissão do certificado.</p>
 
-                        <p><label><strong>Carga horária</strong><br>
-                        <input type="number" min="0" name="workload_minutes" value="<?php echo esc_attr((string) $course['workload_minutes']); ?>"> minutos</label></p>
+                        <p class="fd-course-field"><label><strong>Carga horária</strong><br>
+                        <input type="number" min="0" name="workload_minutes" value="<?php echo esc_attr((string) $course['workload_minutes']); ?>"> minutos</label>
+                        <span class="fd-course-field__help">Carga horária total que aparecerá no curso e no certificado.</span></p>
 
-                        <p><label><strong>Conclusão mínima de vídeo</strong><br>
-                        <input type="number" min="1" max="100" step="0.01" name="completion_threshold" value="<?php echo esc_attr((string) $course['completion_threshold']); ?>">%</label></p>
+                        <p class="fd-course-field"><label><strong>Percentual mínimo do vídeo</strong><br>
+                        <input type="number" min="1" max="100" step="0.01" name="completion_threshold" value="<?php echo esc_attr((string) $course['completion_threshold']); ?>">%</label>
+                        <span class="fd-course-field__help">Percentual assistido necessário para considerar uma videoaula concluída.</span></p>
 
-                        <p><label><strong>Navegação</strong><br>
+                        <p class="fd-course-field"><label><strong>Navegação entre aulas</strong><br>
                         <select name="navigation_mode">
                             <option value="free" <?php selected($course['navigation_mode'], 'free'); ?>>Livre</option>
                             <option value="sequential" <?php selected($course['navigation_mode'], 'sequential'); ?>>Sequencial</option>
@@ -780,18 +991,20 @@ final class CourseAdminModule implements ModuleInterface
                         </select></label></p>
                     </aside>
 
-                    <section class="fd-course-card">
-                        <h2>Venda pelo WooCommerce</h2>
+                    <section class="fd-course-card fd-course-card--commerce">
+                        <h2>Venda e acesso</h2>
+                        <p class="fd-course-card__intro">O curso é vinculado automaticamente a um produto do WooCommerce.</p>
 
-                        <p><label><strong>Preço</strong><br>
+                        <p class="fd-course-field"><label><strong>Preço</strong><br>
                         <input type="number" min="0" step="0.01" name="regular_price" required value="<?php echo esc_attr((string) $price); ?>"></label></p>
 
-                        <p><label><strong>Visibilidade no catálogo</strong><br>
+                        <p class="fd-course-field"><label><strong>Onde o produto aparece</strong><br>
                         <select name="catalog_visibility">
-                            <?php foreach (['visible' => 'Visível', 'catalog' => 'Somente catálogo', 'search' => 'Somente busca', 'hidden' => 'Oculto'] as $key => $label) : ?>
+                            <?php foreach (['visible' => 'Catálogo e busca', 'catalog' => 'Somente catálogo', 'search' => 'Somente busca', 'hidden' => 'Oculto do catálogo'] as $key => $label) : ?>
                                 <option value="<?php echo esc_attr($key); ?>" <?php selected($visibility, $key); ?>><?php echo esc_html($label); ?></option>
                             <?php endforeach; ?>
-                        </select></label></p>
+                        </select></label>
+                        <span class="fd-course-field__help">Use “Oculto do catálogo” enquanto estiver preparando ou testando o curso.</span></p>
 
                         <p><label><strong>Resumo comercial</strong><br>
                         <textarea class="large-text" rows="4" name="product_short_description"><?php echo esc_textarea((string) $productShortDescription); ?></textarea></label></p>
@@ -823,8 +1036,9 @@ final class CourseAdminModule implements ModuleInterface
         <div class="fd-course-builder">
             <div class="fd-course-heading">
                 <div>
+                    <p class="fd-course-heading__eyebrow">Estrutura de aprendizagem</p>
                     <h2>Currículo</h2>
-                    <p>Arraste módulos e aulas ou use os botões de mover. Depois salve a ordem.</p>
+                    <p>Organize os módulos e aulas na ordem em que o aluno irá estudá-los.</p>
                 </div>
             </div>
 
@@ -868,7 +1082,30 @@ final class CourseAdminModule implements ModuleInterface
                                 <button type="button" class="fd-course-drag-handle" title="Arrastar aula">☰</button>
                                 <div class="fd-course-lesson__name">
                                     <strong><?php echo esc_html((string) $lesson['title']); ?></strong>
-                                    <small><?php echo esc_html((string) $lesson['lesson_type'] . ' · ' . (string) $lesson['status']); ?></small>
+                                    <div class="fd-course-lesson__meta">
+                                        <span class="fd-course-type">
+                                            <?php
+                                            echo esc_html(
+                                                match ((string) $lesson['lesson_type']) {
+                                                    'video' => 'Vídeo',
+                                                    'mixed' => 'Vídeo + conteúdo',
+                                                    default => 'Texto',
+                                                }
+                                            );
+                                            ?>
+                                        </span>
+                                        <span class="fd-course-status fd-course-status--<?php echo esc_attr((string) $lesson['status']); ?>">
+                                            <?php
+                                            echo esc_html(
+                                                match ((string) $lesson['status']) {
+                                                    'published' => 'Publicada',
+                                                    'archived' => 'Arquivada',
+                                                    default => 'Rascunho',
+                                                }
+                                            );
+                                            ?>
+                                        </span>
+                                    </div>
                                 </div>
                                 <button type="button" class="button fd-course-move-up">↑</button>
                                 <button type="button" class="button fd-course-move-down">↓</button>
@@ -881,7 +1118,7 @@ final class CourseAdminModule implements ModuleInterface
             <?php endforeach; ?>
             </div>
 
-            <section class="fd-course-card">
+            <section class="fd-course-card fd-course-new-module">
                 <h3>Novo módulo</h3>
                 <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                     <input type="hidden" name="action" value="fd_course_module_save">
@@ -975,54 +1212,160 @@ final class CourseAdminModule implements ModuleInterface
         ?>
         <div class="wrap fd-courses-admin">
             <div class="fd-course-heading">
-                <h1><?php echo esc_html($lessonId > 0 ? 'Editar aula' : 'Nova aula'); ?></h1>
-                <a class="button" href="<?php echo esc_url(add_query_arg(['page' => self::SLUG, 'action' => 'edit', 'id' => $courseId], admin_url('admin.php'))); ?>">Voltar ao curso</a>
+                <div>
+                    <p class="fd-course-heading__eyebrow">Editor de aula</p>
+                    <h1><?php echo esc_html($lessonId > 0 ? (string) $lesson['title'] : 'Nova aula'); ?></h1>
+                    <p class="fd-course-heading__description">
+                        <?php echo esc_html('Módulo: ' . (string) $module['title']); ?>
+                    </p>
+                </div>
+                <a class="button" href="<?php echo esc_url(add_query_arg(['page' => self::SLUG, 'action' => 'edit', 'id' => $courseId], admin_url('admin.php'))); ?>">← Voltar ao curso</a>
             </div>
 
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <form class="fd-course-lesson-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <input type="hidden" name="action" value="fd_course_lesson_save">
                 <input type="hidden" name="course_id" value="<?php echo esc_attr((string) $courseId); ?>">
                 <input type="hidden" name="lesson_id" value="<?php echo esc_attr((string) $lessonId); ?>">
                 <?php wp_nonce_field('fd_course_lesson_save_' . $courseId); ?>
 
                 <div class="fd-course-grid">
-                    <section class="fd-course-card">
-                        <p><label><strong>Título</strong><br><input class="large-text" name="title" required value="<?php echo esc_attr((string) $lesson['title']); ?>"></label></p>
-                        <p><label><strong>Slug</strong><br><input class="regular-text" name="slug" value="<?php echo esc_attr((string) $lesson['slug']); ?>"></label></p>
+                    <section class="fd-course-card fd-course-lesson-settings">
+                        <div class="fd-course-section-heading">
+                            <div>
+                                <h2>Configurações da aula</h2>
+                                <p>Defina a identificação, formato, publicação e comportamento desta aula.</p>
+                            </div>
+                        </div>
 
-                        <p><label><strong>Módulo</strong><br>
-                        <select name="module_id">
-                            <?php foreach ($allModules as $candidate) : ?>
-                                <option value="<?php echo esc_attr((string) $candidate['id']); ?>" <?php selected((int) $candidate['id'], $moduleId); ?>><?php echo esc_html((string) $candidate['title']); ?></option>
-                            <?php endforeach; ?>
-                        </select></label></p>
+                        <p class="fd-course-field fd-course-lesson-field--title">
+                            <label>
+                                <strong>Título da aula</strong><br>
+                                <input class="large-text" name="title" required value="<?php echo esc_attr((string) $lesson['title']); ?>">
+                            </label>
+                        </p>
 
-                        <p><label><strong>Tipo</strong><br>
-                        <select name="lesson_type">
-                            <option value="text" <?php selected($lesson['lesson_type'], 'text'); ?>>Texto</option>
-                            <option value="video" <?php selected($lesson['lesson_type'], 'video'); ?>>Vídeo</option>
-                            <option value="mixed" <?php selected($lesson['lesson_type'], 'mixed'); ?>>Vídeo + conteúdo</option>
-                        </select></label></p>
+                        <p class="fd-course-field fd-course-lesson-field--slug">
+                            <label>
+                                <strong>Endereço amigável</strong><br>
+                                <input class="regular-text" name="slug" value="<?php echo esc_attr((string) $lesson['slug']); ?>">
+                            </label>
+                            <span class="fd-course-field__help">
+                                Identificador amigável usado internamente para esta aula.
+                            </span>
+                        </p>
 
-                        <p><label><strong>Vídeo do YouTube</strong><br>
-                        <input class="large-text" name="youtube_video_id" placeholder="URL ou ID do vídeo" value="<?php echo esc_attr((string) ($lesson['youtube_video_id'] ?? '')); ?>"></label></p>
+                        <p class="fd-course-field fd-course-lesson-field--module">
+                            <label>
+                                <strong>Módulo</strong><br>
+                                <select name="module_id">
+                                    <?php foreach ($allModules as $candidate) : ?>
+                                        <option value="<?php echo esc_attr((string) $candidate['id']); ?>" <?php selected((int) $candidate['id'], $moduleId); ?>><?php echo esc_html((string) $candidate['title']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </label>
+                            <span class="fd-course-field__help">
+                                Você pode mover a aula para outro módulo.
+                            </span>
+                        </p>
 
-                        <p><label><strong>Duração</strong><br>
-                        <input type="number" min="0" name="duration_seconds" value="<?php echo esc_attr((string) $lesson['duration_seconds']); ?>"> segundos</label></p>
+                        <p class="fd-course-field fd-course-lesson-field--type">
+                            <label>
+                                <strong>Tipo de aula</strong><br>
+                                <select name="lesson_type">
+                                    <option value="text" <?php selected($lesson['lesson_type'], 'text'); ?>>Aula em texto</option>
+                                    <option value="video" <?php selected($lesson['lesson_type'], 'video'); ?>>Videoaula</option>
+                                    <option value="mixed" <?php selected($lesson['lesson_type'], 'mixed'); ?>>Vídeo + conteúdo complementar</option>
+                                </select>
+                            </label>
+                            <span class="fd-course-field__help">
+                                Escolha o formato principal desta aula.
+                            </span>
+                        </p>
 
-                        <p><label><input type="checkbox" name="is_required" value="1" <?php checked((int) $lesson['is_required'], 1); ?>> Aula obrigatória</label></p>
+                        <div class="fd-course-video-settings" data-lesson-types="video,mixed">
+                            <div class="fd-course-video-settings__header">
+                                <span class="dashicons dashicons-video-alt3" aria-hidden="true"></span>
+                                <div>
+                                    <strong>Vídeo do YouTube</strong>
+                                    <span>Configure o vídeo que será reproduzido nesta aula.</span>
+                                </div>
+                            </div>
 
-                        <p><label><strong>Ordem</strong><br><input type="number" min="0" name="sort_order" value="<?php echo esc_attr((string) $lesson['sort_order']); ?>"></label></p>
+                            <p class="fd-course-field fd-course-youtube-field">
+                                <label>
+                                    <strong>Link ou ID do vídeo</strong><br>
+                                    <input class="large-text" name="youtube_video_id" placeholder="Ex.: https://youtu.be/M7lc1UVf-VE" value="<?php echo esc_attr((string) ($lesson['youtube_video_id'] ?? '')); ?>">
+                                </label>
+                                <span class="fd-course-field__help">
+                                    Você pode colar o link completo do YouTube, um link youtu.be, Shorts, embed ou apenas o ID do vídeo.
+                                </span>
+                            </p>
 
-                        <p><label><strong>Status</strong><br>
-                        <select name="status"><option value="draft" <?php selected($lesson['status'], 'draft'); ?>>Rascunho</option><option value="published" <?php selected($lesson['status'], 'published'); ?>>Publicada</option><option value="archived" <?php selected($lesson['status'], 'archived'); ?>>Arquivada</option></select></label></p>
+                            <p class="fd-course-field">
+                                <label>
+                                    <strong>Duração da videoaula</strong><br>
+                                    <input type="number" min="0" name="duration_seconds" value="<?php echo esc_attr((string) $lesson['duration_seconds']); ?>"> segundos
+                                </label>
+                                <span class="fd-course-field__help">
+                                    Esse valor auxilia no acompanhamento do progresso do aluno.
+                                </span>
+                            </p>
+                        </div>
+
+                        <p class="fd-course-field fd-course-lesson-field--status">
+                            <label>
+                                <strong>Status</strong><br>
+                                <select name="status">
+                                    <option value="draft" <?php selected($lesson['status'], 'draft'); ?>>Rascunho</option>
+                                    <option value="published" <?php selected($lesson['status'], 'published'); ?>>Publicada</option>
+                                    <option value="archived" <?php selected($lesson['status'], 'archived'); ?>>Arquivada</option>
+                                </select>
+                            </label>
+                            <span class="fd-course-field__help">
+                                Somente aulas publicadas devem ficar disponíveis aos alunos.
+                            </span>
+                        </p>
+
+                        <p class="fd-course-field fd-course-lesson-field--order">
+                            <label>
+                                <strong>Ordem</strong><br>
+                                <input type="number" min="0" name="sort_order" value="<?php echo esc_attr((string) $lesson['sort_order']); ?>">
+                            </label>
+                            <span class="fd-course-field__help">
+                                Define a posição da aula dentro do módulo.
+                            </span>
+                        </p>
+
+                        <p class="fd-course-field fd-course-lesson-field--required">
+                            <label>
+                                <input type="checkbox" name="is_required" value="1" <?php checked((int) $lesson['is_required'], 1); ?>>
+                                <span>
+                                    <strong>Aula obrigatória</strong>
+                                    <small>Exigir esta aula para o progresso e conclusão do curso.</small>
+                                </span>
+                            </label>
+                        </p>
                     </section>
 
-                    <section class="fd-course-card fd-course-card--wide">
-                        <h2>Conteúdo da aula</h2>
-                        <?php wp_editor((string) $lesson['content'], 'fd_lesson_content', ['textarea_name' => 'content', 'textarea_rows' => 12, 'media_buttons' => true]); ?>
+                    <section class="fd-course-card fd-course-card--wide fd-course-lesson-content-card">
+                        <div class="fd-course-section-heading">
+                            <div>
+                                <h2>Conteúdo da aula</h2>
+                                <p>Adicione textos, orientações, materiais complementares ou explicações para o aluno.</p>
+                            </div>
+                        </div>
 
-                        <h2>Transcrição</h2>
+                        <?php wp_editor((string) $lesson['content'], 'fd_lesson_content', ['textarea_name' => 'content', 'textarea_rows' => 12, 'media_buttons' => true]); ?>
+                    </section>
+
+                    <section class="fd-course-card fd-course-card--wide fd-course-lesson-transcript-card">
+                        <div class="fd-course-section-heading">
+                            <div>
+                                <h2>Transcrição</h2>
+                                <p>Opcional. Útil para acessibilidade e para alunos que preferem acompanhar o conteúdo por texto.</p>
+                            </div>
+                        </div>
+
                         <?php wp_editor((string) $lesson['transcript'], 'fd_lesson_transcript', ['textarea_name' => 'transcript', 'textarea_rows' => 10, 'media_buttons' => false]); ?>
                     </section>
                 </div>
@@ -1031,24 +1374,48 @@ final class CourseAdminModule implements ModuleInterface
             </form>
 
             <?php if ($lessonId > 0) : ?>
-                <section class="fd-course-card">
-                    <h2>Recursos da aula</h2>
-                    <p class="description">O arquivo será armazenado na área privada da Fácil Digital+ e somente alunos matriculados poderão baixá-lo. Limite por arquivo: 25 MB.</p>
+                <section class="fd-course-card fd-course-lesson-resources">
+                    <div class="fd-course-section-heading">
+                        <div>
+                            <h2>Recursos da aula</h2>
+                            <p>Arquivos complementares disponíveis somente para alunos autorizados. Limite por arquivo: 25 MB.</p>
+                        </div>
+                    </div>
 
-                    <form method="post" enctype="multipart/form-data" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="fd-course-resource-form">
+                    <form method="post" enctype="multipart/form-data" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="fd-course-resource-form fd-course-resource-form--enhanced">
                         <input type="hidden" name="action" value="fd_course_resource_save">
                         <input type="hidden" name="course_id" value="<?php echo esc_attr((string) $courseId); ?>">
                         <input type="hidden" name="lesson_id" value="<?php echo esc_attr((string) $lessonId); ?>">
                         <input type="hidden" name="resource_id" value="0">
                         <?php wp_nonce_field('fd_course_resource_save_' . $lessonId); ?>
 
-                        <input name="title" required placeholder="Título do recurso">
-                        <input type="file" name="resource_file" required accept=".pdf,.zip,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png">
-                        <input type="number" min="0" name="sort_order" value="10" title="Ordem">
-                        <select name="status"><option value="active">Ativo</option><option value="hidden">Oculto</option></select>
+                        <label>
+                            <span>Título do recurso</span>
+                            <input name="title" required placeholder="Ex.: Material de apoio">
+                        </label>
+
+                        <label>
+                            <span>Arquivo</span>
+                            <input type="file" name="resource_file" required accept=".pdf,.zip,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png">
+                        </label>
+
+                        <label>
+                            <span>Ordem</span>
+                            <input type="number" min="0" name="sort_order" value="10">
+                        </label>
+
+                        <label>
+                            <span>Status</span>
+                            <select name="status">
+                                <option value="active">Ativo</option>
+                                <option value="hidden">Oculto</option>
+                            </select>
+                        </label>
+
                         <button class="button button-primary">Enviar recurso</button>
                     </form>
 
+                    <div class="fd-course-resource-table-wrap">
                     <table class="widefat striped">
                         <thead><tr><th>Recurso</th><th>Arquivo</th><th>MIME</th><th>Status</th><th>Ação</th></tr></thead>
                         <tbody>
@@ -1065,6 +1432,7 @@ final class CourseAdminModule implements ModuleInterface
                         <?php endforeach; ?>
                         </tbody>
                     </table>
+                    </div>
                 </section>
             <?php endif; ?>
         </div>

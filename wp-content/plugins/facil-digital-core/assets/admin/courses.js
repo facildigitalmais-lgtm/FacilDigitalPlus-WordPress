@@ -1,6 +1,43 @@
 document.addEventListener('DOMContentLoaded', function () {
     'use strict';
 
+    const lessonType = document.querySelector(
+        'select[name="lesson_type"]'
+    );
+
+    const conditionalLessonFields = document.querySelectorAll(
+        '[data-lesson-types]'
+    );
+
+    const syncLessonFields = function () {
+        if (!lessonType) {
+            return;
+        }
+
+        conditionalLessonFields.forEach(function (field) {
+            const allowedTypes = (
+                field.dataset.lessonTypes || ''
+            )
+                .split(',')
+                .map(function (type) {
+                    return type.trim();
+                });
+
+            field.hidden = !allowedTypes.includes(
+                lessonType.value
+            );
+        });
+    };
+
+    if (lessonType) {
+        lessonType.addEventListener(
+            'change',
+            syncLessonFields
+        );
+
+        syncLessonFields();
+    }
+
     const builder = document.querySelector('.fd-course-builder');
 
     if (!builder) {
