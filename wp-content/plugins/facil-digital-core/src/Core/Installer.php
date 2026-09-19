@@ -227,6 +227,7 @@ final class Installer
                 slug varchar(191) NOT NULL,
                 short_description text DEFAULT NULL,
                 description longtext DEFAULT NULL,
+                intro_youtube_video_id varchar(32) DEFAULT NULL,
                 workload_minutes int(10) unsigned NOT NULL DEFAULT 0,
                 completion_threshold decimal(5,2) NOT NULL DEFAULT 95.00,
                 navigation_mode varchar(32) NOT NULL DEFAULT 'free',

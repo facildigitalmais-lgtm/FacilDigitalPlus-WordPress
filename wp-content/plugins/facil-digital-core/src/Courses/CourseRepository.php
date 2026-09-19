@@ -114,6 +114,12 @@ final class CourseRepository
                             (string) $data['description']
                         )
                         : null,
+                'intro_youtube_video_id' =>
+                    isset($data['intro_youtube_video_id'])
+                        ? sanitize_text_field(
+                            (string) $data['intro_youtube_video_id']
+                        )
+                        : null,
                 'workload_minutes' =>
                     max(
                         0,
@@ -354,6 +360,22 @@ final class CourseRepository
                 ]
                     ? 1
                     : 0;
+        }
+
+        if (
+            array_key_exists(
+                'intro_youtube_video_id',
+                $data
+            )
+        ) {
+            $videoId = sanitize_text_field(
+                (string) $data['intro_youtube_video_id']
+            );
+
+            $update['intro_youtube_video_id'] =
+                $videoId !== ''
+                    ? $videoId
+                    : null;
         }
 
         if (array_key_exists('status', $data)) {

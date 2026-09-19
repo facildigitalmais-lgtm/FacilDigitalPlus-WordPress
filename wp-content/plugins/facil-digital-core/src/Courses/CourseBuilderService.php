@@ -147,6 +147,48 @@ final class CourseBuilderService
             );
         }
 
+        $introVideoId = $this->youtubeVideoId(
+            (string) (
+                $payload['intro_youtube_video_id']
+                ?? ''
+            ),
+            'course_intro_youtube_invalid'
+        );
+
+        $imageId = max(
+            0,
+            (int) (
+                $payload['image_id']
+                ?? 0
+            )
+        );
+
+        if (
+            $courseId > 0
+            && !array_key_exists('image_id', $payload)
+        ) {
+            $linkedProduct =
+                $this->products->productForCourse(
+                    $courseId
+                );
+
+            $imageId =
+                $linkedProduct instanceof WC_Product
+                    ? (int) $linkedProduct->get_image_id()
+                    : 0;
+        }
+
+        if (
+            $imageId > 0
+            && !wp_attachment_is_image(
+                $imageId
+            )
+        ) {
+            throw new RuntimeException(
+                'course_cover_invalid'
+            );
+        }
+
         $existingBySlug =
             $this->courses->findBySlug(
                 $slug
@@ -177,6 +219,8 @@ final class CourseBuilderService
                     $payload['description']
                     ?? ''
                 ),
+            'intro_youtube_video_id' =>
+                $introVideoId,
             'workload_minutes' =>
                 max(
                     0,
@@ -202,6 +246,8 @@ final class CourseBuilderService
         ];
 
         $productData = [
+            'image_id' =>
+                $imageId,
             'status' =>
                 $this->productStatusForCourse(
                     $status
@@ -272,6 +318,8 @@ final class CourseBuilderService
                         $payload[
                             'regular_price'
                         ] ?? '0',
+                    'image_id' =>
+                        $imageId,
                     'status' =>
                         $productData['status'],
                     'catalog_visibility' =>
@@ -1012,7 +1060,8 @@ final class CourseBuilderService
     }
 
     private function youtubeVideoId(
-        string $value
+        string $value,
+        string $invalidCode = 'course_lesson_youtube_invalid'
     ): ?string {
         $value = trim($value);
 
@@ -1049,7 +1098,7 @@ final class CourseBuilderService
         }
 
         throw new RuntimeException(
-            'course_lesson_youtube_invalid'
+            $invalidCode
         );
     }
 }

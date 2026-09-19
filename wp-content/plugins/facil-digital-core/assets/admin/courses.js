@@ -38,6 +38,176 @@ document.addEventListener('DOMContentLoaded', function () {
         syncLessonFields();
     }
 
+    const coverInput = document.querySelector(
+        '[data-course-cover-input]'
+    );
+
+    const coverPreview = document.querySelector(
+        '[data-course-cover-preview]'
+    );
+
+    const coverSelect = document.querySelector(
+        '[data-course-cover-select]'
+    );
+
+    const coverRemove = document.querySelector(
+        '[data-course-cover-remove]'
+    );
+
+    let courseCoverFrame = null;
+
+    const courseCoverImageUrl = function (attachment) {
+        const sizes = attachment.sizes || {};
+
+        if (sizes.medium_large && sizes.medium_large.url) {
+            return sizes.medium_large.url;
+        }
+
+        if (sizes.medium && sizes.medium.url) {
+            return sizes.medium.url;
+        }
+
+        return attachment.url || '';
+    };
+
+    const showCourseCoverPlaceholder = function () {
+        if (!coverPreview) {
+            return;
+        }
+
+        coverPreview.innerHTML = '';
+
+        const placeholder = document.createElement('div');
+        placeholder.className = 'fd-course-cover__placeholder';
+        placeholder.setAttribute(
+            'data-course-cover-placeholder',
+            ''
+        );
+
+        const icon = document.createElement('span');
+        icon.className =
+            'dashicons dashicons-format-image';
+        icon.setAttribute('aria-hidden', 'true');
+
+        const title = document.createElement('strong');
+        title.textContent = 'Nenhuma capa selecionada';
+
+        const help = document.createElement('span');
+        help.textContent =
+            'Escolha uma imagem da Biblioteca de Mídia.';
+
+        placeholder.appendChild(icon);
+        placeholder.appendChild(title);
+        placeholder.appendChild(help);
+        coverPreview.appendChild(placeholder);
+    };
+
+    const applyCourseCover = function (attachment) {
+        if (
+            !coverInput
+            || !coverPreview
+            || !coverSelect
+            || !coverRemove
+        ) {
+            return;
+        }
+
+        const attachmentId = parseInt(
+            attachment.id,
+            10
+        );
+
+        const imageUrl =
+            courseCoverImageUrl(attachment);
+
+        if (
+            !Number.isInteger(attachmentId)
+            || attachmentId <= 0
+            || !imageUrl
+        ) {
+            return;
+        }
+
+        coverInput.value = String(attachmentId);
+        coverPreview.innerHTML = '';
+
+        const image = document.createElement('img');
+        image.className = 'fd-course-cover__image';
+        image.src = imageUrl;
+        image.alt =
+            attachment.alt
+            || attachment.title
+            || 'Capa do curso';
+
+        coverPreview.appendChild(image);
+        coverSelect.textContent = 'Alterar capa';
+        coverRemove.hidden = false;
+    };
+
+    if (
+        coverInput
+        && coverPreview
+        && coverSelect
+        && coverRemove
+    ) {
+        coverSelect.addEventListener(
+            'click',
+            function () {
+                if (
+                    !window.wp
+                    || !window.wp.media
+                ) {
+                    return;
+                }
+
+                if (!courseCoverFrame) {
+                    courseCoverFrame = window.wp.media({
+                        title: 'Selecionar capa do curso',
+                        button: {
+                            text: 'Usar como capa',
+                        },
+                        library: {
+                            type: 'image',
+                        },
+                        multiple: false,
+                    });
+
+                    courseCoverFrame.on(
+                        'select',
+                        function () {
+                            const selection =
+                                courseCoverFrame
+                                    .state()
+                                    .get('selection')
+                                    .first();
+
+                            if (!selection) {
+                                return;
+                            }
+
+                            applyCourseCover(
+                                selection.toJSON()
+                            );
+                        }
+                    );
+                }
+
+                courseCoverFrame.open();
+            }
+        );
+
+        coverRemove.addEventListener(
+            'click',
+            function () {
+                coverInput.value = '0';
+                showCourseCoverPlaceholder();
+                coverSelect.textContent =
+                    'Selecionar capa';
+                coverRemove.hidden = true;
+            }
+        );
+    }
+
     const builder = document.querySelector('.fd-course-builder');
 
     if (!builder) {

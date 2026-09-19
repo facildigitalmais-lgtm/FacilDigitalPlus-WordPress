@@ -109,6 +109,30 @@ final class CourseAdminModule implements ModuleInterface
             return;
         }
 
+        $stylePath =
+            FACIL_DIGITAL_CORE_DIR
+            . 'assets/admin/courses.css';
+
+        $scriptPath =
+            FACIL_DIGITAL_CORE_DIR
+            . 'assets/admin/courses.js';
+
+        $styleMtime = is_file($stylePath)
+            ? filemtime($stylePath)
+            : false;
+
+        $scriptMtime = is_file($scriptPath)
+            ? filemtime($scriptPath)
+            : false;
+
+        $styleVersion = $styleMtime !== false
+            ? (string) $styleMtime
+            : FACIL_DIGITAL_CORE_VERSION;
+
+        $scriptVersion = $scriptMtime !== false
+            ? (string) $scriptMtime
+            : FACIL_DIGITAL_CORE_VERSION;
+
         wp_enqueue_style(
             'fd-courses-admin',
             plugins_url(
@@ -116,7 +140,7 @@ final class CourseAdminModule implements ModuleInterface
                 FACIL_DIGITAL_CORE_FILE
             ),
             [],
-            FACIL_DIGITAL_CORE_VERSION
+            $styleVersion
         );
 
         wp_enqueue_script(
@@ -126,9 +150,11 @@ final class CourseAdminModule implements ModuleInterface
                 FACIL_DIGITAL_CORE_FILE
             ),
             [],
-            FACIL_DIGITAL_CORE_VERSION,
+            $scriptVersion,
             true
         );
+
+        wp_enqueue_media();
 
         wp_enqueue_editor();
     }
@@ -861,6 +887,7 @@ final class CourseAdminModule implements ModuleInterface
             'slug' => '',
             'short_description' => '',
             'description' => '',
+            'intro_youtube_video_id' => '',
             'workload_minutes' => 0,
             'completion_threshold' => '95.00',
             'navigation_mode' => 'free',
@@ -902,6 +929,11 @@ final class CourseAdminModule implements ModuleInterface
             $product instanceof WC_Product
                 ? $product->get_short_description()
                 : '';
+
+        $imageId =
+            $product instanceof WC_Product
+                ? (int) $product->get_image_id()
+                : 0;
         ?>
         <div class="wrap fd-courses-admin">
             <div class="fd-course-heading">
@@ -961,6 +993,86 @@ final class CourseAdminModule implements ModuleInterface
                             ]
                         );
                         ?>
+                    </section>
+
+                    <section class="fd-course-card fd-course-card--presentation">
+                        <div class="fd-course-section-heading">
+                            <div>
+                                <h2>Capa e apresentação</h2>
+                                <p>Configure a identidade visual e o vídeo de boas-vindas que serão exibidos na apresentação do curso.</p>
+                            </div>
+                        </div>
+
+                        <div class="fd-course-presentation-grid">
+                            <div class="fd-course-cover-field">
+                                <h3>Capa do curso</h3>
+
+                                <div class="fd-course-cover__preview" data-course-cover-preview>
+                                    <?php if ($imageId > 0) : ?>
+                                        <?php echo wp_get_attachment_image(
+                                            $imageId,
+                                            'medium_large',
+                                            false,
+                                            [
+                                                'class' => 'fd-course-cover__image',
+                                            ]
+                                        ); ?>
+                                    <?php else : ?>
+                                        <div class="fd-course-cover__placeholder" data-course-cover-placeholder>
+                                            <span class="dashicons dashicons-format-image" aria-hidden="true"></span>
+                                            <strong>Nenhuma capa selecionada</strong>
+                                            <span>Escolha uma imagem da Biblioteca de Mídia.</span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <input
+                                    type="hidden"
+                                    name="image_id"
+                                    value="<?php echo esc_attr((string) $imageId); ?>"
+                                    data-course-cover-input
+                                >
+
+                                <div class="fd-course-cover__actions">
+                                    <button type="button" class="button button-secondary" data-course-cover-select>
+                                        <?php echo esc_html($imageId > 0 ? 'Alterar capa' : 'Selecionar capa'); ?>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="button-link-delete"
+                                        data-course-cover-remove
+                                        <?php echo $imageId > 0 ? '' : 'hidden'; ?>
+                                    >
+                                        Remover capa
+                                    </button>
+                                </div>
+
+                                <span class="fd-course-field__help">
+                                    Esta imagem será usada como capa do curso e como imagem principal do produto vinculado no WooCommerce.
+                                </span>
+                            </div>
+
+                            <div class="fd-course-intro-video-field">
+                                <h3>Vídeo introdutório</h3>
+
+                                <p class="fd-course-field">
+                                    <label>
+                                        <strong>Link ou ID do YouTube</strong><br>
+                                        <input
+                                            class="large-text"
+                                            name="intro_youtube_video_id"
+                                            placeholder="Ex.: https://youtu.be/M7lc1UVf-VE"
+                                            value="<?php echo esc_attr((string) ($course['intro_youtube_video_id'] ?? '')); ?>"
+                                        >
+                                    </label>
+
+                                    <span class="fd-course-field__help">
+                                        Opcional. Este vídeo será exibido na apresentação do curso e não contará como aula nem como progresso.
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
                     </section>
 
                     <aside class="fd-course-card fd-course-card--settings">

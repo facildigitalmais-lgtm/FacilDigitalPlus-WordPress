@@ -1147,3 +1147,145 @@
         width: 100%;
     }
 }
+
+/* Course presentation: cover + intro video */
+.fd-course-card--presentation {
+    grid-column: 1 / -1;
+}
+
+.fd-course-card--presentation > .fd-course-section-heading {
+    margin-bottom: 18px;
+}
+
+.fd-course-presentation-grid {
+    display: grid;
+    gap: 22px;
+    grid-template-columns: minmax(300px, .9fr) minmax(0, 1.1fr);
+}
+
+.fd-course-cover-field,
+.fd-course-intro-video-field {
+    background: #fbfcfd;
+    border: 1px solid #e2e4e7;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 18px;
+}
+
+.fd-course-cover-field h3,
+.fd-course-intro-video-field h3 {
+    font-size: 14px;
+    margin: 0 0 14px;
+}
+
+.fd-course-cover__preview {
+    align-items: center;
+    aspect-ratio: 16 / 9;
+    background: #f0f0f1;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.fd-course-cover__image {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.fd-course-cover__placeholder {
+    align-items: center;
+    color: #646970;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    justify-content: center;
+    min-height: 180px;
+    padding: 24px;
+    text-align: center;
+}
+
+.fd-course-cover__placeholder .dashicons {
+    color: #8c8f94;
+    font-size: 36px;
+    height: 36px;
+    width: 36px;
+}
+
+.fd-course-cover__placeholder strong {
+    color: #2c3338;
+}
+
+.fd-course-cover__placeholder span:not(.dashicons) {
+    font-size: 12px;
+}
+
+.fd-course-cover__actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.fd-course-cover__actions .button {
+    min-height: 34px;
+}
+
+.fd-course-cover__actions .button-link-delete[hidden] {
+    display: none !important;
+}
+
+.fd-course-intro-video-field .fd-course-field {
+    margin: 0;
+}
+
+.fd-course-intro-video-field input[name="intro_youtube_video_id"] {
+    box-sizing: border-box;
+    min-height: 38px;
+    width: 100%;
+}
+
+.fd-course-intro-video-field::after {
+    background: #eef5ff;
+    border-radius: 8px;
+    color: #135e96;
+    content: "O vídeo introdutório é exibido apenas na apresentação do curso e não interfere no progresso das aulas.";
+    display: block;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: 16px;
+    padding: 12px 14px;
+}
+
+@media screen and (max-width: 900px) {
+    .fd-course-presentation-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fd-course-card--presentation {
+        grid-column: 1;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .fd-course-cover-field,
+    .fd-course-intro-video-field {
+        padding: 14px;
+    }
+
+    .fd-course-cover__actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .fd-course-cover__actions .button {
+        justify-content: center;
+        width: 100%;
+    }
+}
