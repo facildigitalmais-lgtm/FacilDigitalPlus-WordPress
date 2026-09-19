@@ -13,6 +13,98 @@
         return;
     }
 
+    const enrollmentId =
+        classroom.dataset.enrollmentId;
+
+    const lessonId =
+        classroom.dataset.lessonId;
+
+    const sidebar =
+        document.getElementById(
+            'fd-course-sidebar'
+        );
+
+    const sidebarToggle =
+        document.querySelector(
+            '.fd-course-sidebar-toggle'
+        );
+
+    const applySidebarState =
+        function (collapsed) {
+            classroom.classList.toggle(
+                'is-sidebar-collapsed',
+                collapsed
+            );
+
+            if (!sidebarToggle) {
+                return;
+            }
+
+            sidebarToggle.setAttribute(
+                'aria-expanded',
+                collapsed
+                    ? 'false'
+                    : 'true'
+            );
+
+            sidebarToggle.textContent =
+                collapsed
+                    ? (
+                        config.showContentsText
+                        || 'Mostrar conteúdo'
+                    )
+                    : (
+                        config.hideContentsText
+                        || 'Ocultar conteúdo'
+                    );
+        };
+
+    if (
+        sidebar
+        && sidebarToggle
+    ) {
+        let collapsed = false;
+
+        try {
+            collapsed =
+                window.localStorage
+                    .getItem(
+                        'fdCourseSidebarCollapsed'
+                    ) === '1';
+        } catch (error) {
+        }
+
+        applySidebarState(
+            collapsed
+        );
+
+        sidebarToggle.addEventListener(
+            'click',
+            function () {
+                const nextState =
+                    !classroom.classList
+                        .contains(
+                            'is-sidebar-collapsed'
+                        );
+
+                applySidebarState(
+                    nextState
+                );
+
+                try {
+                    window.localStorage
+                        .setItem(
+                            'fdCourseSidebarCollapsed',
+                            nextState
+                                ? '1'
+                                : '0'
+                        );
+                } catch (error) {
+                }
+            }
+        );
+    }
+
     const ajaxPost = async function (
         action,
         payload
@@ -54,7 +146,84 @@
         return response.json();
     };
 
-    const reloadOnCompletion =
+    let toastTimer = null;
+
+    const showToast =
+        function (
+            message,
+            type
+        ) {
+            if (!message) {
+                return;
+            }
+
+            let toast =
+                document.querySelector(
+                    '.fd-course-toast'
+                );
+
+            if (!toast) {
+                toast =
+                    document.createElement(
+                        'div'
+                    );
+
+                toast.className =
+                    'fd-course-toast';
+
+                toast.setAttribute(
+                    'role',
+                    'status'
+                );
+
+                toast.setAttribute(
+                    'aria-live',
+                    'polite'
+                );
+
+                document.body
+                    .appendChild(
+                        toast
+                    );
+            }
+
+            toast.classList.remove(
+                'is-success',
+                'is-info'
+            );
+
+            toast.classList.add(
+                type === 'success'
+                    ? 'is-success'
+                    : 'is-info'
+            );
+
+            toast.textContent =
+                message;
+
+            toast.classList.add(
+                'is-visible'
+            );
+
+            if (toastTimer !== null) {
+                window.clearTimeout(
+                    toastTimer
+                );
+            }
+
+            toastTimer =
+                window.setTimeout(
+                    function () {
+                        toast.classList
+                            .remove(
+                                'is-visible'
+                            );
+                    },
+                    3500
+                );
+        };
+
+    const updateProgressUi =
         function (response) {
             if (
                 !response
@@ -64,15 +233,161 @@
                 return;
             }
 
+            const percent =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        Number(
+                            response.data.percent
+                            || 0
+                        )
+                    )
+                );
+
+            const progressLabel =
+                document.querySelector(
+                    '[data-lesson-progress="'
+                    + lessonId
+                    + '"]'
+                );
+
+            if (progressLabel) {
+                progressLabel.textContent =
+                    Math.round(percent)
+                    + '%';
+
+                const lessonItem =
+                    progressLabel.closest(
+                        '.fd-course-sidebar-lesson'
+                    );
+
+                if (lessonItem) {
+                    lessonItem.classList
+                        .remove(
+                            'is-not-started'
+                        );
+
+                    if (
+                        percent > 0
+                        && !response.data
+                            .lesson_completed
+                    ) {
+                        lessonItem.classList
+                            .add(
+                                'is-in-progress'
+                            );
+                    }
+
+                    if (
+                        response.data
+                            .lesson_completed
+                    ) {
+                        lessonItem.classList
+                            .remove(
+                                'is-in-progress'
+                            );
+
+                        lessonItem.classList
+                            .add(
+                                'is-completed'
+                            );
+
+                        const icon =
+                            lessonItem
+                                .querySelector(
+                                    '.fd-course-sidebar-lesson__icon'
+                                );
+
+                        if (icon) {
+                            icon.textContent =
+                                '✓';
+                        }
+                    }
+                }
+            }
+
+            const liveBar =
+                document.querySelector(
+                    '[data-current-progress-bar]'
+                );
+
+            if (liveBar) {
+                liveBar.setAttribute(
+                    'aria-valuenow',
+                    String(
+                        Math.round(percent)
+                    )
+                );
+
+                const fill =
+                    liveBar.querySelector(
+                        'span'
+                    );
+
+                if (fill) {
+                    fill.style.width =
+                        percent + '%';
+                }
+            }
+
+            const liveLabel =
+                document.querySelector(
+                    '[data-current-progress-label]'
+                );
+
+            if (liveLabel) {
+                liveLabel.textContent =
+                    Math.round(percent)
+                    + '%';
+            }
+        };
+
+    const handleProgressResponse =
+        function (response) {
+            updateProgressUi(
+                response
+            );
+
             if (
-                response.data.lesson_completed
-                || response.data.course_completed
+                !response
+                || !response.success
+                || !response.data
+            ) {
+                return;
+            }
+
+            if (
+                response.data
+                    .course_completed
+            ) {
+                showToast(
+                    config.courseCompletedText
+                    || 'Curso concluído!',
+                    'success'
+                );
+            } else if (
+                response.data
+                    .lesson_completed
+            ) {
+                showToast(
+                    config.lessonCompletedText
+                    || 'Aula concluída!',
+                    'success'
+                );
+            }
+
+            if (
+                response.data
+                    .lesson_completed
+                || response.data
+                    .course_completed
             ) {
                 window.setTimeout(
                     function () {
                         window.location.reload();
                     },
-                    500
+                    1100
                 );
             }
         };
@@ -116,7 +431,7 @@
                         return;
                     }
 
-                    reloadOnCompletion(
+                    handleProgressResponse(
                         response
                     );
                 } catch (error) {
@@ -138,12 +453,6 @@
 
     const videoId =
         playerElement.dataset.videoId;
-
-    const enrollmentId =
-        classroom.dataset.enrollmentId;
-
-    const lessonId =
-        classroom.dataset.lessonId;
 
     if (
         !videoId
@@ -360,7 +669,7 @@
                     stopTimer();
                 }
 
-                reloadOnCompletion(
+                handleProgressResponse(
                     response
                 );
             } catch (error) {

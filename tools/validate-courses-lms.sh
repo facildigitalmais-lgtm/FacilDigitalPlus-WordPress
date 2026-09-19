@@ -312,6 +312,40 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "recursos privados, certificado PDF e verificacao publica"
 
 echo
+echo "=== STUDENT EXPERIENCE / CLASSROOM UX ==="
+
+[[ -f tools/test-courses-experience.php ]] \
+  || fail "teste courses-experience ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-experience.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-experience.log
+then
+  fail "teste funcional courses-experience"
+fi
+
+grep -q '^COURSES_STUDENT_EXPERIENCE=PASS$' \
+  /tmp/fd-courses-experience.log \
+  || fail "experiencia do aluno nao confirmada"
+
+grep -q '^COURSES_CLASSROOM_NAVIGATION=PASS$' \
+  /tmp/fd-courses-experience.log \
+  || fail "navegacao da sala nao confirmada"
+
+grep -q '^COURSES_ACTION_SCHEDULER_UI=PASS$' \
+  /tmp/fd-courses-experience.log \
+  || fail "fila de certificado da experiencia nao confirmada"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-experience.log \
+  || fail "cleanup courses-experience nao confirmado"
+
+pass "experiencia do aluno, navegacao e acabamento LMS"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -365,6 +399,11 @@ docker compose exec -T wordpress \
 docker compose exec -T wordpress \
   php -l \
   /workspace/tools/test-courses-delivery.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-experience.php \
   >/dev/null
 
 bash -n tools/validate-courses-lms.sh

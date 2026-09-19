@@ -279,6 +279,26 @@ final class CourseAccountModule implements ModuleInterface
                     ),
                 'heartbeatMs' =>
                     10000,
+                'lessonCompletedText' =>
+                    __(
+                        'Aula concluída!',
+                        'facil-digital-core'
+                    ),
+                'courseCompletedText' =>
+                    __(
+                        'Curso concluído! Seu certificado está sendo preparado.',
+                        'facil-digital-core'
+                    ),
+                'showContentsText' =>
+                    __(
+                        'Mostrar conteúdo',
+                        'facil-digital-core'
+                    ),
+                'hideContentsText' =>
+                    __(
+                        'Ocultar conteúdo',
+                        'facil-digital-core'
+                    ),
             ]
         );
     }
@@ -354,7 +374,91 @@ final class CourseAccountModule implements ModuleInterface
                     ?? 0
                 );
 
+            $stats =
+                (array) (
+                    $row['stats']
+                    ?? []
+                );
+
+            $moduleCount =
+                (int) (
+                    $stats['module_count']
+                    ?? 0
+                );
+
+            $lessonCount =
+                (int) (
+                    $stats['lesson_count']
+                    ?? 0
+                );
+
+            $workloadMinutes =
+                max(
+                    0,
+                    (int) (
+                        $course[
+                            'workload_minutes'
+                        ]
+                        ?? 0
+                    )
+                );
+
+            $workloadLabel =
+                $workloadMinutes > 0
+                    ? number_format(
+                        $workloadMinutes / 60,
+                        1,
+                        ',',
+                        '.'
+                    )
+                    . ' h'
+                    : __(
+                        'Carga horária não informada',
+                        'facil-digital-core'
+                    );
+
+            $product =
+                wc_get_product(
+                    (int) (
+                        $course['product_id']
+                        ?? 0
+                    )
+                );
+
+            $imageHtml =
+                $product instanceof \WC_Product
+                    ? $product->get_image(
+                        'woocommerce_thumbnail',
+                        [
+                            'class' =>
+                                'fd-course-library-card__image',
+                            'loading' =>
+                                'lazy',
+                            'decoding' =>
+                                'async',
+                        ],
+                        true
+                    )
+                    : '';
+
             echo '<article class="fd-course-library-card">';
+
+            echo '<div class="fd-course-library-card__media">';
+
+            if ($imageHtml !== '') {
+                echo wp_kses_post(
+                    $imageHtml
+                );
+            } else {
+                echo '<span>';
+                echo esc_html__(
+                    'Fácil Digital+',
+                    'facil-digital-core'
+                );
+                echo '</span>';
+            }
+
+            echo '</div>';
 
             echo '<div class="fd-course-library-card__body">';
 
@@ -395,8 +499,57 @@ final class CourseAccountModule implements ModuleInterface
             );
             echo '</p>';
 
+            echo '<div class="fd-course-library-card__meta">';
+
+            echo '<span>';
+            echo esc_html(
+                sprintf(
+                    _n(
+                        '%d módulo',
+                        '%d módulos',
+                        $moduleCount,
+                        'facil-digital-core'
+                    ),
+                    $moduleCount
+                )
+            );
+            echo '</span>';
+
+            echo '<span>';
+            echo esc_html(
+                sprintf(
+                    _n(
+                        '%d aula',
+                        '%d aulas',
+                        $lessonCount,
+                        'facil-digital-core'
+                    ),
+                    $lessonCount
+                )
+            );
+            echo '</span>';
+
+            echo '<span>';
+            echo esc_html(
+                $workloadLabel
+            );
+            echo '</span>';
+
+            echo '</div>';
+
             echo '<div class="fd-course-progress">';
-            echo '<div class="fd-course-progress__bar">';
+            echo '<div class="fd-course-progress__bar"';
+            echo ' role="progressbar"';
+            echo ' aria-label="';
+            echo esc_attr__(
+                'Progresso do curso',
+                'facil-digital-core'
+            );
+            echo '" aria-valuemin="0" aria-valuemax="100" aria-valuenow="';
+            echo esc_attr(
+                (string) round($percent)
+            );
+            echo '">';
             echo '<span style="width:';
             echo esc_attr(
                 (string) $percent
@@ -510,6 +663,51 @@ final class CourseAccountModule implements ModuleInterface
         $summary =
             (array) $state['progress'];
 
+        $enrollment =
+            (array) $state['enrollment'];
+
+        $navigation =
+            (array) (
+                $state['navigation']
+                ?? []
+            );
+
+        $previous =
+            is_array(
+                $navigation['previous']
+                ?? null
+            )
+                ? $navigation['previous']
+                : null;
+
+        $next =
+            is_array(
+                $navigation['next']
+                ?? null
+            )
+                ? $navigation['next']
+                : null;
+
+        $certificate =
+            is_array(
+                $state['certificate']
+                ?? null
+            )
+                ? $state['certificate']
+                : null;
+
+        $courseCompleted =
+            (string) (
+                $enrollment['status']
+                ?? ''
+            ) === 'completed';
+
+        $coursePercent =
+            (float) (
+                $summary['percent']
+                ?? 0
+            );
+
         $lessonId =
             (int) $lesson['id'];
 
@@ -523,6 +721,22 @@ final class CourseAccountModule implements ModuleInterface
             !empty(
                 $lesson['completed']
             );
+
+        $lessonProgress =
+            (array) (
+                $lesson['progress']
+                ?? []
+            );
+
+        $lessonProgressPercent =
+            $lessonCompleted
+                ? 100.0
+                : (float) (
+                    $lessonProgress[
+                        'completion_percent'
+                    ]
+                    ?? 0
+                );
 
         echo '<div class="fd-course-classroom"';
         echo ' data-enrollment-id="';
@@ -551,19 +765,56 @@ final class CourseAccountModule implements ModuleInterface
         );
         echo '</a>';
 
+        echo '<div class="fd-course-classroom__top-actions">';
+
         echo '<div class="fd-course-classroom__course-progress">';
+
+        echo '<span data-course-progress-label>';
         echo esc_html(
             number_format(
-                (float) (
-                    $summary['percent']
-                    ?? 0
-                ),
+                $coursePercent,
                 0,
                 ',',
                 '.'
             )
             . '% do curso'
         );
+        echo '</span>';
+
+        echo '<div class="fd-course-classroom__mini-progress"';
+        echo ' role="progressbar"';
+        echo ' aria-label="';
+        echo esc_attr__(
+            'Progresso do curso',
+            'facil-digital-core'
+        );
+        echo '" aria-valuemin="0" aria-valuemax="100" aria-valuenow="';
+        echo esc_attr(
+            (string) round(
+                $coursePercent
+            )
+        );
+        echo '">';
+
+        echo '<span style="width:';
+        echo esc_attr(
+            (string) $coursePercent
+        );
+        echo '%"></span>';
+
+        echo '</div>';
+        echo '</div>';
+
+        echo '<button type="button"';
+        echo ' class="fd-course-sidebar-toggle"';
+        echo ' aria-controls="fd-course-sidebar"';
+        echo ' aria-expanded="true">';
+        echo esc_html__(
+            'Ocultar conteúdo',
+            'facil-digital-core'
+        );
+        echo '</button>';
+
         echo '</div>';
         echo '</div>';
 
@@ -624,6 +875,52 @@ final class CourseAccountModule implements ModuleInterface
             );
             echo '</span>';
         }
+
+        echo '</div>';
+
+        echo '<div class="fd-course-live-progress">';
+
+        echo '<span>';
+        echo esc_html__(
+            'Progresso desta aula',
+            'facil-digital-core'
+        );
+        echo '</span>';
+
+        echo '<div class="fd-course-live-progress__bar"';
+        echo ' role="progressbar"';
+        echo ' aria-label="';
+        echo esc_attr__(
+            'Progresso desta aula',
+            'facil-digital-core'
+        );
+        echo '" aria-valuemin="0" aria-valuemax="100" aria-valuenow="';
+        echo esc_attr(
+            (string) round(
+                $lessonProgressPercent
+            )
+        );
+        echo '" data-current-progress-bar>';
+
+        echo '<span style="width:';
+        echo esc_attr(
+            (string) $lessonProgressPercent
+        );
+        echo '%"></span>';
+
+        echo '</div>';
+
+        echo '<strong data-current-progress-label>';
+        echo esc_html(
+            number_format(
+                $lessonProgressPercent,
+                0,
+                ',',
+                '.'
+            )
+            . '%'
+        );
+        echo '</strong>';
 
         echo '</div>';
 
@@ -749,10 +1046,205 @@ final class CourseAccountModule implements ModuleInterface
             echo '</section>';
         }
 
+        echo '<nav class="fd-course-lesson-nav" aria-label="';
+        echo esc_attr__(
+            'Navegação entre aulas',
+            'facil-digital-core'
+        );
+        echo '">';
+
+        if (
+            is_array($previous)
+            && (int) (
+                $previous['id']
+                ?? 0
+            ) > 0
+        ) {
+            echo '<a class="fd-course-lesson-nav__previous" href="';
+            echo esc_url(
+                $this->classroomUrl(
+                    $enrollmentId,
+                    (int) $previous['id']
+                )
+            );
+            echo '">';
+            echo '<small>';
+            echo esc_html__(
+                'Aula anterior',
+                'facil-digital-core'
+            );
+            echo '</small>';
+            echo '<strong>';
+            echo esc_html(
+                (string) (
+                    $previous['title']
+                    ?? ''
+                )
+            );
+            echo '</strong>';
+            echo '</a>';
+        } else {
+            echo '<span class="fd-course-lesson-nav__empty"></span>';
+        }
+
+        if (
+            is_array($next)
+            && (int) (
+                $next['id']
+                ?? 0
+            ) > 0
+        ) {
+            if (!empty($next['locked'])) {
+                echo '<span class="fd-course-lesson-nav__next is-disabled" aria-disabled="true">';
+                echo '<small>';
+                echo esc_html__(
+                    'Próxima aula',
+                    'facil-digital-core'
+                );
+                echo '</small>';
+                echo '<strong>';
+                echo esc_html(
+                    (string) (
+                        $next['title']
+                        ?? ''
+                    )
+                );
+                echo '</strong>';
+                echo '<em>';
+                echo esc_html__(
+                    'Conclua a aula atual para liberar.',
+                    'facil-digital-core'
+                );
+                echo '</em>';
+                echo '</span>';
+            } else {
+                echo '<a class="fd-course-lesson-nav__next" href="';
+                echo esc_url(
+                    $this->classroomUrl(
+                        $enrollmentId,
+                        (int) $next['id']
+                    )
+                );
+                echo '">';
+                echo '<small>';
+                echo esc_html__(
+                    'Próxima aula',
+                    'facil-digital-core'
+                );
+                echo '</small>';
+                echo '<strong>';
+                echo esc_html(
+                    (string) (
+                        $next['title']
+                        ?? ''
+                    )
+                );
+                echo '</strong>';
+                echo '</a>';
+            }
+        }
+
+        echo '</nav>';
+
+        if ($courseCompleted) {
+            echo '<section class="fd-course-completion" role="status">';
+
+            echo '<div class="fd-course-completion__icon" aria-hidden="true">';
+            echo '✓';
+            echo '</div>';
+
+            echo '<div>';
+            echo '<h2>';
+            echo esc_html__(
+                'Curso concluído',
+                'facil-digital-core'
+            );
+            echo '</h2>';
+
+            echo '<p>';
+            echo esc_html__(
+                'Parabéns! Todas as aulas obrigatórias foram concluídas.',
+                'facil-digital-core'
+            );
+            echo '</p>';
+
+            echo '<div class="fd-course-completion__actions">';
+
+            if (
+                is_array($certificate)
+                && (string) (
+                    $certificate['status']
+                    ?? ''
+                ) === 'ready'
+            ) {
+                echo '<a class="button alt" href="';
+                echo esc_url(
+                    CourseDeliveryModule::certificateUrl(
+                        (int) (
+                            $certificate['id']
+                            ?? 0
+                        )
+                    )
+                );
+                echo '">';
+                echo esc_html__(
+                    'Baixar certificado',
+                    'facil-digital-core'
+                );
+                echo '</a>';
+            } elseif (
+                is_array($certificate)
+                && (string) (
+                    $certificate['status']
+                    ?? ''
+                ) === 'failed'
+            ) {
+                echo '<a class="button" href="';
+                echo esc_url(
+                    CourseDeliveryModule::retryUrl(
+                        (int) (
+                            $certificate['id']
+                            ?? 0
+                        )
+                    )
+                );
+                echo '">';
+                echo esc_html__(
+                    'Gerar certificado novamente',
+                    'facil-digital-core'
+                );
+                echo '</a>';
+            } else {
+                echo '<a class="button alt" href="';
+                echo esc_url(
+                    wc_get_account_endpoint_url(
+                        self::CERTIFICATES_ENDPOINT
+                    )
+                );
+                echo '">';
+                echo esc_html__(
+                    'Acompanhar certificado',
+                    'facil-digital-core'
+                );
+                echo '</a>';
+            }
+
+            echo '</div>';
+            echo '</div>';
+            echo '</section>';
+        }
+
         echo '</article>';
         echo '</main>';
 
-        echo '<aside class="fd-course-classroom__sidebar">';
+        echo '<aside class="fd-course-classroom__sidebar"';
+        echo ' id="fd-course-sidebar"';
+        echo ' aria-label="';
+        echo esc_attr__(
+            'Conteúdo do curso',
+            'facil-digital-core'
+        );
+        echo '">';
         echo '<div class="fd-course-sidebar__heading">';
         echo '<h2>';
         echo esc_html(
@@ -790,6 +1282,24 @@ final class CourseAccountModule implements ModuleInterface
                         ?? 0
                     );
 
+                $itemProgress =
+                    (array) (
+                        $item['progress']
+                        ?? []
+                    );
+
+                $itemPercent =
+                    !empty(
+                        $item['completed']
+                    )
+                        ? 100.0
+                        : (float) (
+                            $itemProgress[
+                                'completion_percent'
+                            ]
+                            ?? 0
+                        );
+
                 $classes = [
                     'fd-course-sidebar-lesson',
                 ];
@@ -806,6 +1316,20 @@ final class CourseAccountModule implements ModuleInterface
 
                 if (!empty($item['locked'])) {
                     $classes[] = 'is-locked';
+                }
+
+                if (
+                    empty($item['completed'])
+                    && $itemPercent > 0
+                ) {
+                    $classes[] =
+                        'is-in-progress';
+                } elseif (
+                    empty($item['completed'])
+                    && empty($item['locked'])
+                ) {
+                    $classes[] =
+                        'is-not-started';
                 }
 
                 $class =
@@ -869,12 +1393,6 @@ final class CourseAccountModule implements ModuleInterface
                     (string) $itemId
                 );
                 echo '">';
-
-                $itemProgress =
-                    (array) (
-                        $item['progress']
-                        ?? []
-                    );
 
                 echo esc_html(
                     number_format(
@@ -979,7 +1497,13 @@ final class CourseAccountModule implements ModuleInterface
                 ?? ''
             );
 
-            echo '<article class="fd-certificate-card">';
+            echo '<article class="fd-certificate-card is-';
+            echo esc_attr(
+                sanitize_html_class(
+                    $status
+                )
+            );
+            echo '">';
 
             echo '<span class="fd-course-badge">';
             echo esc_html(
@@ -1002,6 +1526,28 @@ final class CourseAccountModule implements ModuleInterface
                 }
             );
             echo '</span>';
+
+            echo '<p class="fd-certificate-status-copy" role="status">';
+            echo esc_html(
+                match ($status) {
+                    'ready' =>
+                        __(
+                            'Seu certificado está pronto para download.',
+                            'facil-digital-core'
+                        ),
+                    'failed' =>
+                        __(
+                            'Não foi possível concluir a geração. Você pode tentar novamente.',
+                            'facil-digital-core'
+                        ),
+                    default =>
+                        __(
+                            'Estamos preparando seu certificado. Ele aparecerá aqui automaticamente quando estiver pronto.',
+                            'facil-digital-core'
+                        ),
+                }
+            );
+            echo '</p>';
 
             echo '<h3>';
             echo esc_html(

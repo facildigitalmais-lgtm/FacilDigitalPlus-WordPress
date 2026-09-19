@@ -94,6 +94,10 @@ final class CourseLearningService
                         $enrollment,
                         $course
                     ),
+                'stats' =>
+                    $this->curriculumStats(
+                        $curriculum
+                    ),
                 'continue_lesson_id' =>
                     $this->firstAccessibleLessonId(
                         $curriculum
@@ -195,6 +199,16 @@ final class CourseLearningService
                     $enrollment,
                     $course
                 ),
+            'navigation' =>
+                $this->lessonNavigation(
+                    $curriculum,
+                    $lessonId
+                ),
+            'certificate' =>
+                $this->certificates
+                    ->findByEnrollmentId(
+                        $enrollmentId
+                    ),
         ];
     }
 
@@ -531,6 +545,177 @@ final class CourseLearningService
             true,
             $courseCompleted
         );
+    }
+
+    /**
+     * @param list<array<string, mixed>> $curriculum
+     * @return array<string, int>
+     */
+    private function curriculumStats(
+        array $curriculum
+    ): array {
+        $moduleCount = 0;
+        $lessonCount = 0;
+        $requiredCount = 0;
+        $completedCount = 0;
+        $videoCount = 0;
+        $resourceCount = 0;
+
+        foreach ($curriculum as $module) {
+            $moduleLessons =
+                (array) (
+                    $module['lessons']
+                    ?? []
+                );
+
+            if ($moduleLessons === []) {
+                continue;
+            }
+
+            $moduleCount++;
+
+            foreach ($moduleLessons as $lesson) {
+                $lessonCount++;
+
+                if (
+                    (int) (
+                        $lesson['is_required']
+                        ?? 0
+                    ) === 1
+                ) {
+                    $requiredCount++;
+                }
+
+                if (!empty($lesson['completed'])) {
+                    $completedCount++;
+                }
+
+                if (
+                    in_array(
+                        (string) (
+                            $lesson['lesson_type']
+                            ?? ''
+                        ),
+                        [
+                            'video',
+                            'mixed',
+                        ],
+                        true
+                    )
+                ) {
+                    $videoCount++;
+                }
+
+                $resourceCount += count(
+                    (array) (
+                        $lesson['resources']
+                        ?? []
+                    )
+                );
+            }
+        }
+
+        return [
+            'module_count' =>
+                $moduleCount,
+            'lesson_count' =>
+                $lessonCount,
+            'required_count' =>
+                $requiredCount,
+            'completed_count' =>
+                $completedCount,
+            'video_count' =>
+                $videoCount,
+            'resource_count' =>
+                $resourceCount,
+        ];
+    }
+
+    /**
+     * @param list<array<string, mixed>> $curriculum
+     * @return array<string, array<string, mixed>|null>
+     */
+    private function lessonNavigation(
+        array $curriculum,
+        int $currentLessonId
+    ): array {
+        $flat = [];
+
+        foreach ($curriculum as $module) {
+            foreach (
+                (array) (
+                    $module['lessons']
+                    ?? []
+                )
+                as $lesson
+            ) {
+                $lessonId =
+                    (int) (
+                        $lesson['id']
+                        ?? 0
+                    );
+
+                if ($lessonId <= 0) {
+                    continue;
+                }
+
+                $flat[] = [
+                    'id' =>
+                        $lessonId,
+                    'title' =>
+                        (string) (
+                            $lesson['title']
+                            ?? ''
+                        ),
+                    'locked' =>
+                        !empty(
+                            $lesson['locked']
+                        ),
+                    'completed' =>
+                        !empty(
+                            $lesson['completed']
+                        ),
+                ];
+            }
+        }
+
+        $currentIndex = null;
+
+        foreach ($flat as $index => $item) {
+            if (
+                (int) $item['id']
+                === $currentLessonId
+            ) {
+                $currentIndex = $index;
+                break;
+            }
+        }
+
+        if ($currentIndex === null) {
+            return [
+                'previous' => null,
+                'next' => null,
+            ];
+        }
+
+        return [
+            'previous' =>
+                $currentIndex > 0
+                    ? $flat[
+                        $currentIndex - 1
+                    ]
+                    : null,
+            'next' =>
+                isset(
+                    $flat[
+                        $currentIndex + 1
+                    ]
+                )
+                    ? $flat[
+                        $currentIndex + 1
+                    ]
+                    : null,
+        ];
     }
 
     /**
