@@ -700,7 +700,13 @@ final class CourseAccountModule implements ModuleInterface
             echo '<ul>';
 
             foreach ($resources as $resource) {
+                $resourceId = (int) (
+                    $resource['id']
+                    ?? 0
+                );
+
                 echo '<li>';
+
                 echo '<strong>';
                 echo esc_html(
                     (string) (
@@ -709,6 +715,7 @@ final class CourseAccountModule implements ModuleInterface
                     )
                 );
                 echo '</strong>';
+
                 echo '<span>';
                 echo esc_html(
                     (string) (
@@ -719,6 +726,22 @@ final class CourseAccountModule implements ModuleInterface
                     )
                 );
                 echo '</span>';
+
+                if ($resourceId > 0) {
+                    echo '<a class="button fd-course-resource-download" href="';
+                    echo esc_url(
+                        CourseDeliveryModule::resourceUrl(
+                            $resourceId
+                        )
+                    );
+                    echo '">';
+                    echo esc_html__(
+                        'Baixar',
+                        'facil-digital-core'
+                    );
+                    echo '</a>';
+                }
+
                 echo '</li>';
             }
 
@@ -899,6 +922,25 @@ final class CourseAccountModule implements ModuleInterface
                     $userId
                 );
 
+        foreach ($rows as $certificate) {
+            if (
+                (string) (
+                    $certificate['status']
+                    ?? ''
+                ) !== 'pending'
+            ) {
+                continue;
+            }
+
+            do_action(
+                'facil_digital_certificate_pending',
+                (int) (
+                    $certificate['id']
+                    ?? 0
+                )
+            );
+        }
+
         echo '<section class="fd-certificates">';
         echo '<h2>';
         echo esc_html__(
@@ -926,6 +968,16 @@ final class CourseAccountModule implements ModuleInterface
                     $row['status']
                     ?? 'pending'
                 );
+
+            $certificateId = (int) (
+                $row['id']
+                ?? 0
+            );
+
+            $verificationCode = (string) (
+                $row['verification_code']
+                ?? ''
+            );
 
             echo '<article class="fd-certificate-card">';
 
@@ -1010,16 +1062,63 @@ final class CourseAccountModule implements ModuleInterface
             echo ' ';
             echo '<strong>';
             echo esc_html(
-                (string) (
-                    $row[
-                        'verification_code'
-                    ]
-                    ?? ''
-                )
+                $verificationCode
             );
             echo '</strong>';
             echo '</p>';
 
+            echo '<div class="fd-certificate-actions">';
+
+            if (
+                $status === 'ready'
+                && $certificateId > 0
+            ) {
+                echo '<a class="button alt" href="';
+                echo esc_url(
+                    CourseDeliveryModule::certificateUrl(
+                        $certificateId
+                    )
+                );
+                echo '">';
+                echo esc_html__(
+                    'Baixar certificado',
+                    'facil-digital-core'
+                );
+                echo '</a>';
+
+                if ($verificationCode !== '') {
+                    echo '<a class="button" target="_blank" rel="noopener" href="';
+                    echo esc_url(
+                        CourseDeliveryModule::verificationUrl(
+                            $verificationCode
+                        )
+                    );
+                    echo '">';
+                    echo esc_html__(
+                        'Verificar autenticidade',
+                        'facil-digital-core'
+                    );
+                    echo '</a>';
+                }
+            } elseif (
+                $status === 'failed'
+                && $certificateId > 0
+            ) {
+                echo '<a class="button" href="';
+                echo esc_url(
+                    CourseDeliveryModule::retryUrl(
+                        $certificateId
+                    )
+                );
+                echo '">';
+                echo esc_html__(
+                    'Tentar gerar novamente',
+                    'facil-digital-core'
+                );
+                echo '</a>';
+            }
+
+            echo '</div>';
             echo '</article>';
         }
 

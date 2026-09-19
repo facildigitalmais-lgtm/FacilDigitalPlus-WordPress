@@ -22,7 +22,9 @@ final class CourseAdminModule implements ModuleInterface
         private readonly LessonRepository $lessons =
             new LessonRepository(),
         private readonly LessonResourceRepository $resources =
-            new LessonResourceRepository()
+            new LessonResourceRepository(),
+        private readonly CourseResourceService $resourceFiles =
+            new CourseResourceService()
     ) {
     }
 
@@ -405,15 +407,35 @@ final class CourseAdminModule implements ModuleInterface
         );
 
         try {
-            $this->builder->saveResource(
+            $file = isset(
+                $_FILES['resource_file']
+            )
+            && is_array(
+                $_FILES['resource_file']
+            )
+                ? $_FILES['resource_file']
+                : [];
+
+            $this->resourceFiles->upload(
                 $courseId,
                 $lessonId,
-                absint(
-                    $_POST['resource_id']
-                    ?? 0
+                (string) wp_unslash(
+                    $_POST['title']
+                    ?? ''
                 ),
-                (array) wp_unslash(
-                    $_POST
+                $file,
+                max(
+                    0,
+                    absint(
+                        $_POST['sort_order']
+                        ?? 0
+                    )
+                ),
+                sanitize_key(
+                    (string) (
+                        $_POST['status']
+                        ?? 'active'
+                    )
                 )
             );
 
@@ -472,7 +494,7 @@ final class CourseAdminModule implements ModuleInterface
         );
 
         try {
-            $this->builder->deleteResource(
+            $this->resourceFiles->delete(
                 $courseId,
                 $resourceId
             );
@@ -1011,9 +1033,9 @@ final class CourseAdminModule implements ModuleInterface
             <?php if ($lessonId > 0) : ?>
                 <section class="fd-course-card">
                     <h2>Recursos da aula</h2>
-                    <p class="description">Nesta etapa o Builder cadastra os metadados do recurso. O upload e a entrega privada serão conectados na etapa específica de recursos protegidos.</p>
+                    <p class="description">O arquivo será armazenado na área privada da Fácil Digital+ e somente alunos matriculados poderão baixá-lo. Limite por arquivo: 25 MB.</p>
 
-                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="fd-course-resource-form">
+                    <form method="post" enctype="multipart/form-data" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="fd-course-resource-form">
                         <input type="hidden" name="action" value="fd_course_resource_save">
                         <input type="hidden" name="course_id" value="<?php echo esc_attr((string) $courseId); ?>">
                         <input type="hidden" name="lesson_id" value="<?php echo esc_attr((string) $lessonId); ?>">
@@ -1021,14 +1043,10 @@ final class CourseAdminModule implements ModuleInterface
                         <?php wp_nonce_field('fd_course_resource_save_' . $lessonId); ?>
 
                         <input name="title" required placeholder="Título do recurso">
-                        <input name="storage_key" required placeholder="courses/curso/arquivo.pdf">
-                        <input name="original_filename" required placeholder="arquivo.pdf">
-                        <input name="mime_type" required placeholder="application/pdf">
-                        <input type="number" min="0" name="file_size" placeholder="Bytes">
-                        <input name="sha256" placeholder="SHA-256 opcional">
-                        <input type="number" min="0" name="sort_order" value="10">
+                        <input type="file" name="resource_file" required accept=".pdf,.zip,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png">
+                        <input type="number" min="0" name="sort_order" value="10" title="Ordem">
                         <select name="status"><option value="active">Ativo</option><option value="hidden">Oculto</option></select>
-                        <button class="button button-primary">Adicionar recurso</button>
+                        <button class="button button-primary">Enviar recurso</button>
                     </form>
 
                     <table class="widefat striped">

@@ -317,6 +317,22 @@
     word-break: break-all;
 }
 
+.fd-certificate-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.fd-course-resources li {
+    gap: 12px;
+}
+
+.fd-course-resource-download {
+    flex: 0 0 auto;
+    margin-left: auto !important;
+}
+
 @media screen and (max-width: 1100px) {
     .fd-course-classroom {
         grid-template-columns:

@@ -819,6 +819,18 @@ try {
         )
         as $certificateId
     ) {
+        if (
+            function_exists(
+                'as_unschedule_all_actions'
+            )
+        ) {
+            as_unschedule_all_actions(
+                'facil_digital_generate_certificate',
+                [$certificateId],
+                'facil-digital-courses'
+            );
+        }
+
         $wpdb->delete(
             Database::table(
                 'certificates'

@@ -19,6 +19,7 @@ use FacilDigital\Core\Contracts\ModuleInterface;
 use FacilDigital\Core\Courses\CourseAccountModule;
 use FacilDigital\Core\Courses\CourseAdminModule;
 use FacilDigital\Core\Courses\CourseCommerceModule;
+use FacilDigital\Core\Courses\CourseDeliveryModule;
 use FacilDigital\Core\Entitlements\EntitlementModule;
 use FacilDigital\Core\Import\ImportAdminModule;
 use FacilDigital\Core\PDFs\DownloadModule;
@@ -64,6 +65,7 @@ final class ModuleRegistry
             new DownloadModule(),
             new AccountModule(),
             new CourseAccountModule(),
+            new CourseDeliveryModule(),
             new PdfController(),
             new QuestionAdminModule(),
             new SimulationAdminModule(),

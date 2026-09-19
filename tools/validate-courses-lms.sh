@@ -274,6 +274,44 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "matricula, area do aluno, aprendizagem e certificados"
 
 echo
+echo "=== PRIVATE RESOURCES / CERTIFICATE DELIVERY ==="
+
+[[ -f tools/test-courses-delivery.php ]] \
+  || fail "teste courses-delivery ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-delivery.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-delivery.log
+then
+  fail "teste funcional courses-delivery"
+fi
+
+grep -q '^COURSES_RESOURCE_PRIVATE_DELIVERY=PASS$' \
+  /tmp/fd-courses-delivery.log \
+  || fail "recursos privados nao confirmados"
+
+grep -q '^COURSES_CERTIFICATE_GENERATION=PASS$' \
+  /tmp/fd-courses-delivery.log \
+  || fail "geracao real de certificado nao confirmada"
+
+grep -q '^COURSES_CERTIFICATE_VERIFICATION=PASS$' \
+  /tmp/fd-courses-delivery.log \
+  || fail "verificacao de certificado nao confirmada"
+
+grep -q '^COURSES_DELIVERY_SECURITY=PASS$' \
+  /tmp/fd-courses-delivery.log \
+  || fail "seguranca de entrega LMS nao confirmada"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-delivery.log \
+  || fail "cleanup courses-delivery nao confirmado"
+
+pass "recursos privados, certificado PDF e verificacao publica"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -322,6 +360,11 @@ docker compose exec -T wordpress \
 docker compose exec -T wordpress \
   php -l \
   /workspace/tools/test-courses-learning.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-delivery.php \
   >/dev/null
 
 bash -n tools/validate-courses-lms.sh

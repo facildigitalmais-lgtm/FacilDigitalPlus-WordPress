@@ -1007,21 +1007,27 @@ final class CourseLearningService
                     ? $user->display_name
                     : 'Aluno';
 
-            $this->certificates
-                ->createPending(
-                    (int) $enrollment['id'],
-                    $studentName,
-                    (string) $course['title'],
-                    max(
-                        0,
-                        (int) (
-                            $course[
-                                'workload_minutes'
-                            ]
-                            ?? 0
+            $certificateId =
+                $this->certificates
+                    ->createPending(
+                        (int) $enrollment['id'],
+                        $studentName,
+                        (string) $course['title'],
+                        max(
+                            0,
+                            (int) (
+                                $course[
+                                    'workload_minutes'
+                                ]
+                                ?? 0
+                            )
                         )
-                    )
-                );
+                    );
+
+            do_action(
+                'facil_digital_certificate_pending',
+                $certificateId
+            );
         }
 
         return true;
