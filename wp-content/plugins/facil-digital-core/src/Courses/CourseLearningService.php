@@ -39,7 +39,7 @@ final class CourseLearningService
             return [];
         }
 
-        $result = [];
+        $resultByCourse = [];
 
         foreach (
             $this->enrollments->forUser(
@@ -66,6 +66,21 @@ final class CourseLearningService
                 continue;
             }
 
+            $expiresAt =
+                (string) (
+                    $enrollment['expires_at']
+                    ?? ''
+                );
+
+            if (
+                $expiresAt !== ''
+                && strtotime(
+                    $expiresAt . ' UTC'
+                ) < time()
+            ) {
+                continue;
+            }
+
             $course =
                 $this->courses->findById(
                     (int) (
@@ -84,16 +99,29 @@ final class CourseLearningService
                     $course
                 );
 
-            $result[] = [
+            $courseId =
+                (int) (
+                    $course['id']
+                    ?? 0
+                );
+
+            if ($courseId <= 0) {
+                continue;
+            }
+
+            $candidateProgress =
+                $this->progressSummary(
+                    $enrollment,
+                    $course
+                );
+
+            $candidate = [
                 'enrollment' =>
                     $enrollment,
                 'course' =>
                     $course,
                 'progress' =>
-                    $this->progressSummary(
-                        $enrollment,
-                        $course
-                    ),
+                    $candidateProgress,
                 'stats' =>
                     $this->curriculumStats(
                         $curriculum
@@ -103,9 +131,84 @@ final class CourseLearningService
                         $curriculum
                     ),
             ];
+
+            $current =
+                $resultByCourse[
+                    $courseId
+                ]
+                ?? null;
+
+            if (!is_array($current)) {
+                $resultByCourse[
+                    $courseId
+                ] = $candidate;
+
+                continue;
+            }
+
+            $currentEnrollment =
+                (array) (
+                    $current['enrollment']
+                    ?? []
+                );
+
+            $currentProgress =
+                (array) (
+                    $current['progress']
+                    ?? []
+                );
+
+            $currentCompleted =
+                (string) (
+                    $currentEnrollment[
+                        'status'
+                    ]
+                    ?? ''
+                ) === 'completed';
+
+            $candidateCompleted =
+                (string) (
+                    $enrollment['status']
+                    ?? ''
+                ) === 'completed';
+
+            $currentPercent =
+                (float) (
+                    $currentProgress[
+                        'percent'
+                    ]
+                    ?? 0
+                );
+
+            $candidatePercent =
+                (float) (
+                    $candidateProgress[
+                        'percent'
+                    ]
+                    ?? 0
+                );
+
+            if (
+                (
+                    $candidateCompleted
+                    && !$currentCompleted
+                )
+                || (
+                    $candidateCompleted
+                    === $currentCompleted
+                    && $candidatePercent
+                        > $currentPercent
+                )
+            ) {
+                $resultByCourse[
+                    $courseId
+                ] = $candidate;
+            }
         }
 
-        return $result;
+        return array_values(
+            $resultByCourse
+        );
     }
 
     /**

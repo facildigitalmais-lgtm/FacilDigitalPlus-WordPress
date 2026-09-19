@@ -346,6 +346,48 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "experiencia do aluno, navegacao e acabamento LMS"
 
 echo
+echo "=== RELEASE HARDENING ==="
+
+[[ -f tools/test-courses-hardening.php ]] \
+  || fail "teste courses-hardening ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-hardening.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-hardening.log
+then
+  fail "teste funcional courses-hardening"
+fi
+
+grep -q '^COURSES_REPEAT_PURCHASE=PASS$' \
+  /tmp/fd-courses-hardening.log \
+  || fail "compras repetidas nao confirmadas"
+
+grep -q '^COURSES_EXPIRATION_GUARD=PASS$' \
+  /tmp/fd-courses-hardening.log \
+  || fail "expiracao de matricula nao confirmada"
+
+grep -q '^COURSES_REVOCATION_HARDENING=PASS$' \
+  /tmp/fd-courses-hardening.log \
+  || fail "revogacao comercial nao confirmada"
+
+grep -q '^COURSES_ACTION_SCHEDULER_WORKER=PASS$' \
+  /tmp/fd-courses-hardening.log \
+  || fail "worker de certificado nao confirmado"
+
+grep -q '^COURSES_RELEASE_HARDENING=PASS$' \
+  /tmp/fd-courses-hardening.log \
+  || fail "release hardening nao confirmado"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-hardening.log \
+  || fail "cleanup courses-hardening nao confirmado"
+
+pass "compras repetidas, expiracao, revogacao e worker"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -406,7 +448,18 @@ docker compose exec -T wordpress \
   /workspace/tools/test-courses-experience.php \
   >/dev/null
 
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-hardening.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/check-courses-runtime.php \
+  >/dev/null
+
 bash -n tools/validate-courses-lms.sh
+bash -n tools/validate-courses-release.sh
 git diff --check
 
 pass "sintaxe PHP, shell e git diff check"
