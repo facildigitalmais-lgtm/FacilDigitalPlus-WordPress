@@ -168,6 +168,40 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "persistencia de progresso e certificados"
 
 echo
+echo "=== COURSE / WOOCOMMERCE PRODUCTS ==="
+
+[[ -f tools/test-courses-products.php ]] \
+  || fail "teste courses-products ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-products.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-products.log
+then
+  fail "teste funcional courses-products"
+fi
+
+grep -q '^COURSES_PRODUCT_LINKAGE=PASS$' \
+  /tmp/fd-courses-products.log \
+  || fail "vinculo curso-produto nao confirmado"
+
+grep -q '^COURSES_PRODUCT_COEXISTENCE=PASS$' \
+  /tmp/fd-courses-products.log \
+  || fail "coexistencia de produtos nao confirmada"
+
+grep -q '^COURSES_WOOCOMMERCE_INTEGRATION=PASS$' \
+  /tmp/fd-courses-products.log \
+  || fail "integracao WooCommerce nao confirmada"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-products.log \
+  || fail "cleanup courses-products nao confirmado"
+
+pass "curso vinculado a produto WooCommerce"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -201,6 +235,11 @@ docker compose exec -T wordpress \
 docker compose exec -T wordpress \
   php -l \
   /workspace/tools/test-courses-progress-certificates.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-products.php \
   >/dev/null
 
 bash -n tools/validate-courses-lms.sh
