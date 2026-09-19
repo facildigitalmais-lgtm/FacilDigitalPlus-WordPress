@@ -202,6 +202,40 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "curso vinculado a produto WooCommerce"
 
 echo
+echo "=== COURSE BUILDER ADMIN ==="
+
+[[ -f tools/test-courses-admin-builder.php ]] \
+  || fail "teste courses-admin-builder ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-admin-builder.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-admin-builder.log
+then
+  fail "teste funcional courses-admin-builder"
+fi
+
+grep -q '^COURSES_ADMIN_SECURITY=PASS$' \
+  /tmp/fd-courses-admin-builder.log \
+  || fail "seguranca do Course Builder nao confirmada"
+
+grep -q '^COURSES_CURRICULUM_BUILDER=PASS$' \
+  /tmp/fd-courses-admin-builder.log \
+  || fail "curriculo do Course Builder nao confirmado"
+
+grep -q '^COURSES_ADMIN_BUILDER=PASS$' \
+  /tmp/fd-courses-admin-builder.log \
+  || fail "Course Builder administrativo nao confirmado"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-admin-builder.log \
+  || fail "cleanup Course Builder nao confirmado"
+
+pass "Course Builder administrativo"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -240,6 +274,11 @@ docker compose exec -T wordpress \
 docker compose exec -T wordpress \
   php -l \
   /workspace/tools/test-courses-products.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-admin-builder.php \
   >/dev/null
 
 bash -n tools/validate-courses-lms.sh

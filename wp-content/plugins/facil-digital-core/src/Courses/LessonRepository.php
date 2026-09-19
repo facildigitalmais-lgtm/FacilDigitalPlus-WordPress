@@ -471,6 +471,68 @@ final class LessonRepository
         }
     }
 
+    public function moveToModule(
+        int $id,
+        int $courseId,
+        int $moduleId
+    ): void {
+        global $wpdb;
+
+        $lesson = $this->findById(
+            $id
+        );
+
+        if (
+            !is_array($lesson)
+            || (int) (
+                $lesson['course_id']
+                ?? 0
+            ) !== $courseId
+        ) {
+            throw new RuntimeException(
+                'lesson_missing'
+            );
+        }
+
+        $module = $this->modules->findById(
+            $moduleId
+        );
+
+        if (
+            !is_array($module)
+            || (int) (
+                $module['course_id']
+                ?? 0
+            ) !== $courseId
+        ) {
+            throw new RuntimeException(
+                'lesson_module_invalid'
+            );
+        }
+
+        $result = $wpdb->update(
+            Database::table(
+                'course_lessons'
+            ),
+            [
+                'module_id' =>
+                    $moduleId,
+                'updated_at' =>
+                    current_time(
+                        'mysql',
+                        true
+                    ),
+            ],
+            ['id' => $id]
+        );
+
+        if ($result === false) {
+            throw new RuntimeException(
+                'lesson_move_failed'
+            );
+        }
+    }
+
     public function delete(int $id): void
     {
         global $wpdb;
