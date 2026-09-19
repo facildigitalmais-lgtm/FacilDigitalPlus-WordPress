@@ -236,6 +236,44 @@ grep -q '^FIXTURES_CLEANUP=OK$' \
 pass "Course Builder administrativo"
 
 echo
+echo "=== STUDENT COURSES / LEARNING ==="
+
+[[ -f tools/test-courses-learning.php ]] \
+  || fail "teste courses-learning ausente"
+
+if ! docker compose run --rm wpcli \
+  wp eval-file \
+  /workspace/tools/test-courses-learning.php \
+  --use-include \
+  2>&1 \
+  | tee /tmp/fd-courses-learning.log
+then
+  fail "teste funcional courses-learning"
+fi
+
+grep -q '^COURSES_COMMERCE_ENROLLMENT=PASS$' \
+  /tmp/fd-courses-learning.log \
+  || fail "matricula comercial nao confirmada"
+
+grep -q '^COURSES_LEARNING_PROGRESS=PASS$' \
+  /tmp/fd-courses-learning.log \
+  || fail "progresso de aprendizagem nao confirmado"
+
+grep -q '^COURSES_CERTIFICATE_TRIGGER=PASS$' \
+  /tmp/fd-courses-learning.log \
+  || fail "gatilho de certificado nao confirmado"
+
+grep -q '^COURSES_ACCOUNT_ENDPOINTS=PASS$' \
+  /tmp/fd-courses-learning.log \
+  || fail "endpoints da area do aluno nao confirmados"
+
+grep -q '^FIXTURES_CLEANUP=OK$' \
+  /tmp/fd-courses-learning.log \
+  || fail "cleanup courses-learning nao confirmado"
+
+pass "matricula, area do aluno, aprendizagem e certificados"
+
+echo
 echo "=== PHP / SHELL / GIT ==="
 
 while IFS= read -r file; do
@@ -279,6 +317,11 @@ docker compose exec -T wordpress \
 docker compose exec -T wordpress \
   php -l \
   /workspace/tools/test-courses-admin-builder.php \
+  >/dev/null
+
+docker compose exec -T wordpress \
+  php -l \
+  /workspace/tools/test-courses-learning.php \
   >/dev/null
 
 bash -n tools/validate-courses-lms.sh

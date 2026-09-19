@@ -16,7 +16,9 @@ use FacilDigital\Core\CLI\QuestionImportCommand;
 use FacilDigital\Core\CLI\StatusCommand;
 use FacilDigital\Core\Contests\ContestModule;
 use FacilDigital\Core\Contracts\ModuleInterface;
+use FacilDigital\Core\Courses\CourseAccountModule;
 use FacilDigital\Core\Courses\CourseAdminModule;
+use FacilDigital\Core\Courses\CourseCommerceModule;
 use FacilDigital\Core\Entitlements\EntitlementModule;
 use FacilDigital\Core\Import\ImportAdminModule;
 use FacilDigital\Core\PDFs\DownloadModule;
@@ -51,6 +53,7 @@ final class ModuleRegistry
             new ContestModule(),
             new ProductMetadata(),
             new CourseAdminModule(),
+            new CourseCommerceModule(),
             new CheckoutModule(),
             new MercadoPagoModule(),
             new EntitlementModule(),
@@ -60,6 +63,7 @@ final class ModuleRegistry
             new ApostilaEmailModule(),
             new DownloadModule(),
             new AccountModule(),
+            new CourseAccountModule(),
             new PdfController(),
             new QuestionAdminModule(),
             new SimulationAdminModule(),
